@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.intel</groupId>
+	<artifactId>jndn-management</artifactId>
+	<version>0.9</version>
+	<packaging>jar</packaging>
+	<description>Tools for managing an NDN forwarding daemon</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>net.named_data.jndn</groupId>
+			<artifactId>jndn</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>com.intel.jndn.utils</groupId>
+			<artifactId>jndn-utils</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.intel.jndn.mock</groupId>
+			<artifactId>jndn-mock</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<distributionManagement>
+		<repository>
+			<id>ubit-artifactory-or.intel.com</id>
+			<name>ubit-artifactory-or.intel.com-releases</name>
+			<url>https://ubit-artifactory-or.intel.com/artifactory/libs-release-local</url>
+		</repository>
+		<snapshotRepository>
+			<id>ubit-artifactory-or.intel.com</id>
+			<name>ubit-artifactory-or.intel.com-snapshots</name>
+			<url>https://ubit-artifactory-or.intel.com/artifactory/libs-snapshot-local</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
