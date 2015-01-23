@@ -46,6 +46,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>ubit-artifactory-or.intel.com</id>
+			<name>IT Artifactory (libs)</name>
+			<url>https://ubit-artifactory-or.intel.com/artifactory/libs-release-local</url>
+		</repository>
+	</repositories>
 	<distributionManagement>
 		<repository>
 			<id>ubit-artifactory-or.intel.com</id>
