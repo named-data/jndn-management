@@ -52,6 +52,11 @@
 			<name>IT Artifactory (libs)</name>
 			<url>https://ubit-artifactory-or.intel.com/artifactory/libs-release-local</url>
 		</repository>
+		<repository>
+			<id>ubit-artifactory-or.intel.com-ext</id>
+			<name>IT Artifactory (ext)</name>
+			<url>https://ubit-artifactory-or.intel.com/artifactory/ext-releases-local</url>
+		</repository>
 	</repositories>
 	<distributionManagement>
 		<repository>
