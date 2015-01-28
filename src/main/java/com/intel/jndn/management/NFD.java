@@ -142,9 +142,9 @@ public class NFD {
 		// send the interest
 		ControlResponse response = sendCommand(forwarder, new Interest(command));
 
-		// check for body
-		if (response.Body.isEmpty()) {
-			throw new Exception("Failed to create face: " + uri);
+		// check for body and that status code is OK (TODO: 200 should be replaced with a CONSTANT like ControlResponse.STATUS_OK)
+		if (response.Body.isEmpty() || response.StatusCode != 200) {
+			throw new Exception("Failed to create face: " + uri + " " + response.StatusText != null ? response.StatusText : "");
 		}
 
 		// return
