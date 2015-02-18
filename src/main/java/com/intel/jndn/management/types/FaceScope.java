@@ -11,22 +11,22 @@
 package com.intel.jndn.management.types;
 
 /**
- * Indicate whether the face is local for scope control purposes; used by FaceStatus
- * See http://redmine.named-data.net/projects/nfd/widi/FaceMgmt
+ * Indicate whether the face is local for scope control purposes; used by
+ * FaceStatus See http://redmine.named-data.net/projects/nfd/widi/FaceMgmt
  *
  * @author andrew
  */
 public enum FaceScope {
 
-	LOCAL(0),
-	NON_LOCAL(1);
+  LOCAL(0),
+  NON_LOCAL(1);
 
-	FaceScope(int value) {
-		value_ = value;
-	}
+  FaceScope(int value) {
+    value_ = value;
+  }
 
-	public final int getNumericValue() {
-		return value_;
-	}
-	private final int value_;
+  public final int getNumericValue() {
+    return value_;
+  }
+  private final int value_;
 }

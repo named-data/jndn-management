@@ -21,5 +21,6 @@ import net.named_data.jndn.encoding.tlv.TlvDecoder;
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public interface Decodable {
-	public void wireDecode(TlvDecoder decoder) throws EncodingException;
+
+  public void wireDecode(TlvDecoder decoder) throws EncodingException;
 }

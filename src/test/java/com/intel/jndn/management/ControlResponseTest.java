@@ -22,31 +22,31 @@ import org.junit.Test;
  */
 public class ControlResponseTest {
 
-	/**
-	 * Test encoding/decoding
-	 *
-	 * @throws java.lang.Exception
-	 */
-	@Test
-	public void testEncodeDecode() throws Exception {
-		ControlParameters parameters = new ControlParameters();
-		parameters.setFaceId(3);
-		ControlResponse response = new ControlResponse();
-		response.setStatusCode(404);
-		response.setStatusText("Not Found");
-		response.getBody().add(parameters);
+  /**
+   * Test encoding/decoding
+   *
+   * @throws java.lang.Exception
+   */
+  @Test
+  public void testEncodeDecode() throws Exception {
+    ControlParameters parameters = new ControlParameters();
+    parameters.setFaceId(3);
+    ControlResponse response = new ControlResponse();
+    response.setStatusCode(404);
+    response.setStatusText("Not Found");
+    response.getBody().add(parameters);
 
-		// encode
-		Blob encoded = response.wireEncode();
+    // encode
+    Blob encoded = response.wireEncode();
 
-		// decode
-		ControlResponse decoded = new ControlResponse();
-		decoded.wireDecode(encoded.buf());
+    // decode
+    ControlResponse decoded = new ControlResponse();
+    decoded.wireDecode(encoded.buf());
 
-		// test
-		Assert.assertEquals(response.getStatusCode(), decoded.getStatusCode());
-		Assert.assertEquals(response.getStatusText(), decoded.getStatusText());
-		Assert.assertEquals(response.getBody().size(), decoded.getBody().size());
-		Assert.assertEquals(response.getBody().get(0).getFaceId(), decoded.getBody().get(0).getFaceId());
-	}
+    // test
+    Assert.assertEquals(response.getStatusCode(), decoded.getStatusCode());
+    Assert.assertEquals(response.getStatusText(), decoded.getStatusText());
+    Assert.assertEquals(response.getBody().size(), decoded.getBody().size());
+    Assert.assertEquals(response.getBody().get(0).getFaceId(), decoded.getBody().get(0).getFaceId());
+  }
 }

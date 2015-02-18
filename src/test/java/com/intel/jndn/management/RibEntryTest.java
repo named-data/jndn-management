@@ -32,56 +32,56 @@ import org.junit.Test;
  */
 public class RibEntryTest {
 
-	/**
-	 * Test encoding/decoding
-	 *
-	 * @throws java.lang.Exception
-	 */
-	@Test
-	public void testEncodeDecode() throws Exception {
-		Route route = new Route();
-		route.setFaceId(42);
-		route.setCost(100);
-		route.setOrigin(0);
-		RibEntry entry = new RibEntry();
-		entry.setName(new Name("/rib/entry/test"));
-		entry.getRoutes().add(route);
+  /**
+   * Test encoding/decoding
+   *
+   * @throws java.lang.Exception
+   */
+  @Test
+  public void testEncodeDecode() throws Exception {
+    Route route = new Route();
+    route.setFaceId(42);
+    route.setCost(100);
+    route.setOrigin(0);
+    RibEntry entry = new RibEntry();
+    entry.setName(new Name("/rib/entry/test"));
+    entry.getRoutes().add(route);
 
-		// encode
-		Blob encoded = entry.wireEncode();
+    // encode
+    Blob encoded = entry.wireEncode();
 
-		// decode
-		RibEntry decoded = new RibEntry();
-		decoded.wireDecode(encoded.buf());
+    // decode
+    RibEntry decoded = new RibEntry();
+    decoded.wireDecode(encoded.buf());
 
-		// test
-		Assert.assertEquals(entry.getName().toUri(), decoded.getName().toUri());
-		Assert.assertEquals(entry.getRoutes().get(0).getFaceId(), decoded.getRoutes().get(0).getFaceId());
-		Assert.assertEquals(entry.getRoutes().get(0).getCost(), decoded.getRoutes().get(0).getCost());
-		Assert.assertEquals(entry.getRoutes().get(0).getOrigin(), decoded.getRoutes().get(0).getOrigin());
-	}
+    // test
+    Assert.assertEquals(entry.getName().toUri(), decoded.getName().toUri());
+    Assert.assertEquals(entry.getRoutes().get(0).getFaceId(), decoded.getRoutes().get(0).getFaceId());
+    Assert.assertEquals(entry.getRoutes().get(0).getCost(), decoded.getRoutes().get(0).getCost());
+    Assert.assertEquals(entry.getRoutes().get(0).getOrigin(), decoded.getRoutes().get(0).getOrigin());
+  }
 
-	/**
-	 * Integration test to run on actual system
-	 *
-	 * @param args
-	 * @throws EncodingException
-	 */
-	public static void main(String[] args) throws Exception {
-		Face forwarder = new Face("localhost");
+  /**
+   * Integration test to run on actual system
+   *
+   * @param args
+   * @throws EncodingException
+   */
+  public static void main(String[] args) throws Exception {
+    Face forwarder = new Face("localhost");
 
-		// build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-		Interest interest = new Interest(new Name("/localhost/nfd/rib/list"));
-		interest.setMustBeFresh(true);
-		interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
-		interest.setInterestLifetimeMilliseconds(2000.0);
+    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    Interest interest = new Interest(new Name("/localhost/nfd/rib/list"));
+    interest.setMustBeFresh(true);
+    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+    interest.setInterestLifetimeMilliseconds(2000.0);
 
-		// send packet
-		Data data = Client.getDefault().getSync(forwarder, interest);
+    // send packet
+    Data data = Client.getDefault().getSync(forwarder, interest);
 
-		// decode results
-		List<RibEntry> results = StatusDataset.wireDecode(data.getContent(), RibEntry.class);
-		assertTrue(results.size() > 0);
-		assertEquals("/localhost/nfd", results.get(0).getName().toUri());
-	}
+    // decode results
+    List<RibEntry> results = StatusDataset.wireDecode(data.getContent(), RibEntry.class);
+    assertTrue(results.size() > 0);
+    assertEquals("/localhost/nfd", results.get(0).getName().toUri());
+  }
 }

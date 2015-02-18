@@ -26,101 +26,101 @@ import net.named_data.jndn.util.Blob;
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
-public class FibEntry implements Decodable{
+public class FibEntry implements Decodable {
 
-	public final static int TLV_FIB_ENTRY = 128;
+  public final static int TLV_FIB_ENTRY = 128;
 
-	/**
-	 * Encode using a new TLV encoder.
-	 *
-	 * @return The encoded buffer.
-	 */
-	public final Blob wireEncode() {
-		TlvEncoder encoder = new TlvEncoder();
-		wireEncode(encoder);
-		return new Blob(encoder.getOutput(), false);
-	}
+  /**
+   * Encode using a new TLV encoder.
+   *
+   * @return The encoded buffer.
+   */
+  public final Blob wireEncode() {
+    TlvEncoder encoder = new TlvEncoder();
+    wireEncode(encoder);
+    return new Blob(encoder.getOutput(), false);
+  }
 
-	/**
-	 * Encode as part of an existing encode context.
-	 *
-	 * @param encoder
-	 */
-	public final void wireEncode(TlvEncoder encoder) {
-		int saveLength = encoder.getLength();
-		for (NextHopRecord record : records) {
-			record.wireEncode(encoder);
-		}
-		EncodingHelper.encodeName(name, encoder);
-		encoder.writeTypeAndLength(TLV_FIB_ENTRY, encoder.getLength() - saveLength);
-	}
+  /**
+   * Encode as part of an existing encode context.
+   *
+   * @param encoder
+   */
+  public final void wireEncode(TlvEncoder encoder) {
+    int saveLength = encoder.getLength();
+    for (NextHopRecord record : records) {
+      record.wireEncode(encoder);
+    }
+    EncodingHelper.encodeName(name, encoder);
+    encoder.writeTypeAndLength(TLV_FIB_ENTRY, encoder.getLength() - saveLength);
+  }
 
-	/**
-	 * Decode the input from its TLV format.
-	 *
-	 * @param input The input buffer to decode. This reads from position() to
-	 * limit(), but does not change the position.
-	 * @throws EncodingException For invalid encoding.
-	 */
-	public final void wireDecode(ByteBuffer input) throws EncodingException {
-		TlvDecoder decoder = new TlvDecoder(input);
-		wireDecode(decoder);
-	}
+  /**
+   * Decode the input from its TLV format.
+   *
+   * @param input The input buffer to decode. This reads from position() to
+   * limit(), but does not change the position.
+   * @throws EncodingException For invalid encoding.
+   */
+  public final void wireDecode(ByteBuffer input) throws EncodingException {
+    TlvDecoder decoder = new TlvDecoder(input);
+    wireDecode(decoder);
+  }
 
-	/**
-	 * Decode as part of an existing decode context.
-	 *
-	 * @param decoder
-	 * @throws EncodingException
-	 */
-	@Override
-	public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-		int endOffset = decoder.readNestedTlvsStart(TLV_FIB_ENTRY);
-		name = EncodingHelper.decodeName(decoder);
-		while (decoder.getOffset() < endOffset) {
-			NextHopRecord record = new NextHopRecord();
-			record.wireDecode(decoder);
-			records.add(record);
-		}
-		decoder.finishNestedTlvs(endOffset);
-	}
+  /**
+   * Decode as part of an existing decode context.
+   *
+   * @param decoder
+   * @throws EncodingException
+   */
+  @Override
+  public final void wireDecode(TlvDecoder decoder) throws EncodingException {
+    int endOffset = decoder.readNestedTlvsStart(TLV_FIB_ENTRY);
+    name = EncodingHelper.decodeName(decoder);
+    while (decoder.getOffset() < endOffset) {
+      NextHopRecord record = new NextHopRecord();
+      record.wireDecode(decoder);
+      records.add(record);
+    }
+    decoder.finishNestedTlvs(endOffset);
+  }
 
-	/**
-	 * Get name
-	 *
-	 * @return
-	 */
-	public Name getName() {
-		return name;
-	}
+  /**
+   * Get name
+   *
+   * @return
+   */
+  public Name getName() {
+    return name;
+  }
 
-	/**
-	 * Set name
-	 *
-	 * @param name
-	 */
-	public void setName(Name name) {
-		this.name = name;
-	}
+  /**
+   * Set name
+   *
+   * @param name
+   */
+  public void setName(Name name) {
+    this.name = name;
+  }
 
-	/**
-	 * Get records
-	 *
-	 * @return
-	 */
-	public List<NextHopRecord> getRecords() {
-		return records;
-	}
+  /**
+   * Get records
+   *
+   * @return
+   */
+  public List<NextHopRecord> getRecords() {
+    return records;
+  }
 
-	/**
-	 * Set records
-	 *
-	 * @param records
-	 */
-	public void setRecords(List<NextHopRecord> records) {
-		this.records = records;
-	}
+  /**
+   * Set records
+   *
+   * @param records
+   */
+  public void setRecords(List<NextHopRecord> records) {
+    this.records = records;
+  }
 
-	private Name name = new Name();
-	private List<NextHopRecord> records = new ArrayList<>();
+  private Name name = new Name();
+  private List<NextHopRecord> records = new ArrayList<>();
 }

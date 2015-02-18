@@ -32,54 +32,54 @@ import org.junit.Test;
  */
 public class FibEntryTest {
 
-	/**
-	 * Test encoding/decoding
-	 *
-	 * @throws java.lang.Exception
-	 */
-	@Test
-	public void testEncodeDecode() throws Exception {
-		NextHopRecord nextHopRecord = new NextHopRecord();
-		nextHopRecord.setFaceId(42);
-		nextHopRecord.setCost(100);
-		FibEntry entry = new FibEntry();
-		entry.setName(new Name("/fib/entry/test"));
-		entry.getRecords().add(nextHopRecord);
+  /**
+   * Test encoding/decoding
+   *
+   * @throws java.lang.Exception
+   */
+  @Test
+  public void testEncodeDecode() throws Exception {
+    NextHopRecord nextHopRecord = new NextHopRecord();
+    nextHopRecord.setFaceId(42);
+    nextHopRecord.setCost(100);
+    FibEntry entry = new FibEntry();
+    entry.setName(new Name("/fib/entry/test"));
+    entry.getRecords().add(nextHopRecord);
 
-		// encode
-		Blob encoded = entry.wireEncode();
+    // encode
+    Blob encoded = entry.wireEncode();
 
-		// decode
-		FibEntry decoded = new FibEntry();
-		decoded.wireDecode(encoded.buf());
+    // decode
+    FibEntry decoded = new FibEntry();
+    decoded.wireDecode(encoded.buf());
 
-		// test
-		Assert.assertEquals(entry.getName().toUri(), decoded.getName().toUri());
-		Assert.assertEquals(entry.getRecords().get(0).getFaceId(), decoded.getRecords().get(0).getFaceId());
-		Assert.assertEquals(entry.getRecords().get(0).getCost(), decoded.getRecords().get(0).getCost());
-	}
+    // test
+    Assert.assertEquals(entry.getName().toUri(), decoded.getName().toUri());
+    Assert.assertEquals(entry.getRecords().get(0).getFaceId(), decoded.getRecords().get(0).getFaceId());
+    Assert.assertEquals(entry.getRecords().get(0).getCost(), decoded.getRecords().get(0).getCost());
+  }
 
-	/**
-	 * Integration test to run on actual system
-	 *
-	 * @param args
-	 * @throws EncodingException
-	 */
-	public static void main(String[] args) throws Exception {
-		Face forwarder = new Face("localhost");
+  /**
+   * Integration test to run on actual system
+   *
+   * @param args
+   * @throws EncodingException
+   */
+  public static void main(String[] args) throws Exception {
+    Face forwarder = new Face("localhost");
 
-		// build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-		Interest interest = new Interest(new Name("/localhost/nfd/fib/list"));
-		interest.setMustBeFresh(true);
-		interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
-		interest.setInterestLifetimeMilliseconds(2000.0);
+    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    Interest interest = new Interest(new Name("/localhost/nfd/fib/list"));
+    interest.setMustBeFresh(true);
+    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+    interest.setInterestLifetimeMilliseconds(2000.0);
 
-		// send packet
-		Data data = Client.getDefault().getSync(forwarder, interest);
+    // send packet
+    Data data = Client.getDefault().getSync(forwarder, interest);
 
-		// decode results
-		List<FibEntry> results = StatusDataset.wireDecode(data.getContent(), FibEntry.class);
-		assertTrue(results.size() > 0);
-		assertEquals("/localhost/nfd", results.get(0).getName().toUri());
-	}
+    // decode results
+    List<FibEntry> results = StatusDataset.wireDecode(data.getContent(), FibEntry.class);
+    assertTrue(results.size() > 0);
+    assertEquals("/localhost/nfd", results.get(0).getName().toUri());
+  }
 }
