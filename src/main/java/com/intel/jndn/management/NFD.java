@@ -14,6 +14,7 @@ package com.intel.jndn.management;
 import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.ControlResponse;
 import com.intel.jndn.management.types.FaceStatus;
+import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.utils.Client;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public class NFD {
     interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
     interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
 
-		// TODO verify that all faces are being returned; right now they don't
+    // TODO verify that all faces are being returned; right now they don't
     // match up with the results from nfd-status-http-server but no 
     // additional segments are present;  
     // see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
@@ -101,6 +102,36 @@ public class NFD {
 
     // parse packet
     return StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
+  }
+
+  /**
+   * Retrieve a list of FIB entries and their NextHopRecords from the given
+   * forwarder; calls /localhost/nfd/fib/list which requires a local Face (all
+   * non-local packets are dropped).
+   *
+   * @param forwarder Only a localhost Face
+   * @return
+   * @throws Exception
+   */
+  public static List<FibEntry> getFibList(Face forwarder) throws Exception {
+    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    Interest interest = new Interest(new Name("/localhost/nfd/fib/list"));
+    interest.setMustBeFresh(true);
+    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
+
+    // TODO verify that all faces are being returned; right now they don't
+    // match up with the results from nfd-status-http-server but no 
+    // additional segments are present;  
+    // see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    // send packet
+    Data data = Client.getDefault().getSync(forwarder, interest);
+    if (data == null) {
+      throw new Exception("Failed to retrieve list of fib entries from the forwarder.");
+    }
+
+    // parse packet
+    return StatusDataset.wireDecode(data.getContent(), FibEntry.class);
   }
 
   /**
@@ -247,6 +278,31 @@ public class NFD {
 
     // run base method
     return register(forwarder, parameters);
+  }
+
+  /**
+   * Unregister a route on a forwarder; see
+   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
+   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
+   * protocol documentation. Ensure the forwarding face is on the local machine
+   * (management requests are to /localhost/...) and that command signing has
+   * been set up (e.g. forwarder.setCommandSigningInfo()
+   *
+   * @param forwarder
+   * @param route
+   * @return
+   */
+  public static boolean unregister(Face forwarder, Name route) throws Exception{
+     // build command name
+    ControlParameters controlParameters = new ControlParameters();
+    controlParameters.setName(route);
+
+    // build command name
+    Name command = new Name("/localhost/nfd/rib/unregister");
+    command.append(controlParameters.wireEncode());
+
+    // send the interest
+    return sendCommandAndErrorCheck(forwarder, new Interest(command));
   }
 
   /**

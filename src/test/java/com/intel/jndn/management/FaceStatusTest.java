@@ -14,6 +14,8 @@ import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.utils.Client;
 import java.util.List;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.named_data.jndn.Data;
 import net.named_data.jndn.Face;
@@ -21,8 +23,6 @@ import net.named_data.jndn.Interest;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.util.Blob;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  */
 public class FaceStatusTest {
 
-  private static final Logger logger = LogManager.getLogger();
+  private static final Logger logger = Logger.getLogger(FaceStatusTest.class.getName());
 
   /**
    * Test encoding/decoding
