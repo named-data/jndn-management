@@ -8,7 +8,7 @@
  * Intel Corporation, 2200 Mission College Boulevard,
  * Santa Clara, CA 95052-8119, USA
  */
-package com.intel.jndn.management;
+package com.intel.jndn.management.types;
 
 /**
  * Indicate whether the face is local for scope control purposes; used by FaceStatus

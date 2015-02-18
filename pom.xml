@@ -22,16 +22,6 @@
 			<artifactId>jndn-utils</artifactId>
 			<version>RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.1</version>
-		</dependency>
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

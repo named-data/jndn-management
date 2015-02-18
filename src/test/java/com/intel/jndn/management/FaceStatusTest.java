@@ -10,8 +10,11 @@
  */
 package com.intel.jndn.management;
 
+import com.intel.jndn.management.types.StatusDataset;
+import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.utils.Client;
 import java.util.List;
+import junit.framework.Assert;
 import net.named_data.jndn.Data;
 import net.named_data.jndn.Face;
 import net.named_data.jndn.Interest;
@@ -30,8 +33,39 @@ import static org.junit.Assert.*;
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class FaceStatusTest {
-	
+
 	private static final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Test encoding/decoding
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testEncodeDecode() throws Exception {
+		FaceStatus status = new FaceStatus();
+		status.setFaceId(42);
+		status.setUri("...");
+		status.setLocalUri("...");
+
+		// encode
+		Blob encoded = status.wireEncode();
+
+		// decode
+		FaceStatus decoded = new FaceStatus();
+		decoded.wireDecode(encoded.buf());
+
+		// test
+		Assert.assertEquals(status.getFaceId(), decoded.getFaceId());
+		Assert.assertEquals(status.getUri(), decoded.getUri());
+		Assert.assertEquals(status.getLocalUri(), decoded.getLocalUri());
+		Assert.assertEquals(status.getExpirationPeriod(), decoded.getExpirationPeriod());
+		Assert.assertEquals(status.getFaceScope(), decoded.getFaceScope());
+		Assert.assertEquals(status.getFacePersistency(), decoded.getFacePersistency());
+		Assert.assertEquals(status.getLinkType(), decoded.getLinkType());
+		Assert.assertEquals(status.getInBytes(), decoded.getInBytes());
+		Assert.assertEquals(status.getOutBytes(), decoded.getOutBytes());
+	}
 
 	/**
 	 * Test of decode method, of class FaceStatus.
@@ -39,15 +73,15 @@ public class FaceStatusTest {
 	 * @throws java.lang.Exception
 	 */
 	@Test
-	public void testDecode() throws Exception {
+	public void testDecodeFakeData() throws Exception {
 		Data data = getFaceData(true);
-		List<FaceStatus> results = FaceStatus.decode(data);
+		List<FaceStatus> results = StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
 		assertTrue(results.size() > 4);
 		for (FaceStatus f : results) {
 			// the first face (face 1) should always be the internal face
-			if (f.faceId == 1) {
-				assertEquals("internal://", f.uri);
-				assertEquals("internal://", f.localUri);
+			if (f.getFaceId() == 1) {
+				assertEquals("internal://", f.getUri());
+				assertEquals("internal://", f.getLocalUri());
 			}
 		}
 	}
@@ -58,15 +92,15 @@ public class FaceStatusTest {
 	 * @param args
 	 * @throws EncodingException
 	 */
-	public static void main(String[] args) throws EncodingException {
+	public static void main(String[] args) throws Exception {
 		Data data = getFaceData(false);
-		List<FaceStatus> results = FaceStatus.decode(data);
+		List<FaceStatus> results = StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
 		assertTrue(results.size() > 4);
 		for (FaceStatus f : results) {
 			// the first face (face 1) should always be the internal face
-			if (f.faceId == 1) {
-				assertEquals("internal://", f.uri);
-				assertEquals("internal://", f.localUri);
+			if (f.getFaceId() == 1) {
+				assertEquals("internal://", f.getUri());
+				assertEquals("internal://", f.getLocalUri());
 			}
 		}
 	}

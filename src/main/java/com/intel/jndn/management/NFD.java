@@ -11,6 +11,10 @@
  */
 package com.intel.jndn.management;
 
+import com.intel.jndn.management.types.StatusDataset;
+import com.intel.jndn.management.types.ControlResponse;
+import com.intel.jndn.management.types.FaceStatus;
+import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.utils.Client;
 import java.io.IOException;
 import java.util.List;
@@ -22,8 +26,7 @@ import net.named_data.jndn.Interest;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.security.SecurityException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * Helper class for interacting with an NDN forwarder daemon; see
@@ -35,7 +38,7 @@ import org.apache.logging.log4j.Logger;
 public class NFD {
 
 	public final static long DEFAULT_TIMEOUT = 2000;
-	private static final Logger logger = LogManager.getLogger();
+	static private final Logger logger = Logger.getLogger(NFD.class.getName());
 
 	/**
 	 * Ping a forwarder on an existing face to verify that the forwarder is
@@ -43,7 +46,7 @@ public class NFD {
 	 * to /localhost/nfd which should always respond if the requestor is on the
 	 * same machine as the NDN forwarding daemon.
 	 *
-	 * @param face 
+	 * @param face
 	 * @return true if successful, false otherwise
 	 */
 	public static boolean pingLocal(Face face) {
@@ -97,7 +100,33 @@ public class NFD {
 		}
 
 		// parse packet
-		return FaceStatus.decode(data);
+		return StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
+	}
+
+	/**
+	 * Retrieve a list of routing entries from the RIB; calls
+	 * /localhost/nfd/rib/list which requires a local Face (all non-local
+	 * packets are dropped)
+	 *
+	 * @param forwarder Only a localhost Face
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<RibEntry> getRouteList(Face forwarder) throws Exception {
+		// build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+		Interest interest = new Interest(new Name("/localhost/nfd/rib/list"));
+		interest.setMustBeFresh(true);
+		interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+		interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
+
+		// send packet
+		Data data = Client.getDefault().getSync(forwarder, interest);
+		if (data == null) {
+			throw new Exception("Failed to retrieve list of faces from the forwarder.");
+		}
+
+		// parse packet
+		return StatusDataset.wireDecode(data.getContent(), RibEntry.class);
 	}
 
 	/**
@@ -143,12 +172,12 @@ public class NFD {
 		ControlResponse response = sendCommand(forwarder, new Interest(command));
 
 		// check for body and that status code is OK (TODO: 200 should be replaced with a CONSTANT like ControlResponse.STATUS_OK)
-		if (response.Body.isEmpty() || response.StatusCode != 200) {
-			throw new Exception("Failed to create face: " + uri + " " + response.StatusText != null ? response.StatusText : "");
+		if (response.getBody().isEmpty() || response.getStatusCode() != 200) {
+			throw new Exception("Failed to create face: " + uri + " " + response.getStatusText());
 		}
 
 		// return
-		return response.Body.get(0).getFaceId();
+		return response.getBody().get(0).getFaceId();
 	}
 
 	/**
@@ -273,7 +302,9 @@ public class NFD {
 		}
 
 		// return response
-		return ControlResponse.decode(data);
+		ControlResponse response = new ControlResponse();
+		response.wireDecode(data.getContent().buf());
+		return response;
 	}
 
 	/**
@@ -293,10 +324,10 @@ public class NFD {
 	 */
 	public static boolean sendCommandAndErrorCheck(Face forwarder, Interest interest) throws SecurityException, IOException, EncodingException {
 		ControlResponse response = sendCommand(forwarder, interest);
-		if (response.StatusCode < 400) {
+		if (response.getStatusCode() < 400) {
 			return true;
 		} else {
-			logger.warn("Command sent but failed: " + response.StatusCode + " " + response.StatusText);
+			logger.warning("Command sent but failed: " + response.getStatusCode() + " " + response.getStatusText());
 			return false;
 		}
 	}
