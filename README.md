@@ -24,4 +24,4 @@ With a Face that has command signing information set, call any of the following 
  - __NFD.setStrategy(Face forwarder, Name prefix, Name strategy)__: set the forwarding strategy for the given prefix.
 
 ## License
-This library is licensed under LGPLv3, see LICENSE.
+© Copyright Intel Corporation. Licensed under LGPLv3, see [LICENSE](https://github.com/01org/jndn-management/blob/master/LICENSE).
