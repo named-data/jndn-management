@@ -21,6 +21,7 @@ With a Face that has command signing information set, call any of the following 
  - __NFD.createFace(Face forwarder, String uri)__: create a new face on the NFD opened to the given URI.
  - __NFD.register(Face forwarder, ...)__: includes several similar methods for registering a new route on the NFD.
  - __NFD.unregister(Face forwarder, Name route)__: unregister a route by name.
+ - __NFD.setStrategy(Face forwarder, Name prefix, Name strategy)__: set the forwarding strategy for the given prefix.
 
 ## License
 This library is licensed under LGPLv3, see LICENSE.
