@@ -19,8 +19,8 @@ With a Face that has command signing information set, call any of the following 
  - __NFD.getFibList(Face forwarder)__: retrieve all forwarding entries in the Forwarding Information Base (FIB).
  - __NFD.getRibList(Face forwarder)__: retrieve all routing entries in the Routing Information Base (RIB).
  - __NFD.createFace(Face forwarder, String uri)__: create a new face on the NFD opened to the given URI.
- - __NFD.register(Face forwarder, ...): includes several similar methods for registering a new route on the NFD.
- - __NFD.unregister(Face forwarder, Name route): unregister a route by name.
- 
- ## License
- This library is licensed under LGPLv3, see LICENSE.
+ - __NFD.register(Face forwarder, ...)__: includes several similar methods for registering a new route on the NFD.
+ - __NFD.unregister(Face forwarder, Name route)__: unregister a route by name.
+
+## License
+This library is licensed under LGPLv3, see LICENSE.
