@@ -7,8 +7,8 @@ With Maven, add the following to your POM:
 ```
 <dependency>
   <groupId>com.intel.jndn.management</groupId>
-	<artifactId>jndn-management</artifactId>
-	<version>RELEASE</version> <!-- or a specific version -->
+  <artifactId>jndn-management</artifactId>
+  <version>RELEASE</version> <!-- or a specific version -->
 </dependency>
 ```
 
