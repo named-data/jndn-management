@@ -26,7 +26,7 @@ public class IntegrationSuite {
   private static final Logger logger = Logger.getLogger(IntegrationSuite.class.getName());
 
   public static void main(String[] args) throws Exception {
-    Face face = new Face();
+    Face face = new Face("localhost");
     Assert.assertTrue(NFD.pingLocal(face));
     
     // grab datasets

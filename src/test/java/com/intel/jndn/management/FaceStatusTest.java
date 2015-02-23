@@ -14,7 +14,6 @@ import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.utils.Client;
 import java.util.List;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.named_data.jndn.Data;
