@@ -17,6 +17,7 @@ import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.utils.Client;
+import com.intel.jndn.utils.SegmentedClient;
 import java.io.IOException;
 import java.util.List;
 import net.named_data.jndn.ControlParameters;
@@ -90,12 +91,8 @@ public class NFD {
     interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
     interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
 
-    // TODO verify that all faces are being returned; right now they don't
-    // match up with the results from nfd-status-http-server but no 
-    // additional segments are present;  
-    // see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
     // send packet
-    Data data = Client.getDefault().getSync(forwarder, interest);
+    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
     if (data == null) {
       throw new Exception("Failed to retrieve list of faces from the forwarder.");
     }
@@ -125,7 +122,7 @@ public class NFD {
     // additional segments are present;  
     // see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
     // send packet
-    Data data = Client.getDefault().getSync(forwarder, interest);
+    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
     if (data == null) {
       throw new Exception("Failed to retrieve list of fib entries from the forwarder.");
     }
@@ -151,7 +148,7 @@ public class NFD {
     interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
 
     // send packet
-    Data data = Client.getDefault().getSync(forwarder, interest);
+    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
     if (data == null) {
       throw new Exception("Failed to retrieve list of faces from the forwarder.");
     }
@@ -289,20 +286,90 @@ public class NFD {
    * been set up (e.g. forwarder.setCommandSigningInfo()
    *
    * @param forwarder
-   * @param route
+   * @param controlParameters
    * @return
    */
-  public static boolean unregister(Face forwarder, Name route) throws Exception{
-     // build command name
-    ControlParameters controlParameters = new ControlParameters();
-    controlParameters.setName(route);
-
+  public static boolean unregister(Face forwarder, ControlParameters controlParameters) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/rib/unregister");
     command.append(controlParameters.wireEncode());
 
     // send the interest
     return sendCommandAndErrorCheck(forwarder, new Interest(command));
+  }
+
+  /**
+   * Unregister a route on a forwarder; see
+   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
+   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
+   * protocol documentation. Ensure the forwarding face is on the local machine
+   * (management requests are to /localhost/...) and that command signing has
+   * been set up (e.g. forwarder.setCommandSigningInfo()
+   *
+   * @param forwarder
+   * @param route
+   * @return
+   */
+  public static boolean unregister(Face forwarder, Name route) throws Exception {
+    // build command name
+    ControlParameters controlParameters = new ControlParameters();
+    controlParameters.setName(route);
+
+    // send the interest
+    return unregister(forwarder, controlParameters);
+  }
+
+  /**
+   * Unregister a route on a forwarder; see
+   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
+   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
+   * protocol documentation. Ensure the forwarding face is on the local machine
+   * (management requests are to /localhost/...) and that command signing has
+   * been set up (e.g. forwarder.setCommandSigningInfo()
+   *
+   * @param forwarder
+   * @param route
+   * @param faceId
+   * @return
+   */
+  public static boolean unregister(Face forwarder, Name route, int faceId) throws Exception {
+    // build command name
+    ControlParameters controlParameters = new ControlParameters();
+    controlParameters.setName(route);
+    controlParameters.setFaceId(faceId);
+
+    // send the interest
+    return unregister(forwarder, controlParameters);
+  }
+
+  /**
+   * Unregister a route on a forwarder; see
+   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
+   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
+   * protocol documentation. Ensure the forwarding face is on the local machine
+   * (management requests are to /localhost/...) and that command signing has
+   * been set up (e.g. forwarder.setCommandSigningInfo()
+   *
+   * @param forwarder
+   * @param route
+   * @param uri
+   * @return
+   */
+  public static boolean unregister(Face forwarder, Name route, String uri) throws Exception {
+    int faceId = -1;
+    for(FaceStatus face : getFaceList(forwarder)){
+      if(face.getUri().matches(uri)){
+        faceId = face.getFaceId();
+        break;
+      }
+    }
+    
+    if(faceId == -1){
+      throw new Exception("Face not found: " + uri);
+    }
+
+    // send the interest
+    return unregister(forwarder, route, faceId);
   }
 
   /**
