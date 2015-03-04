@@ -1,13 +1,15 @@
 /*
- * File name: EncodingHelper.java
- * 
- * Purpose: Provide helper methods to cover areas too protected in Tlv0_1_1WireFormat;
- * this class can be deprecated if WireFormats allow passing in an existing
- * TlvEncoder/TlvDecoder (currently these methods are protected).
- * 
- * © Copyright Intel Corporation. All rights reserved.
- * Intel Corporation, 2200 Mission College Boulevard,
- * Santa Clara, CA 95052-8119, USA
+ * jndn-management
+ * Copyright (c) 2015, Intel Corporation.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms and conditions of the GNU Lesser General Public License,
+ * version 3, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  */
 package com.intel.jndn.management;
 
