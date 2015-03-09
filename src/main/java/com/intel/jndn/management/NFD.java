@@ -17,6 +17,7 @@ import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.ControlResponse;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
+import com.intel.jndn.management.types.LocalControlHeader;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.utils.Client;
 import com.intel.jndn.utils.SegmentedClient;
@@ -229,6 +230,46 @@ public class NFD {
 
     // return
     return response.getBody().get(0).getFaceId();
+  }
+
+  /**
+   * Enable a local control feature on the given forwarder. See
+   * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature
+   *
+   * @param forwarder
+   * @param header
+   * @return
+   * @throws Exception
+   */
+  public static boolean enableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
+    // build command name
+    Name command = new Name("/localhost/nfd/faces/enable-local-control");
+    ControlParameters parameters = new ControlParameters();
+    parameters.setLocalControlFeature(header.getNumericValue());
+    command.append(parameters.wireEncode());
+
+    // send command and return
+    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+  }
+
+  /**
+   * Disable a local control feature on the given forwarder. See
+   * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Disable-a-LocalControlHeader-feature
+   *
+   * @param forwarder
+   * @param header
+   * @return
+   * @throws Exception
+   */
+  public static boolean disableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
+    // build command name
+    Name command = new Name("/localhost/nfd/faces/disable-local-control");
+    ControlParameters parameters = new ControlParameters();
+    parameters.setLocalControlFeature(header.getNumericValue());
+    command.append(parameters.wireEncode());
+
+    // send command and return
+    return sendCommandAndErrorCheck(forwarder, new Interest(command));
   }
 
   /**
