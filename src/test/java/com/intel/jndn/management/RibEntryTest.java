@@ -86,6 +86,6 @@ public class RibEntryTest {
     // decode results
     List<RibEntry> results = StatusDataset.wireDecode(data.getContent(), RibEntry.class);
     assertTrue(results.size() > 0);
-    assertEquals("/localhost/nfd", results.get(0).getName().toUri());
+    assertEquals("/localhost/nfd/rib", results.get(0).getName().toUri());
   }
 }
