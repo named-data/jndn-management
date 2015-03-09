@@ -99,6 +99,13 @@ public class NFD {
       throw new Exception("Failed to retrieve list of faces from the forwarder.");
     }
 
+    // check for failed request
+    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
+      ControlResponse response = new ControlResponse();
+      response.wireDecode(data.getContent().buf());
+      throw new Exception("Failed to retrieve list of faces, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText());
+    }
+
     // parse packet
     return StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
   }
@@ -126,7 +133,14 @@ public class NFD {
     // send packet
     Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
     if (data == null) {
-      throw new Exception("Failed to retrieve list of fib entries from the forwarder.");
+      throw new Exception("Failed to retrieve list of FIB entries from the forwarder.");
+    }
+
+    // check for failed request
+    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
+      ControlResponse response = new ControlResponse();
+      response.wireDecode(data.getContent().buf());
+      throw new Exception("Failed to retrieve list of FIB entries, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText());
     }
 
     // parse packet
@@ -152,7 +166,14 @@ public class NFD {
     // send packet
     Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
     if (data == null) {
-      throw new Exception("Failed to retrieve list of faces from the forwarder.");
+      throw new Exception("Failed to retrieve list of routes from the forwarder.");
+    }
+
+    // check for failed request
+    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
+      ControlResponse response = new ControlResponse();
+      response.wireDecode(data.getContent().buf());
+      throw new Exception("Failed to retrieve list of routes, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText());
     }
 
     // parse packet
@@ -359,14 +380,14 @@ public class NFD {
    */
   public static boolean unregister(Face forwarder, Name route, String uri) throws Exception {
     int faceId = -1;
-    for(FaceStatus face : getFaceList(forwarder)){
-      if(face.getUri().matches(uri)){
+    for (FaceStatus face : getFaceList(forwarder)) {
+      if (face.getUri().matches(uri)) {
         faceId = face.getFaceId();
         break;
       }
     }
-    
-    if(faceId == -1){
+
+    if (faceId == -1) {
       throw new Exception("Face not found: " + uri);
     }
 
