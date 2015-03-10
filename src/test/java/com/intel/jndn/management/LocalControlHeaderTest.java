@@ -43,13 +43,13 @@ public class LocalControlHeaderTest {
     Face forwarder = new Face("localhost");
     KeyChain keyChain = IntegrationSuite.buildTestKeyChain();
     forwarder.setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
-    
+
     // enable incoming face ID header
     boolean success = NFD.enableLocalControlHeader(forwarder, LocalControlHeader.INCOMING_FACE_ID);
     assertTrue(success);
     
     // use and verify
-    Data data = Client.getDefault().getSync(forwarder, new Name("/localhop/nfd"));
+    Data data = Client.getDefault().getSync(forwarder, new Name("/localhost/nfd"));
     long faceId = data.getIncomingFaceId();
     logger.info("Face ID for this client on the forwarder: " + faceId);
   }
