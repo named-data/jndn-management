@@ -233,6 +233,32 @@ public class NFD {
   }
 
   /**
+   * Create a new face on the given forwarder. Ensure the forwarding face is on
+   * the local machine (management requests are to /localhost/...) and that
+   * command signing has been set up (e.g. forwarder.setCommandSigningInfo()).
+   *
+   * @param forwarder Only a localhost Face
+   * @param faceId
+   * @throws java.lang.Exception
+   */
+  public static void destroyFace(Face forwarder, int faceId) throws Exception {
+    Name command = new Name("/localhost/nfd/faces/destroy");
+    ControlParameters parameters = new ControlParameters();
+    parameters.setFaceId(faceId);
+    command.append(parameters.wireEncode());
+
+    // send the interest
+    ControlResponse response = sendCommand(forwarder, new Interest(command));
+
+    // check for body and that status code is OK (TODO: 200 should be replaced with a CONSTANT like ControlResponse.STATUS_OK)
+    if (response.getBody().isEmpty() || response.getStatusCode() != 200) {
+      throw new Exception("Failed to destroy face: " + String.valueOf(faceId) + " " + response.getStatusText());
+    }
+
+    return;
+  }
+
+  /**
    * Enable a local control feature on the given forwarder. See
    * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature
    *
