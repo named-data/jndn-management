@@ -233,15 +233,16 @@ public class NFD {
   }
 
   /**
-   * Create a new face on the given forwarder. Ensure the forwarding face is on
+   * Destroy a face on given forwarder. Ensure the forwarding face is on
    * the local machine (management requests are to /localhost/...) and that
    * command signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
    * @param forwarder Only a localhost Face
    * @param faceId
+   * @return 
    * @throws java.lang.Exception
    */
-  public static void destroyFace(Face forwarder, int faceId) throws Exception {
+  public static boolean destroyFace(Face forwarder, int faceId) throws Exception {
     Name command = new Name("/localhost/nfd/faces/destroy");
     ControlParameters parameters = new ControlParameters();
     parameters.setFaceId(faceId);
@@ -255,7 +256,7 @@ public class NFD {
       throw new Exception("Failed to destroy face: " + String.valueOf(faceId) + " " + response.getStatusText());
     }
 
-    return;
+    return true;
   }
 
   /**
