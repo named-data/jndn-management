@@ -426,7 +426,7 @@ public class NFD {
    */
   public static Data retrieveDataSet(Face forwarder, Name datasetName) throws IOException, ManagementException {
     // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-    Interest interest = new Interest(new Name());
+    Interest interest = new Interest(datasetName);
     interest.setMustBeFresh(true);
     interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
     interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
