@@ -54,6 +54,7 @@ public class IntegrationSuite {
     // check that route is created
     boolean found = false;
     for(RibEntry route : NFD.getRouteList(face)){
+      logger.info("Found route: " + route.getName().toUri());
       if(route.getName().equals(new Name("/my/test/route"))){
         found = true;
       }
