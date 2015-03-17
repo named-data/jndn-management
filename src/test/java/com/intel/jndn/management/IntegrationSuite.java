@@ -13,6 +13,7 @@
  */
 package com.intel.jndn.management;
 
+import com.intel.jndn.management.types.RibEntry;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.named_data.jndn.Face;
@@ -48,10 +49,19 @@ public class IntegrationSuite {
     Assert.assertFalse(NFD.getRouteList(face).isEmpty());
 
     // create a new route
-    Assert.assertTrue(NFD.register(face, "udp4://127.0.0.1:56363", new Name("/my/test/route"), 999));
+    NFD.register(face, "udp4://127.0.0.1:56363", new Name("/my/test/route"), 999);
+    
+    // check that route is created
+    boolean found = false;
+    for(RibEntry route : NFD.getRouteList(face)){
+      if(route.getName().equals(new Name("/my/test/route"))){
+        found = true;
+      }
+    }
+    Assert.assertTrue(found);
 
     // remove the route
-    Assert.assertTrue(NFD.unregister(face, new Name("/my/test/route"), "udp4://127.0.0.1:56363"));
+    NFD.unregister(face, new Name("/my/test/route"), "udp4://127.0.0.1:56363");
   }
 
   /**

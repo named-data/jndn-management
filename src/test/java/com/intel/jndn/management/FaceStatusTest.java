@@ -15,7 +15,8 @@ package com.intel.jndn.management;
 
 import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.FaceStatus;
-import com.intel.jndn.utils.Client;
+import com.intel.jndn.utils.SimpleClient;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 import junit.framework.Assert;
@@ -113,7 +114,7 @@ public class FaceStatusTest {
    * @param usePreComputedData to avoid errors when local NFD is not present
    * @return
    */
-  private static Data getFaceData(boolean usePreComputedData) {
+  private static Data getFaceData(boolean usePreComputedData) throws IOException {
     // use pre-computed data to avoid errors when local NFD is not present
     if (usePreComputedData) {
       Data data = new Data();
@@ -130,7 +131,7 @@ public class FaceStatusTest {
       interest.setInterestLifetimeMilliseconds(2000.0);
 
       // send packet
-      Data data = Client.getDefault().getSync(forwarder, interest);
+      Data data = SimpleClient.getDefault().getSync(forwarder, interest);
       String hex = data.getContent().toHex();
       logger.info("Hex dump of face list: " + hex);
       return data;

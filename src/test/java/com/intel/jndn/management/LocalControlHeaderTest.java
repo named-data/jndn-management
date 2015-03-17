@@ -14,8 +14,9 @@
 package com.intel.jndn.management;
 
 import com.intel.jndn.management.types.LocalControlHeader;
-import com.intel.jndn.utils.Client;
+import com.intel.jndn.utils.SimpleClient;
 import java.util.logging.Logger;
+import junit.framework.Assert;
 import net.named_data.jndn.Data;
 import net.named_data.jndn.Face;
 import net.named_data.jndn.Name;
@@ -45,12 +46,12 @@ public class LocalControlHeaderTest {
     forwarder.setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
 
     // enable incoming face ID header
-    boolean success = NFD.enableLocalControlHeader(forwarder, LocalControlHeader.INCOMING_FACE_ID);
-    assertTrue(success);
+    NFD.enableLocalControlHeader(forwarder, LocalControlHeader.INCOMING_FACE_ID);
     
     // use and verify
-    Data data = Client.getDefault().getSync(forwarder, new Name("/localhost/nfd"));
+    Data data = SimpleClient.getDefault().getSync(forwarder, new Name("/localhost/nfd"));
     long faceId = data.getIncomingFaceId();
+    Assert.assertTrue(faceId != -1); // this verifies that the headers are working correctly
     logger.info("Face ID for this client on the forwarder: " + faceId);
   }
 }
