@@ -19,7 +19,7 @@ import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.LocalControlHeader;
 import com.intel.jndn.management.types.RibEntry;
-import com.intel.jndn.utils.Client;
+import com.intel.jndn.utils.SimpleClient;
 import com.intel.jndn.utils.SegmentedClient;
 import java.io.IOException;
 import java.util.List;
@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 public class NFD {
 
   public final static long DEFAULT_TIMEOUT = 2000;
+  public final static int OK_STATUS = 200;
   static private final Logger logger = Logger.getLogger(NFD.class.getName());
 
   /**
@@ -74,8 +75,12 @@ public class NFD {
     interest.setMustBeFresh(true);
 
     // send packet
-    Data data = Client.getDefault().getSync(face, interest);
-    return data != null;
+    try {
+      Data data = SimpleClient.getDefault().getSync(face, interest);
+      return data != null;
+    } catch (IOException e) {
+      return false;
+    }
   }
 
   /**
@@ -85,29 +90,10 @@ public class NFD {
    *
    * @param forwarder Only a localhost Face
    * @return
-   * @throws Exception
+   * @throws java.lang.Exception
    */
   public static List<FaceStatus> getFaceList(Face forwarder) throws Exception {
-    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-    Interest interest = new Interest(new Name("/localhost/nfd/faces/list"));
-    interest.setMustBeFresh(true);
-    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
-    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
-
-    // send packet
-    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
-    if (data == null) {
-      throw new Exception("Failed to retrieve list of faces from the forwarder.");
-    }
-
-    // check for failed request
-    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
-      ControlResponse response = new ControlResponse();
-      response.wireDecode(data.getContent().buf());
-      throw new Exception("Failed to retrieve list of faces, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText());
-    }
-
-    // parse packet
+    Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/faces/list"));
     return StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
   }
 
@@ -118,66 +104,24 @@ public class NFD {
    *
    * @param forwarder Only a localhost Face
    * @return
-   * @throws Exception
+   * @throws java.lang.Exception
    */
   public static List<FibEntry> getFibList(Face forwarder) throws Exception {
-    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-    Interest interest = new Interest(new Name("/localhost/nfd/fib/list"));
-    interest.setMustBeFresh(true);
-    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
-    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
-
-    // TODO verify that all faces are being returned; right now they don't
-    // match up with the results from nfd-status-http-server but no 
-    // additional segments are present;  
-    // see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-    // send packet
-    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
-    if (data == null) {
-      throw new Exception("Failed to retrieve list of FIB entries from the forwarder.");
-    }
-
-    // check for failed request
-    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
-      ControlResponse response = new ControlResponse();
-      response.wireDecode(data.getContent().buf());
-      throw new Exception("Failed to retrieve list of FIB entries, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText());
-    }
-
-    // parse packet
+    Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/fib/list"));
     return StatusDataset.wireDecode(data.getContent(), FibEntry.class);
   }
 
   /**
    * Retrieve a list of routing entries from the RIB; calls
    * /localhost/nfd/rib/list which requires a local Face (all non-local packets
-   * are dropped)
+   * are dropped).
    *
    * @param forwarder Only a localhost Face
    * @return
-   * @throws Exception
+   * @throws java.lang.Exception
    */
   public static List<RibEntry> getRouteList(Face forwarder) throws Exception {
-    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
-    Interest interest = new Interest(new Name("/localhost/nfd/rib/list"));
-    interest.setMustBeFresh(true);
-    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
-    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
-
-    // send packet
-    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
-    if (data == null) {
-      throw new Exception("Failed to retrieve list of routes from the forwarder.");
-    }
-
-    // check for failed request
-    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
-      ControlResponse response = new ControlResponse();
-      response.wireDecode(data.getContent().buf());
-      throw new Exception("Failed to retrieve list of routes, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText());
-    }
-
-    // parse packet
+    Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/rib/list"));
     return StatusDataset.wireDecode(data.getContent(), RibEntry.class);
   }
 
@@ -189,10 +133,9 @@ public class NFD {
    * @param forwarder Only a localhost Face
    * @param faceId
    * @param prefix
-   * @return
-   * @throws Exception
+   * @throws java.lang.Exception
    */
-  public static boolean addNextHop(Face forwarder, int faceId, Name prefix) throws Exception {
+  public static void addNextHop(Face forwarder, int faceId, Name prefix) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/fib/add-nexthop");
     ControlParameters parameters = new ControlParameters();
@@ -201,7 +144,7 @@ public class NFD {
     command.append(parameters.wireEncode());
 
     // send the interest
-    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+    sendCommand(forwarder, new Interest(command));
   }
 
   /**
@@ -223,40 +166,27 @@ public class NFD {
     // send the interest
     ControlResponse response = sendCommand(forwarder, new Interest(command));
 
-    // check for body and that status code is OK (TODO: 200 should be replaced with a CONSTANT like ControlResponse.STATUS_OK)
-    if (response.getBody().isEmpty() || response.getStatusCode() != 200) {
-      throw new Exception("Failed to create face: " + uri + " " + response.getStatusText());
-    }
-
     // return
     return response.getBody().get(0).getFaceId();
   }
 
   /**
-   * Destroy a face on given forwarder. Ensure the forwarding face is on
-   * the local machine (management requests are to /localhost/...) and that
-   * command signing has been set up (e.g. forwarder.setCommandSigningInfo()).
+   * Destroy a face on given forwarder. Ensure the forwarding face is on the
+   * local machine (management requests are to /localhost/...) and that command
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
    * @param forwarder Only a localhost Face
    * @param faceId
-   * @return 
    * @throws java.lang.Exception
    */
-  public static boolean destroyFace(Face forwarder, int faceId) throws Exception {
+  public static void destroyFace(Face forwarder, int faceId) throws Exception {
     Name command = new Name("/localhost/nfd/faces/destroy");
     ControlParameters parameters = new ControlParameters();
     parameters.setFaceId(faceId);
     command.append(parameters.wireEncode());
 
     // send the interest
-    ControlResponse response = sendCommand(forwarder, new Interest(command));
-
-    // check for body and that status code is OK (TODO: 200 should be replaced with a CONSTANT like ControlResponse.STATUS_OK)
-    if (response.getBody().isEmpty() || response.getStatusCode() != 200) {
-      throw new Exception("Failed to destroy face: " + String.valueOf(faceId) + " " + response.getStatusText());
-    }
-
-    return true;
+    sendCommand(forwarder, new Interest(command));
   }
 
   /**
@@ -265,10 +195,9 @@ public class NFD {
    *
    * @param forwarder
    * @param header
-   * @return
    * @throws Exception
    */
-  public static boolean enableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
+  public static void enableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/faces/enable-local-control");
     ControlParameters parameters = new ControlParameters();
@@ -276,7 +205,7 @@ public class NFD {
     command.append(parameters.wireEncode());
 
     // send command and return
-    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+    sendCommand(forwarder, new Interest(command));
   }
 
   /**
@@ -285,10 +214,9 @@ public class NFD {
    *
    * @param forwarder
    * @param header
-   * @return
    * @throws Exception
    */
-  public static boolean disableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
+  public static void disableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/faces/disable-local-control");
     ControlParameters parameters = new ControlParameters();
@@ -296,7 +224,7 @@ public class NFD {
     command.append(parameters.wireEncode());
 
     // send command and return
-    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+    sendCommand(forwarder, new Interest(command));
   }
 
   /**
@@ -309,16 +237,15 @@ public class NFD {
    *
    * @param forwarder Only a localhost Face
    * @param controlParameters
-   * @return
    * @throws Exception
    */
-  public static boolean register(Face forwarder, ControlParameters controlParameters) throws Exception {
+  public static void register(Face forwarder, ControlParameters controlParameters) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/rib/register");
     command.append(controlParameters.wireEncode());
 
     // send the interest
-    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+    sendCommand(forwarder, new Interest(command));
   }
 
   /**
@@ -330,15 +257,14 @@ public class NFD {
    * @param uri
    * @param cost
    * @param route
-   * @return true for successful registration
    * @throws java.lang.Exception
    */
-  public static boolean register(Face forwarder, String uri, Name route, int cost) throws Exception {
+  public static void register(Face forwarder, String uri, Name route, int cost) throws Exception {
     // create the new face
     int faceId = createFace(forwarder, uri);
 
     // run base method
-    return register(forwarder, faceId, route, cost);
+    register(forwarder, faceId, route, cost);
   }
 
   /**
@@ -350,10 +276,9 @@ public class NFD {
    * @param faceId
    * @param route
    * @param cost
-   * @return true for successful registration
    * @throws java.lang.Exception
    */
-  public static boolean register(Face forwarder, int faceId, Name route, int cost) throws Exception {
+  public static void register(Face forwarder, int faceId, Name route, int cost) throws Exception {
     // build command name
     ControlParameters parameters = new ControlParameters();
     parameters.setName(route);
@@ -365,7 +290,7 @@ public class NFD {
     parameters.setForwardingFlags(flags);
 
     // run base method
-    return register(forwarder, parameters);
+    register(forwarder, parameters);
   }
 
   /**
@@ -378,15 +303,15 @@ public class NFD {
    *
    * @param forwarder
    * @param controlParameters
-   * @return
+   * @throws java.lang.Exception
    */
-  public static boolean unregister(Face forwarder, ControlParameters controlParameters) throws Exception {
+  public static void unregister(Face forwarder, ControlParameters controlParameters) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/rib/unregister");
     command.append(controlParameters.wireEncode());
 
     // send the interest
-    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+    sendCommand(forwarder, new Interest(command));
   }
 
   /**
@@ -399,15 +324,15 @@ public class NFD {
    *
    * @param forwarder
    * @param route
-   * @return
+   * @throws java.lang.Exception
    */
-  public static boolean unregister(Face forwarder, Name route) throws Exception {
+  public static void unregister(Face forwarder, Name route) throws Exception {
     // build command name
     ControlParameters controlParameters = new ControlParameters();
     controlParameters.setName(route);
 
     // send the interest
-    return unregister(forwarder, controlParameters);
+    unregister(forwarder, controlParameters);
   }
 
   /**
@@ -421,16 +346,16 @@ public class NFD {
    * @param forwarder
    * @param route
    * @param faceId
-   * @return
+   * @throws java.lang.Exception
    */
-  public static boolean unregister(Face forwarder, Name route, int faceId) throws Exception {
+  public static void unregister(Face forwarder, Name route, int faceId) throws Exception {
     // build command name
     ControlParameters controlParameters = new ControlParameters();
     controlParameters.setName(route);
     controlParameters.setFaceId(faceId);
 
     // send the interest
-    return unregister(forwarder, controlParameters);
+    unregister(forwarder, controlParameters);
   }
 
   /**
@@ -444,9 +369,9 @@ public class NFD {
    * @param forwarder
    * @param route
    * @param uri
-   * @return
+   * @throws java.lang.Exception
    */
-  public static boolean unregister(Face forwarder, Name route, String uri) throws Exception {
+  public static void unregister(Face forwarder, Name route, String uri) throws Exception {
     int faceId = -1;
     for (FaceStatus face : getFaceList(forwarder)) {
       if (face.getUri().matches(uri)) {
@@ -456,11 +381,11 @@ public class NFD {
     }
 
     if (faceId == -1) {
-      throw new Exception("Face not found: " + uri);
+      throw new ManagementException("Face not found: " + uri);
     }
 
     // send the interest
-    return unregister(forwarder, route, faceId);
+    unregister(forwarder, route, faceId);
   }
 
   /**
@@ -474,10 +399,9 @@ public class NFD {
    * @param forwarder Only a localhost Face
    * @param prefix
    * @param strategy
-   * @return true for successful command
    * @throws Exception
    */
-  public static boolean setStrategy(Face forwarder, Name prefix, Name strategy) throws Exception {
+  public static void setStrategy(Face forwarder, Name prefix, Name strategy) throws Exception {
     // build command name
     Name command = new Name("/localhost/nfd/strategy-choice/set");
     ControlParameters parameters = new ControlParameters();
@@ -486,7 +410,36 @@ public class NFD {
     command.append(parameters.wireEncode());
 
     // send the interest
-    return sendCommandAndErrorCheck(forwarder, new Interest(command));
+    sendCommand(forwarder, new Interest(command));
+  }
+
+  /**
+   * Build an interest to retrieve a segmented data set from the NFD; for
+   * details on the DataSet, see
+   * http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+   *
+   * @param forwarder
+   * @param datasetName
+   * @return
+   * @throws IOException
+   * @throws ManagementException
+   */
+  public static Data retrieveDataSet(Face forwarder, Name datasetName) throws IOException, ManagementException {
+    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    Interest interest = new Interest(datasetName);
+    interest.setMustBeFresh(true);
+    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
+
+    // send packet
+    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
+
+    // check for failed request
+    if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
+      throw ManagementException.fromResponse(data.getContent());
+    }
+    
+    return data;
   }
 
   /**
@@ -496,53 +449,36 @@ public class NFD {
    * (management requests are to /localhost/...) and that command signing has
    * been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder Only a localhost Face, command signing info must be set
    * @param interest As described at
    * http://redmine.named-data.net/projects/nfd/wiki/ControlCommand, the
    * requested interest must have encoded ControlParameters appended to the
    * interest name
    * @return
-   * @throws net.named_data.jndn.security.SecurityException
    * @throws java.io.IOException
    * @throws net.named_data.jndn.encoding.EncodingException
+   * @throws com.intel.jndn.management.ManagementException
    */
-  public static ControlResponse sendCommand(Face forwarder, Interest interest) throws SecurityException, IOException, EncodingException {
-    forwarder.makeCommandInterest(interest);
+  public static ControlResponse sendCommand(Face forwarder, Interest interest) throws IOException, EncodingException, ManagementException {
+    // forwarder must have command signing info set
+    try {
+      forwarder.makeCommandInterest(interest);
+    } catch (SecurityException e) {
+      throw new IllegalArgumentException("Failed to make command interest; ensure command signing info is set on the face.", e);
+    }
 
     // send command packet
-    Data data = Client.getDefault().getSync(forwarder, interest);
-    if (data == null) {
-      throw new IOException("Failed to receive command response.");
-    }
+    Data data = SimpleClient.getDefault().getSync(forwarder, interest);
 
-    // return response
+    // decode response
     ControlResponse response = new ControlResponse();
     response.wireDecode(data.getContent().buf());
-    return response;
-  }
 
-  /**
-   * Send an interest as a command to the forwarder; this method will convert
-   * the interest to a command interest and block until a response is received
-   * from the forwarder.
-   *
-   * @param forwarder Only a localhost Face
-   * @param interest As described at
-   * http://redmine.named-data.net/projects/nfd/wiki/ControlCommand, the
-   * requested interest must have encoded ControlParameters appended to the
-   * interest name
-   * @return
-   * @throws net.named_data.jndn.security.SecurityException
-   * @throws java.io.IOException
-   * @throws net.named_data.jndn.encoding.EncodingException
-   */
-  public static boolean sendCommandAndErrorCheck(Face forwarder, Interest interest) throws SecurityException, IOException, EncodingException {
-    ControlResponse response = sendCommand(forwarder, interest);
-    if (response.getStatusCode() < 400) {
-      return true;
-    } else {
-      logger.warning("Command sent but failed: " + response.getStatusCode() + " " + response.getStatusText());
-      return false;
+    // check response for success
+    if (response.getStatusCode() != OK_STATUS) {
+      throw ManagementException.fromResponse(response);
     }
+
+    return response;
   }
 }

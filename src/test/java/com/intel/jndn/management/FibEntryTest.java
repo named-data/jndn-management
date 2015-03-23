@@ -16,7 +16,7 @@ package com.intel.jndn.management;
 import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.NextHopRecord;
 import com.intel.jndn.management.types.FibEntry;
-import com.intel.jndn.utils.Client;
+import com.intel.jndn.utils.SimpleClient;
 import java.util.List;
 import junit.framework.Assert;
 import net.named_data.jndn.Data;
@@ -79,7 +79,7 @@ public class FibEntryTest {
     interest.setInterestLifetimeMilliseconds(2000.0);
 
     // send packet
-    Data data = Client.getDefault().getSync(forwarder, interest);
+    Data data = SimpleClient.getDefault().getSync(forwarder, interest);
 
     // decode results
     List<FibEntry> results = StatusDataset.wireDecode(data.getContent(), FibEntry.class);

@@ -13,6 +13,7 @@
  */
 package com.intel.jndn.management.types;
 
+import com.intel.jndn.management.ManagementException;
 import java.util.ArrayList;
 import java.util.List;
 import net.named_data.jndn.encoding.EncodingException;
@@ -35,18 +36,20 @@ public class StatusDataset {
    * @param statusDataset
    * @param type
    * @return
-   * @throws EncodingException
-   * @throws InstantiationException
-   * @throws IllegalAccessException
+   * @throws com.intel.jndn.management.ManagementException
    */
-  public static final <T extends Decodable> List<T> wireDecode(Blob statusDataset, Class<T> type) throws EncodingException, InstantiationException, IllegalAccessException {
+  public static final <T extends Decodable> List<T> wireDecode(Blob statusDataset, Class<T> type) throws ManagementException {
     List<T> entries = new ArrayList<>();
     int endOffset = statusDataset.size();
     TlvDecoder decoder = new TlvDecoder(statusDataset.buf());
     while (decoder.getOffset() < endOffset) {
-      T entry = type.newInstance();
-      entry.wireDecode(decoder);
-      entries.add(entry);
+      try {
+        T entry = type.newInstance();
+        entry.wireDecode(decoder);
+        entries.add(entry);
+      } catch (EncodingException | IllegalAccessException | InstantiationException e) {
+        throw new ManagementException("Failed to read status dataset.", e);
+      }
     }
     return entries;
   }
