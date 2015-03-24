@@ -27,7 +27,7 @@ import net.named_data.jndn.util.Blob;
 /**
  * Represent a ControlResponse, a Data packet sent in response to a
  * ControlCommand to the NFD, see
- * http://redmine.named-data.net/projects/nfd/wiki/ControlCommand
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand">http://redmine.named-data.net/projects/nfd/wiki/ControlCommand</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -35,7 +35,7 @@ public class ControlResponse {
 
   /**
    * Use TLV codes from jndn.encoding.tlv.Tlv.java See
-   * http://redmine.named-data.net/projects/nfd/wiki/ControlCommand
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand">http://redmine.named-data.net/projects/nfd/wiki/ControlCommand</a>
    */
   public final static int TLV_CONTROL_RESPONSE = 101;
   public final static int TLV_CONTROL_RESPONSE_STATUS_CODE = 102;

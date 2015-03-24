@@ -14,8 +14,8 @@
 package com.intel.jndn.management.types;
 
 /**
- * Indicate whether the face is persistent; used by FaceStatus See
- * http://redmine.named-data.net/projects/nfd/widi/FaceMgmt
+ * Indicate whether the face is persistent; used by FaceStatus. See
+ * <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">http://redmine.named-data.net/projects/nfd/widi/FaceMgmt</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */

@@ -50,12 +50,12 @@ public class IntegrationSuite {
 
     // create a new route
     NFD.register(face, "udp4://127.0.0.1:56363", new Name("/my/test/route"), 999);
-    
+
     // check that route is created
     boolean found = false;
-    for(RibEntry route : NFD.getRouteList(face)){
+    for (RibEntry route : NFD.getRouteList(face)) {
       logger.info("Found route: " + route.getName().toUri());
-      if(route.getName().equals(new Name("/my/test/route"))){
+      if (route.getName().equals(new Name("/my/test/route"))) {
         found = true;
       }
     }

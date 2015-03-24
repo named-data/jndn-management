@@ -21,21 +21,24 @@ import net.named_data.jndn.util.Blob;
 
 /**
  * Represent a FaceStatus object from /localhost/nfd/faces/list; see
- * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt for details
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt</a>
+ * for details
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class FaceStatus implements Decodable {
 
   /**
-   * Spec from http://redmine.named-data.net/projects/nfd/wiki/ControlCommand
+   * Spec from
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand">http://redmine.named-data.net/projects/nfd/wiki/ControlCommand</a>
    */
   public static final int TLV_FACE_ID = 105;
   public static final int TLV_URI = 114;
   public static final int TLV_EXPIRATION_PERIOD = 109;
 
   /**
-   * Spec from http://redmine.named-data.net/projects/nfd/widi/FaceMgmt
+   * Spec from
+   * <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">http://redmine.named-data.net/projects/nfd/widi/FaceMgmt</a>
    */
   public static final int TLV_FACE_STATUS = 128;
   public static final int TLV_LOCAL_URI = 129;

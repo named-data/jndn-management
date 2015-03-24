@@ -72,7 +72,7 @@ public class FibEntryTest {
   public static void main(String[] args) throws Exception {
     Face forwarder = new Face("localhost");
 
-    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    // build management Interest packet; see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
     Interest interest = new Interest(new Name("/localhost/nfd/fib/list"));
     interest.setMustBeFresh(true);
     interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);

@@ -22,7 +22,7 @@ import net.named_data.jndn.util.Blob;
 
 /**
  * Represent a NextHopRecord in a FibEntry; see
- * http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */

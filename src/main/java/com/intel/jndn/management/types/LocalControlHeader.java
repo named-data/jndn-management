@@ -15,7 +15,7 @@ package com.intel.jndn.management.types;
 
 /**
  * Define constants for local control header options. See
- * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */

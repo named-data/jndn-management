@@ -22,7 +22,7 @@ import net.named_data.jndn.util.Blob;
 
 /**
  * Helper class to handle StatusDatasets, see
- * http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -30,7 +30,7 @@ public class StatusDataset {
 
   /**
    * Decode multiple status entries as part of a StatusDataset, see
-   * http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
    *
    * @param <T>
    * @param statusDataset

@@ -15,7 +15,7 @@ package com.intel.jndn.management.types;
 
 /**
  * Indicate the type of communication link; used by FaceStatus See
- * http://redmine.named-data.net/projects/nfd/widi/FaceMgmt
+ * <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">http://redmine.named-data.net/projects/nfd/widi/FaceMgmt</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */

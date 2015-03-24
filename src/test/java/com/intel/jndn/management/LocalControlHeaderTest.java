@@ -47,7 +47,7 @@ public class LocalControlHeaderTest {
 
     // enable incoming face ID header
     NFD.enableLocalControlHeader(forwarder, LocalControlHeader.INCOMING_FACE_ID);
-    
+
     // use and verify
     Data data = SimpleClient.getDefault().getSync(forwarder, new Name("/localhost/nfd"));
     long faceId = data.getIncomingFaceId();

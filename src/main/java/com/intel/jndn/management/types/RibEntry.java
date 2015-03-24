@@ -25,8 +25,8 @@ import net.named_data.jndn.util.Blob;
 
 /**
  * Represent a entry in the RIB; see
- * http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset for
- * details
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset</a>
+ * for details
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -34,7 +34,7 @@ public class RibEntry implements Decodable {
 
   /**
    * TLV type, see
-   * http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments</a>
    */
   public final static int TLV_RIB_ENTRY = 128;
 

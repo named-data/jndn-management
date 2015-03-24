@@ -15,7 +15,8 @@ package com.intel.jndn.management.types;
 
 /**
  * Indicate whether the face is local for scope control purposes; used by
- * FaceStatus See http://redmine.named-data.net/projects/nfd/widi/FaceMgmt
+ * FaceStatus See
+ * <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">http://redmine.named-data.net/projects/nfd/widi/FaceMgmt</a>
  *
  * @author andrew
  */

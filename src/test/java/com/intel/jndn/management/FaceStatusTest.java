@@ -124,7 +124,7 @@ public class FaceStatusTest {
     else {
       Face forwarder = new Face("localhost");
 
-      // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+      // build management Interest packet; see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
       Interest interest = new Interest(new Name("/localhost/nfd/faces/list"));
       interest.setMustBeFresh(true);
       interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
@@ -145,7 +145,7 @@ public class FaceStatusTest {
 
   /**
    * Convert hex string to bytes; special thanks to
-   * http://stackoverflow.com/questions/140131
+   * <a href="http://stackoverflow.com/questions/140131">http://stackoverflow.com/questions/140131</a>
    *
    * @param s
    * @return

@@ -35,8 +35,8 @@ import java.util.logging.Logger;
 
 /**
  * Helper class for interacting with an NDN forwarder daemon; see
- * http://redmine.named-data.net/projects/nfd/wiki/Management for explanations
- * of the various protocols used.
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/Management">http://redmine.named-data.net/projects/nfd/wiki/Management</a>
+ * for explanations of the various protocols used.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -127,8 +127,8 @@ public class NFD {
 
   /**
    * Helper method to register a new face on the forwarder; as mentioned at
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html, this is more for
-   * debugging; use 'register' instead
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>,
+   * this is more for debugging; use 'register' instead
    *
    * @param forwarder Only a localhost Face
    * @param faceId
@@ -191,7 +191,7 @@ public class NFD {
 
   /**
    * Enable a local control feature on the given forwarder. See
-   * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature</a>
    *
    * @param forwarder
    * @param header
@@ -210,7 +210,7 @@ public class NFD {
 
   /**
    * Disable a local control feature on the given forwarder. See
-   * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Disable-a-LocalControlHeader-feature
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Disable-a-LocalControlHeader-feature">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Disable-a-LocalControlHeader-feature</a>
    *
    * @param forwarder
    * @param header
@@ -229,11 +229,12 @@ public class NFD {
 
   /**
    * Register a route on the forwarder; see
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
-   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
-   * protocol documentation. Ensure the forwarding face is on the local machine
-   * (management requests are to /localhost/...) and that command signing has
-   * been set up (e.g. forwarder.setCommandSigningInfo()).
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>
+   * for command-line usage and
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
+   * for protocol documentation. Ensure the forwarding face is on the local
+   * machine (management requests are to /localhost/...) and that command
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
    * @param forwarder Only a localhost Face
    * @param controlParameters
@@ -295,11 +296,12 @@ public class NFD {
 
   /**
    * Unregister a route on a forwarder; see
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
-   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
-   * protocol documentation. Ensure the forwarding face is on the local machine
-   * (management requests are to /localhost/...) and that command signing has
-   * been set up (e.g. forwarder.setCommandSigningInfo()
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>
+   * for command-line usage and
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
+   * for protocol documentation. Ensure the forwarding face is on the local
+   * machine (management requests are to /localhost/...) and that command
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
    * @param forwarder
    * @param controlParameters
@@ -316,11 +318,12 @@ public class NFD {
 
   /**
    * Unregister a route on a forwarder; see
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
-   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
-   * protocol documentation. Ensure the forwarding face is on the local machine
-   * (management requests are to /localhost/...) and that command signing has
-   * been set up (e.g. forwarder.setCommandSigningInfo()
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>
+   * for command-line usage and
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
+   * for protocol documentation. Ensure the forwarding face is on the local
+   * machine (management requests are to /localhost/...) and that command
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
    * @param forwarder
    * @param route
@@ -337,11 +340,12 @@ public class NFD {
 
   /**
    * Unregister a route on a forwarder; see
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
-   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
-   * protocol documentation. Ensure the forwarding face is on the local machine
-   * (management requests are to /localhost/...) and that command signing has
-   * been set up (e.g. forwarder.setCommandSigningInfo()
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>
+   * for command-line usage and
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
+   * for protocol documentation. Ensure the forwarding face is on the local
+   * machine (management requests are to /localhost/...) and that command
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
    * @param forwarder
    * @param route
@@ -360,11 +364,12 @@ public class NFD {
 
   /**
    * Unregister a route on a forwarder; see
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
-   * usage and http://redmine.named-data.net/projects/nfd/wiki/RibMgmt for
-   * protocol documentation. Ensure the forwarding face is on the local machine
-   * (management requests are to /localhost/...) and that command signing has
-   * been set up (e.g. forwarder.setCommandSigningInfo()
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>
+   * for command-line usage and
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
+   * for protocol documentation. Ensure the forwarding face is on the local
+   * machine (management requests are to /localhost/...) and that command
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
    * @param forwarder
    * @param route
@@ -390,8 +395,9 @@ public class NFD {
 
   /**
    * Set a strategy on the forwarder; see
-   * http://named-data.net/doc/NFD/current/manpages/nfdc.html for command-line
-   * usage and http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice
+   * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>
+   * for command-line usage and
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice">http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice</a>
    * for protocol documentation. Ensure the forwarding face is on the local
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
@@ -416,7 +422,7 @@ public class NFD {
   /**
    * Build an interest to retrieve a segmented data set from the NFD; for
    * details on the DataSet, see
-   * http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
    *
    * @param forwarder
    * @param datasetName
@@ -425,7 +431,7 @@ public class NFD {
    * @throws ManagementException
    */
   public static Data retrieveDataSet(Face forwarder, Name datasetName) throws IOException, ManagementException {
-    // build management Interest packet; see http://redmine.named-data.net/projects/nfd/wiki/StatusDataset
+    // build management Interest packet; see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
     Interest interest = new Interest(datasetName);
     interest.setMustBeFresh(true);
     interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
@@ -438,7 +444,7 @@ public class NFD {
     if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
       throw ManagementException.fromResponse(data.getContent());
     }
-    
+
     return data;
   }
 
@@ -451,8 +457,8 @@ public class NFD {
    *
    * @param forwarder Only a localhost Face, command signing info must be set
    * @param interest As described at
-   * http://redmine.named-data.net/projects/nfd/wiki/ControlCommand, the
-   * requested interest must have encoded ControlParameters appended to the
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand,">http://redmine.named-data.net/projects/nfd/wiki/ControlCommand,</a>
+   * the requested interest must have encoded ControlParameters appended to the
    * interest name
    * @return
    * @throws java.io.IOException

@@ -23,8 +23,8 @@ import net.named_data.jndn.util.Blob;
 
 /**
  * Represent a Route object from /localhost/nfd/rib/list; see
- * http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset for
- * details.
+ * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset</a>
+ * for details.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -32,7 +32,7 @@ public class Route {
 
   /**
    * TLV type, see
-   * http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments</a>
    */
   public final static int TLV_ROUTE = 129;
 
