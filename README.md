@@ -23,6 +23,8 @@ With a Face that has command signing information set, call any of the following 
  - __NFD.unregister(Face forwarder, Name route)__: unregister a route by name.
  - __NFD.setStrategy(Face forwarder, Name prefix, Name strategy)__: set the forwarding strategy for the given prefix.
 
+See [full Javadoc documentation](http://01org.github.io/jndn-management/index.html)
+
 ## License
 Copyright © 2015, Intel Corporation.
 
