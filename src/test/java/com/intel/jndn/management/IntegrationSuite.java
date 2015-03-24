@@ -44,6 +44,7 @@ public class IntegrationSuite {
     Assert.assertTrue(NFD.pingLocal(face));
 
     // grab datasets
+    Assert.assertTrue(NFD.getForwarderStatus(face).getStartTimestamp() > 0);
     Assert.assertFalse(NFD.getFaceList(face).isEmpty());
     Assert.assertFalse(NFD.getFibList(face).isEmpty());
     Assert.assertFalse(NFD.getRouteList(face).isEmpty());

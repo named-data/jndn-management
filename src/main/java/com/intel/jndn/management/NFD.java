@@ -17,6 +17,7 @@ import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.ControlResponse;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
+import com.intel.jndn.management.types.ForwarderStatus;
 import com.intel.jndn.management.types.LocalControlHeader;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.utils.SimpleClient;
@@ -52,7 +53,7 @@ public class NFD {
    * to /localhost/nfd which should always respond if the requestor is on the
    * same machine as the NDN forwarding daemon.
    *
-   * @param face
+   * @param face only a localhost Face
    * @return true if successful, false otherwise
    */
   public static boolean pingLocal(Face face) {
@@ -84,12 +85,29 @@ public class NFD {
   }
 
   /**
+   * Retrieve the status of the given forwarder; calls /localhost/nfd/status
+   * which requires a local Face (all non-local packets are dropped)
+   *
+   * @param forwarder only a localhost Face
+   * @return the forwarder status object, see
+   * http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus.
+   * @throws java.lang.Exception
+   */
+  public static ForwarderStatus getForwarderStatus(Face forwarder) throws Exception {
+    Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/status"));
+    ForwarderStatus status = new ForwarderStatus();
+    status.wireDecode(data.getContent().buf());
+    return status;
+  }
+
+  /**
    * Retrieve a list of faces and their status from the given forwarder; calls
    * /localhost/nfd/faces/list which requires a local Face (all non-local
    * packets are dropped)
    *
-   * @param forwarder Only a localhost Face
-   * @return
+   * @param forwarder only a localhost Face
+   * @return a list of face status objects, see
+   * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt.
    * @throws java.lang.Exception
    */
   public static List<FaceStatus> getFaceList(Face forwarder) throws Exception {
@@ -102,8 +120,9 @@ public class NFD {
    * forwarder; calls /localhost/nfd/fib/list which requires a local Face (all
    * non-local packets are dropped).
    *
-   * @param forwarder Only a localhost Face
-   * @return
+   * @param forwarder only a localhost Face
+   * @return a list of FIB entries, see
+   * http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset.
    * @throws java.lang.Exception
    */
   public static List<FibEntry> getFibList(Face forwarder) throws Exception {
@@ -116,8 +135,9 @@ public class NFD {
    * /localhost/nfd/rib/list which requires a local Face (all non-local packets
    * are dropped).
    *
-   * @param forwarder Only a localhost Face
-   * @return
+   * @param forwarder only a localhost Face
+   * @return a list of RIB entries, i.e. routes, see
+   * http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset.
    * @throws java.lang.Exception
    */
   public static List<RibEntry> getRouteList(Face forwarder) throws Exception {
@@ -130,7 +150,7 @@ public class NFD {
    * http://named-data.net/doc/NFD/current/manpages/nfdc.html, this is more for
    * debugging; use 'register' instead
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param faceId
    * @param prefix
    * @throws java.lang.Exception
@@ -152,7 +172,7 @@ public class NFD {
    * the local machine (management requests are to /localhost/...) and that
    * command signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param uri
    * @return
    * @throws java.lang.Exception
@@ -175,7 +195,7 @@ public class NFD {
    * local machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param faceId
    * @throws java.lang.Exception
    */
@@ -235,7 +255,7 @@ public class NFD {
    * (management requests are to /localhost/...) and that command signing has
    * been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param controlParameters
    * @throws Exception
    */
@@ -253,7 +273,7 @@ public class NFD {
    * forwarder to the given URI/route pair. See register(Face,
    * ControlParameters) for more details documentation.
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param uri
    * @param cost
    * @param route
@@ -272,7 +292,7 @@ public class NFD {
    * is provided a faceId. See register(Face, ControlParameters) for full
    * documentation
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param faceId
    * @param route
    * @param cost
@@ -396,7 +416,7 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder Only a localhost Face
+   * @param forwarder only a localhost Face
    * @param prefix
    * @param strategy
    * @throws Exception
@@ -438,7 +458,7 @@ public class NFD {
     if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {
       throw ManagementException.fromResponse(data.getContent());
     }
-    
+
     return data;
   }
 
@@ -449,7 +469,7 @@ public class NFD {
    * (management requests are to /localhost/...) and that command signing has
    * been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder Only a localhost Face, command signing info must be set
+   * @param forwarder only a localhost Face, command signing info must be set
    * @param interest As described at
    * http://redmine.named-data.net/projects/nfd/wiki/ControlCommand, the
    * requested interest must have encoded ControlParameters appended to the
