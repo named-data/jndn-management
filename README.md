@@ -15,6 +15,7 @@ With Maven, add the following to your POM:
 ## Use
 With a Face that has command signing information set, call any of the following static methods:
  - __NFD.pingLocal(Face forwarder)__: ping a local NFD with /localhost/nfd to verify if it exists.
+ - __NFD.getForwarderStatus(Face forwarder)__: retrieve the forwarder status information.
  - __NFD.getFaceList(Face forwarder)__: retrieve all connected faces.
  - __NFD.getFibList(Face forwarder)__: retrieve all forwarding entries in the Forwarding Information Base (FIB).
  - __NFD.getRibList(Face forwarder)__: retrieve all routing entries in the Routing Information Base (RIB).

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.intel.jndn.management</groupId>
   <artifactId>jndn-management</artifactId>
-  <version>0.9.6</version>
+  <version>0.9.7</version>
   <name>jndn-management</name>
   <description>Tools for managing an NDN forwarding daemon</description>
   <url>https://github.com/01org/jndn-management</url>
