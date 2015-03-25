@@ -53,6 +53,7 @@ public class IntegrationSuite {
     NFD.register(face, "udp4://127.0.0.1:56363", new Name("/my/test/route"), 999);
     
     // check that route is created
+    Thread.sleep(1000); // NFD registers the route asynchronously
     boolean found = false;
     for(RibEntry route : NFD.getRouteList(face)){
       logger.info("Found route: " + route.getName().toUri());

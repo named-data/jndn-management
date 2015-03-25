@@ -90,11 +90,17 @@ public class NFD {
    *
    * @param forwarder only a localhost Face
    * @return the forwarder status object, see
-   * http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus.
+   * <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">
+   * http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus</a>.
    * @throws java.lang.Exception
    */
   public static ForwarderStatus getForwarderStatus(Face forwarder) throws Exception {
-    Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/status"));
+    Interest interest = new Interest(new Name("/localhost/nfd/status"));
+    interest.setMustBeFresh(true);
+    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
+
+    Data data = SimpleClient.getDefault().getSync(forwarder, interest);
     ForwarderStatus status = new ForwarderStatus();
     status.wireDecode(data.getContent().buf());
     return status;
