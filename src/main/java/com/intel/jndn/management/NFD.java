@@ -33,6 +33,7 @@ import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.security.SecurityException;
 import java.util.logging.Logger;
+import net.named_data.jndn.KeyLocator;
 
 /**
  * Helper class for interacting with an NDN forwarder daemon; see
@@ -95,12 +96,7 @@ public class NFD {
    * @throws java.lang.Exception
    */
   public static ForwarderStatus getForwarderStatus(Face forwarder) throws Exception {
-    Interest interest = new Interest(new Name("/localhost/nfd/status"));
-    interest.setMustBeFresh(true);
-    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
-    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
-
-    Data data = SimpleClient.getDefault().getSync(forwarder, interest);
+    Data data = retrieveStatus(forwarder);
     ForwarderStatus status = new ForwarderStatus();
     status.wireDecode(data.getContent().buf());
     return status;
@@ -149,6 +145,22 @@ public class NFD {
   public static List<RibEntry> getRouteList(Face forwarder) throws Exception {
     Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/rib/list"));
     return StatusDataset.wireDecode(data.getContent(), RibEntry.class);
+  }
+
+  /**
+   * Retrieve the {@link KeyLocator} for an NFD.
+   *
+   * @param forwarder only a localhost {@link Face}
+   * @return the {@link KeyLocator} of the NFD's key
+   * @throws ManagementException if the key is not available
+   * @throws IOException if the request fails
+   */
+  public static KeyLocator getKeyLocator(Face forwarder) throws ManagementException, IOException {
+    Data data = retrieveStatus(forwarder);
+    if (!KeyLocator.canGetFromSignature(data.getSignature())) {
+      throw new ManagementException("No key locator available.");
+    }
+    return KeyLocator.getFromSignature(data.getSignature());
   }
 
   /**
@@ -446,15 +458,31 @@ public class NFD {
   }
 
   /**
+   * Build an interest to retrieve the NFD status.
+   *
+   * @param forwarder only a localhost {@link Face}
+   * @return the status {@link Data} packet
+   * @throws IOException if the retrieval fails
+   */
+  private static Data retrieveStatus(Face forwarder) throws IOException {
+    Interest interest = new Interest(new Name("/localhost/nfd/status"));
+    interest.setMustBeFresh(true);
+    interest.setChildSelector(Interest.CHILD_SELECTOR_RIGHT);
+    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
+    Data data = SimpleClient.getDefault().getSync(forwarder, interest);
+    return data;
+  }
+
+  /**
    * Build an interest to retrieve a segmented data set from the NFD; for
    * details on the DataSet, see
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
    *
-   * @param forwarder
-   * @param datasetName
-   * @return
-   * @throws IOException
-   * @throws ManagementException
+   * @param forwarder the {@link Face} to an NFD
+   * @param datasetName the {@link Name} of the dataset to retrieve
+   * @return the re-assembled {@link Data} packet
+   * @throws IOException if the request fails
+   * @throws ManagementException if the returned TLV is not the expected type
    */
   public static Data retrieveDataSet(Face forwarder, Name datasetName) throws IOException, ManagementException {
     // build management Interest packet; see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
@@ -486,7 +514,7 @@ public class NFD {
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand,">http://redmine.named-data.net/projects/nfd/wiki/ControlCommand,</a>
    * the requested interest must have encoded ControlParameters appended to the
    * interest name
-   * @return
+   * @return a {@link ControlResponse}
    * @throws java.io.IOException
    * @throws net.named_data.jndn.encoding.EncodingException
    * @throws com.intel.jndn.management.ManagementException

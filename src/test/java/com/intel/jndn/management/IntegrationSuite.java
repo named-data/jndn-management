@@ -17,6 +17,7 @@ import com.intel.jndn.management.types.RibEntry;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.named_data.jndn.Face;
+import net.named_data.jndn.KeyLocator;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.security.KeyChain;
 
@@ -42,6 +43,11 @@ public class IntegrationSuite {
     face.setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
 
     Assert.assertTrue(NFD.pingLocal(face));
+    
+    // grab key locator
+    KeyLocator keyLocator = NFD.getKeyLocator(face);
+    Assert.assertNotNull(keyLocator);
+    logger.info("Connected to NFD with key locator: " + keyLocator.getKeyName().toUri());
 
     // grab datasets
     Assert.assertTrue(NFD.getForwarderStatus(face).getStartTimestamp() > 0);
