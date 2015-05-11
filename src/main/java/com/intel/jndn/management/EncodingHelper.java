@@ -36,8 +36,8 @@ public class EncodingHelper {
    * Helper to decode names since Tlv0_1_1WireFormat.java uses its own internal,
    * protected implementation.
    *
-   * @param input
-   * @return
+   * @param input the bytes to decode
+   * @return a decoded {@link Name}
    * @throws EncodingException
    */
   public static Name decodeName(ByteBuffer input) throws EncodingException {
@@ -49,8 +49,8 @@ public class EncodingHelper {
    * Helper to decode names using an existing decoding context; could be merged
    * to Tlv0_1_1WireFormat.java.
    *
-   * @param decoder
-   * @return
+   * @param decoder a current decoder context to use for decoding
+   * @return a decoded {@link Name}
    * @throws EncodingException
    */
   public static Name decodeName(TlvDecoder decoder) throws EncodingException {
@@ -68,8 +68,8 @@ public class EncodingHelper {
    * Helper to encode names since Tlv0_1_1WireFormat.java uses its own internal,
    * protected implementation.
    *
-   * @param name
-   * @return
+   * @param name the {@link Name} to encode
+   * @return an encoded {@link Blob}
    */
   public static Blob encodeName(Name name) {
     TlvEncoder encoder = new TlvEncoder();
@@ -81,8 +81,8 @@ public class EncodingHelper {
    * Helper to encode names using an existing encoding context; could be merged
    * to Tlv0_1_1WireFormat.java.
    *
-   * @param name
-   * @param encoder
+   * @param name the {@link Name} to encode
+   * @param encoder the current {@link TlvEncoder} context to encode with
    */
   public static final void encodeName(Name name, TlvEncoder encoder) {
     int saveLength = encoder.getLength();
@@ -90,6 +90,61 @@ public class EncodingHelper {
       encoder.writeBlobTlv(Tlv.NameComponent, name.get(i).getValue().buf());
     }
     encoder.writeTypeAndLength(Tlv.Name, encoder.getLength() - saveLength);
+  }
+
+  /**
+   * Helper to decode strategies since Tlv0_1_1WireFormat.java uses its own
+   * internal, protected implementation.
+   *
+   * @param input the bytes to decode
+   * @return a decoded {@link Name}
+   * @throws EncodingException
+   */
+  public static Name decodeStrategy(ByteBuffer input) throws EncodingException {
+    TlvDecoder decoder = new TlvDecoder(input);
+    return decodeStrategy(decoder);
+  }
+
+  /**
+   * Helper to decode strategies using an existing decoding context; could be
+   * merged to Tlv0_1_1WireFormat.java.
+   *
+   * @param decoder the current {@link TlvDecoder} context to decode with
+   * @return a decoded strategy (e.g. {@link Name})
+   * @throws EncodingException
+   */
+  public static Name decodeStrategy(TlvDecoder decoder) throws EncodingException {
+    int strategyEndOffset = decoder.readNestedTlvsStart(Tlv.ControlParameters_Strategy);
+    Name strategy = decodeName(decoder);
+    decoder.finishNestedTlvs(strategyEndOffset);
+    return strategy;
+  }
+
+  /**
+   * Helper to encode strategies since Tlv0_1_1WireFormat.java uses its own
+   * internal, protected implementation.
+   *
+   * @param strategy the {@link Name} to encode
+   * @return an encoded {@link Blob}
+   */
+  public static Blob encodeStrategy(Name strategy) {
+    TlvEncoder encoder = new TlvEncoder();
+    encodeName(strategy, encoder);
+    return new Blob(encoder.getOutput(), false);
+  }
+
+  /**
+   * Helper to encode strategies using an existing decoding context; could be
+   * merged to Tlv0_1_1WireFormat.java.
+   *
+   * @param strategy the {@link Name} to encode
+   * @param encoder the current {@link TlvEncoder} context to use
+   */
+  public static final void encodeStrategy(Name strategy, TlvEncoder encoder) {
+    int strategySaveLength = encoder.getLength();
+    encodeName(strategy, encoder);
+    encoder.writeTypeAndLength(Tlv.ControlParameters_Strategy,
+            encoder.getLength() - strategySaveLength);
   }
 
   /**

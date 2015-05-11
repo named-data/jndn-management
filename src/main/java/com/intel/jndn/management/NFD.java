@@ -487,7 +487,7 @@ public class NFD {
    */
   public static void unsetStrategy(Face forwarder, Name prefix) throws Exception {
     // build command name
-    Name command = new Name("/localhost/nfd/strategy-choice/unsetset");
+    Name command = new Name("/localhost/nfd/strategy-choice/unset");
     ControlParameters parameters = new ControlParameters();
     parameters.setName(prefix);
     command.append(parameters.wireEncode());

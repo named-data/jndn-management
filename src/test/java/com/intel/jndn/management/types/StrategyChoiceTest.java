@@ -21,16 +21,15 @@ import net.named_data.jndn.util.Blob;
 import org.junit.Test;
 
 /**
+ * Test StrategyCHoice encoding/decoding
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class StrategyChoiceTest {
 
-  public StrategyChoiceTest() {
-  }
-
   /**
    * Test of wireEncode method, of class StrategyChoice.
+   * @throws net.named_data.jndn.encoding.EncodingException
    */
   @Test
   public void testEncodeDecode() throws EncodingException {

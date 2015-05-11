@@ -14,7 +14,6 @@
 package com.intel.jndn.management.types;
 
 import com.intel.jndn.management.EncodingHelper;
-import static com.intel.jndn.management.types.RibEntry.TLV_RIB_ENTRY;
 import java.nio.ByteBuffer;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
@@ -54,8 +53,8 @@ public class StrategyChoice implements Decodable {
    */
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
+    EncodingHelper.encodeStrategy(strategy, encoder);
     EncodingHelper.encodeName(name, encoder);
-    EncodingHelper.encodeName(strategy, encoder);
     encoder.writeTypeAndLength(TLV_STRATEGY_CHOICE, encoder.getLength() - saveLength);
   }
 
@@ -79,9 +78,9 @@ public class StrategyChoice implements Decodable {
    */
   @Override
   public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_RIB_ENTRY);
-    strategy = EncodingHelper.decodeName(decoder);
+    int endOffset = decoder.readNestedTlvsStart(TLV_STRATEGY_CHOICE);
     name = EncodingHelper.decodeName(decoder);
+    strategy = EncodingHelper.decodeStrategy(decoder);
     decoder.finishNestedTlvs(endOffset);
   }
 

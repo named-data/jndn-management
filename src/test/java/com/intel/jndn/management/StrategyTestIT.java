@@ -15,8 +15,8 @@ package com.intel.jndn.management;
 
 import com.intel.jndn.management.types.StrategyChoice;
 import com.intel.jndn.mock.MockKeyChain;
-import com.intel.jndn.utils.SegmentedServer;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 import static junit.framework.Assert.assertEquals;
 import net.named_data.jndn.Face;
@@ -36,7 +36,7 @@ public class StrategyTestIT {
   Face face;
 
   public StrategyTestIT() throws net.named_data.jndn.security.SecurityException {
-    this.prefix = new Name("/test/strategy");
+    this.prefix = new Name("/test/strategy").append("random:" + new Random().nextInt());
     this.face = new Face("localhost"); // strategy commands only available on localhost
     KeyChain mockKeyChain = MockKeyChain.configure(new Name("/test/server"));
     face.setCommandSigningInfo(mockKeyChain, mockKeyChain.getDefaultCertificateName());
@@ -48,6 +48,8 @@ public class StrategyTestIT {
     int oldSize = choices.size();
 
     NFD.setStrategy(face, prefix, Strategies.CLIENT_CONTROL);
+    Thread.sleep(1000); // strategy takes a while to register
+
     choices = NFD.getStrategyList(face);
     assertEquals(oldSize + 1, choices.size());
 
