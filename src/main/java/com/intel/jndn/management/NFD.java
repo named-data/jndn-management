@@ -20,6 +20,7 @@ import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.ForwarderStatus;
 import com.intel.jndn.management.types.LocalControlHeader;
 import com.intel.jndn.management.types.RibEntry;
+import com.intel.jndn.management.types.StrategyChoice;
 import com.intel.jndn.utils.SimpleClient;
 import com.intel.jndn.utils.SegmentedClient;
 import java.io.IOException;
@@ -145,6 +146,21 @@ public class NFD {
   public static List<RibEntry> getRouteList(Face forwarder) throws Exception {
     Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/rib/list"));
     return StatusDataset.wireDecode(data.getContent(), RibEntry.class);
+  }
+
+  /**
+   * Retrieve the list of strategy choice entries from the NFD; calls
+   * /localhost/nfd/rib/list which requires a local Face (all non-local packets
+   * are dropped).
+   *
+   * @param forwarder only a localhost Face
+   * @return a list of strategy choice entries, i.e. routes, see
+   * http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice.
+   * @throws java.lang.Exception
+   */
+  public static List<StrategyChoice> getStrategyList(Face forwarder) throws Exception {
+    Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/strategy-choice/list"));
+    return StatusDataset.wireDecode(data.getContent(), StrategyChoice.class);
   }
 
   /**
@@ -442,7 +458,8 @@ public class NFD {
    *
    * @param forwarder only a localhost Face
    * @param prefix the {@link Name} prefix
-   * @param strategy the {@link Name} of the strategy to set, e.g. /localhost/nfd/strategy/broadcast
+   * @param strategy the {@link Name} of the strategy to set, e.g.
+   * /localhost/nfd/strategy/broadcast
    * @throws Exception if the command fails
    */
   public static void setStrategy(Face forwarder, Name prefix, Name strategy) throws Exception {
