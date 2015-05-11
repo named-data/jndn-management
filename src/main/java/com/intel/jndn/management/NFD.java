@@ -441,9 +441,9 @@ public class NFD {
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
    * @param forwarder only a localhost Face
-   * @param prefix
-   * @param strategy
-   * @throws Exception
+   * @param prefix the {@link Name} prefix
+   * @param strategy the {@link Name} of the strategy to set, e.g. /localhost/nfd/strategy/broadcast
+   * @throws Exception if the command fails
    */
   public static void setStrategy(Face forwarder, Name prefix, Name strategy) throws Exception {
     // build command name
@@ -451,6 +451,28 @@ public class NFD {
     ControlParameters parameters = new ControlParameters();
     parameters.setName(prefix);
     parameters.setStrategy(strategy);
+    command.append(parameters.wireEncode());
+
+    // send the interest
+    sendCommand(forwarder, new Interest(command));
+  }
+
+  /**
+   * Set a strategy on the forwarder; see
+   * {@link #setStrategy(net.named_data.jndn.Face, net.named_data.jndn.Name, net.named_data.jndn.Name)}
+   * for more information. Ensure the forwarding face is on the local machine
+   * (management requests are to /localhost/...) and that command signing has
+   * been set up (e.g. forwarder.setCommandSigningInfo()).
+   *
+   * @param forwarder only a localhost {@link Face}
+   * @param prefix the {@link Name} prefix
+   * @throws Exception if the command fails
+   */
+  public static void unsetStrategy(Face forwarder, Name prefix) throws Exception {
+    // build command name
+    Name command = new Name("/localhost/nfd/strategy-choice/unsetset");
+    ControlParameters parameters = new ControlParameters();
+    parameters.setName(prefix);
     command.append(parameters.wireEncode());
 
     // send the interest
