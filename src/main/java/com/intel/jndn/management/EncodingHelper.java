@@ -190,7 +190,7 @@ public class EncodingHelper {
     encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, controlParameters.getFaceId());
 
     // Encode name
-    if (controlParameters.getName().size() != 0) {
+    if (controlParameters.getName() != null && controlParameters.getName().size() != 0) {
       encodeName(controlParameters.getName(), encoder);
     }
 
