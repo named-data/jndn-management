@@ -67,8 +67,8 @@ public class NFD {
    * responding to requests. Note that the name must be served or cached on the
    * forwarder for this to return true.
    *
-   * @param face
-   * @param name
+   * @param face a {@link Face} to ping
+   * @param name a known {@link Name} that the remote node will answer to
    * @return true if successful, false otherwise
    */
   public static boolean ping(Face face, Name name) {
@@ -94,9 +94,10 @@ public class NFD {
    * @return the forwarder status object, see
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">
    * http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus</a>.
-   * @throws java.lang.Exception
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the returned status could not be decoded
    */
-  public static ForwarderStatus getForwarderStatus(Face forwarder) throws Exception {
+  public static ForwarderStatus getForwarderStatus(Face forwarder) throws IOException, EncodingException {
     Data data = retrieveStatus(forwarder);
     ForwarderStatus status = new ForwarderStatus();
     status.wireDecode(data.getContent().buf());
@@ -111,9 +112,10 @@ public class NFD {
    * @param forwarder only a localhost Face
    * @return a list of face status objects, see
    * http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt.
-   * @throws java.lang.Exception
+   * @throws IOException if the network request failed
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static List<FaceStatus> getFaceList(Face forwarder) throws Exception {
+  public static List<FaceStatus> getFaceList(Face forwarder) throws IOException, ManagementException {
     Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/faces/list"));
     return StatusDataset.wireDecode(data.getContent(), FaceStatus.class);
   }
@@ -126,9 +128,10 @@ public class NFD {
    * @param forwarder only a localhost Face
    * @return a list of FIB entries, see
    * http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset.
-   * @throws java.lang.Exception
+   * @throws IOException if the network request failed
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static List<FibEntry> getFibList(Face forwarder) throws Exception {
+  public static List<FibEntry> getFibList(Face forwarder) throws IOException, ManagementException {
     Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/fib/list"));
     return StatusDataset.wireDecode(data.getContent(), FibEntry.class);
   }
@@ -141,9 +144,10 @@ public class NFD {
    * @param forwarder only a localhost Face
    * @return a list of RIB entries, i.e. routes, see
    * http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset.
-   * @throws java.lang.Exception
+   * @throws IOException if the network request failed
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static List<RibEntry> getRouteList(Face forwarder) throws Exception {
+  public static List<RibEntry> getRouteList(Face forwarder) throws IOException, ManagementException {
     Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/rib/list"));
     return StatusDataset.wireDecode(data.getContent(), RibEntry.class);
   }
@@ -156,9 +160,10 @@ public class NFD {
    * @param forwarder only a localhost Face
    * @return a list of strategy choice entries, i.e. routes, see
    * http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice.
-   * @throws java.lang.Exception
+   * @throws IOException if the network request failed
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static List<StrategyChoice> getStrategyList(Face forwarder) throws Exception {
+  public static List<StrategyChoice> getStrategyList(Face forwarder) throws IOException, ManagementException {
     Data data = retrieveDataSet(forwarder, new Name("/localhost/nfd/strategy-choice/list"));
     return StatusDataset.wireDecode(data.getContent(), StrategyChoice.class);
   }
@@ -168,8 +173,9 @@ public class NFD {
    *
    * @param forwarder only a localhost {@link Face}
    * @return the {@link KeyLocator} of the NFD's key
-   * @throws ManagementException if the key is not available
-   * @throws IOException if the request fails
+   * @throws IOException if the network request failed
+   * @throws ManagementException if the NFD rejected the request or no
+   * KeyLocator was found
    */
   public static KeyLocator getKeyLocator(Face forwarder) throws ManagementException, IOException {
     Data data = retrieveStatus(forwarder);
@@ -184,12 +190,16 @@ public class NFD {
    * <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">http://named-data.net/doc/NFD/current/manpages/nfdc.html</a>,
    * this is more for debugging; use 'register' instead
    *
-   * @param forwarder only a localhost Face
-   * @param faceId
-   * @param prefix
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param faceId the ID of the face to add, see
+   * {@link #createFace(net.named_data.jndn.Face, java.lang.String)} for
+   * creating this
+   * @param prefix the {@link Name} of the next-hop prefix
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void addNextHop(Face forwarder, int faceId, Name prefix) throws Exception {
+  public static void addNextHop(Face forwarder, int faceId, Name prefix) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/fib/add-nexthop");
     ControlParameters parameters = new ControlParameters();
@@ -206,12 +216,15 @@ public class NFD {
    * the local machine (management requests are to /localhost/...) and that
    * command signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder only a localhost Face
-   * @param uri
-   * @return
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param uri a string like "tcp4://host.name.com" (see nfd-status channels
+   * for more protocol options)
+   * @return the newly created face ID
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static int createFace(Face forwarder, String uri) throws Exception {
+  public static int createFace(Face forwarder, String uri) throws IOException, EncodingException, ManagementException {
     Name command = new Name("/localhost/nfd/faces/create");
     ControlParameters parameters = new ControlParameters();
     parameters.setUri(uri);
@@ -229,11 +242,13 @@ public class NFD {
    * local machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder only a localhost Face
-   * @param faceId
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param faceId the ID of the face to destroy
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void destroyFace(Face forwarder, int faceId) throws Exception {
+  public static void destroyFace(Face forwarder, int faceId) throws IOException, EncodingException, ManagementException {
     Name command = new Name("/localhost/nfd/faces/destroy");
     ControlParameters parameters = new ControlParameters();
     parameters.setFaceId(faceId);
@@ -247,11 +262,13 @@ public class NFD {
    * Enable a local control feature on the given forwarder. See
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature</a>
    *
-   * @param forwarder
-   * @param header
-   * @throws Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param header the control feature to enable
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void enableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
+  public static void enableLocalControlHeader(Face forwarder, LocalControlHeader header) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/faces/enable-local-control");
     ControlParameters parameters = new ControlParameters();
@@ -266,11 +283,13 @@ public class NFD {
    * Disable a local control feature on the given forwarder. See
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Disable-a-LocalControlHeader-feature">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Disable-a-LocalControlHeader-feature</a>
    *
-   * @param forwarder
-   * @param header
-   * @throws Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param header the control feature to disable
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void disableLocalControlHeader(Face forwarder, LocalControlHeader header) throws Exception {
+  public static void disableLocalControlHeader(Face forwarder, LocalControlHeader header) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/faces/disable-local-control");
     ControlParameters parameters = new ControlParameters();
@@ -290,11 +309,13 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder only a localhost Face
-   * @param controlParameters
-   * @throws Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param controlParameters the {@link ControlParameters} command options
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void register(Face forwarder, ControlParameters controlParameters) throws Exception {
+  public static void register(Face forwarder, ControlParameters controlParameters) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/rib/register");
     command.append(controlParameters.wireEncode());
@@ -308,13 +329,15 @@ public class NFD {
    * forwarder to the given URI/route pair. See register(Face,
    * ControlParameters) for more details documentation.
    *
-   * @param forwarder only a localhost Face
-   * @param uri
-   * @param cost
-   * @param route
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param uri the URI (e.g. "tcp4://some.host.com") of the remote node
+   * @param route the {@link Name} prefix of the route
+   * @param cost the numeric cost of forwarding along the route
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void register(Face forwarder, String uri, Name route, int cost) throws Exception {
+  public static void register(Face forwarder, String uri, Name route, int cost) throws IOException, EncodingException, ManagementException {
     // create the new face
     int faceId = createFace(forwarder, uri);
 
@@ -327,13 +350,15 @@ public class NFD {
    * is provided a faceId. See register(Face, ControlParameters) for full
    * documentation
    *
-   * @param forwarder only a localhost Face
-   * @param faceId
-   * @param route
-   * @param cost
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param faceId the ID of the {@link Face} to assign to the route
+   * @param route the {@link Name} prefix of the route
+   * @param cost the numeric cost of forwarding along the route
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void register(Face forwarder, int faceId, Name route, int cost) throws Exception {
+  public static void register(Face forwarder, int faceId, Name route, int cost) throws IOException, EncodingException, ManagementException {
     // build command name
     ControlParameters parameters = new ControlParameters();
     parameters.setName(route);
@@ -357,11 +382,13 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
-   * @param forwarder
-   * @param controlParameters
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param controlParameters the {@link ControlParameters} command options
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void unregister(Face forwarder, ControlParameters controlParameters) throws Exception {
+  public static void unregister(Face forwarder, ControlParameters controlParameters) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/rib/unregister");
     command.append(controlParameters.wireEncode());
@@ -379,11 +406,13 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
-   * @param forwarder
-   * @param route
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param route the {@link Name} prefix of the route
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void unregister(Face forwarder, Name route) throws Exception {
+  public static void unregister(Face forwarder, Name route) throws IOException, EncodingException, ManagementException {
     // build command name
     ControlParameters controlParameters = new ControlParameters();
     controlParameters.setName(route);
@@ -401,12 +430,15 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
-   * @param forwarder
-   * @param route
-   * @param faceId
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param route the {@link Name} prefix of the route
+   * @param faceId the specific ID of the face to remove (more than one face can
+   * be registered to a route)
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void unregister(Face forwarder, Name route, int faceId) throws Exception {
+  public static void unregister(Face forwarder, Name route, int faceId) throws IOException, EncodingException, ManagementException {
     // build command name
     ControlParameters controlParameters = new ControlParameters();
     controlParameters.setName(route);
@@ -425,12 +457,15 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()
    *
-   * @param forwarder
-   * @param route
-   * @param uri
-   * @throws java.lang.Exception
+   * @param forwarder only a localhost {@link Face}
+   * @param route the {@link Name} prefix of the route
+   * @param uri the URI (e.g. "tcp4://some.host.com") of the remote node (more
+   * than one face can be registered to a route)
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void unregister(Face forwarder, Name route, String uri) throws Exception {
+  public static void unregister(Face forwarder, Name route, String uri) throws IOException, EncodingException, ManagementException {
     int faceId = -1;
     for (FaceStatus face : getFaceList(forwarder)) {
       if (face.getUri().matches(uri)) {
@@ -456,13 +491,15 @@ public class NFD {
    * machine (management requests are to /localhost/...) and that command
    * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
-   * @param forwarder only a localhost Face
+   * @param forwarder only a localhost {@link Face}
    * @param prefix the {@link Name} prefix
    * @param strategy the {@link Name} of the strategy to set, e.g.
    * /localhost/nfd/strategy/broadcast
-   * @throws Exception if the command fails
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void setStrategy(Face forwarder, Name prefix, Name strategy) throws Exception {
+  public static void setStrategy(Face forwarder, Name prefix, Name strategy) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/strategy-choice/set");
     ControlParameters parameters = new ControlParameters();
@@ -483,9 +520,11 @@ public class NFD {
    *
    * @param forwarder only a localhost {@link Face}
    * @param prefix the {@link Name} prefix
-   * @throws Exception if the command fails
+   * @throws IOException if the network request failed
+   * @throws EncodingException if the NFD response could not be decoded
+   * @throws ManagementException if the NFD rejected the request
    */
-  public static void unsetStrategy(Face forwarder, Name prefix) throws Exception {
+  public static void unsetStrategy(Face forwarder, Name prefix) throws IOException, EncodingException, ManagementException {
     // build command name
     Name command = new Name("/localhost/nfd/strategy-choice/unset");
     ControlParameters parameters = new ControlParameters();
