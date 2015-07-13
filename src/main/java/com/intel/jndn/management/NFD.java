@@ -327,10 +327,13 @@ public class NFD {
   /**
    * Register a route on a forwarder; this will create a new face on the
    * forwarder to the given URI/route pair. See register(Face,
-   * ControlParameters) for more details documentation.
+   * ControlParameters) for more detailed documentation.
    *
    * @param forwarder only a localhost {@link Face}
-   * @param uri the URI (e.g. "tcp4://some.host.com") of the remote node
+   * @param uri the URI (e.g. "tcp4://10.10.2.2:6363") of the remote node; note
+   * that this must be one of the canonical forms described in the wiki
+   * (http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#TCP) for NFD to
+   * accept the registration--otherwise you will see 400 errors
    * @param route the {@link Name} prefix of the route
    * @param cost the numeric cost of forwarding along the route
    * @throws IOException if the network request failed
@@ -348,7 +351,7 @@ public class NFD {
   /**
    * Register a route on a forwarder; this will not create a new face since it
    * is provided a faceId. See register(Face, ControlParameters) for full
-   * documentation
+   * documentation.
    *
    * @param forwarder only a localhost {@link Face}
    * @param faceId the ID of the {@link Face} to assign to the route
@@ -380,7 +383,7 @@ public class NFD {
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
    * for protocol documentation. Ensure the forwarding face is on the local
    * machine (management requests are to /localhost/...) and that command
-   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo()).
    *
    * @param forwarder only a localhost {@link Face}
    * @param controlParameters the {@link ControlParameters} command options
@@ -404,7 +407,7 @@ public class NFD {
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
    * for protocol documentation. Ensure the forwarding face is on the local
    * machine (management requests are to /localhost/...) and that command
-   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo().
    *
    * @param forwarder only a localhost {@link Face}
    * @param route the {@link Name} prefix of the route
@@ -428,7 +431,7 @@ public class NFD {
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
    * for protocol documentation. Ensure the forwarding face is on the local
    * machine (management requests are to /localhost/...) and that command
-   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo().
    *
    * @param forwarder only a localhost {@link Face}
    * @param route the {@link Name} prefix of the route
@@ -455,7 +458,7 @@ public class NFD {
    * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt</a>
    * for protocol documentation. Ensure the forwarding face is on the local
    * machine (management requests are to /localhost/...) and that command
-   * signing has been set up (e.g. forwarder.setCommandSigningInfo()
+   * signing has been set up (e.g. forwarder.setCommandSigningInfo().
    *
    * @param forwarder only a localhost {@link Face}
    * @param route the {@link Name} prefix of the route
