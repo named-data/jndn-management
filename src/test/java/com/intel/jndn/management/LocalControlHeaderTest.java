@@ -14,7 +14,7 @@
 package com.intel.jndn.management;
 
 import com.intel.jndn.management.types.LocalControlHeader;
-import com.intel.jndn.utils.SimpleClient;
+import com.intel.jndn.utils.client.SimpleClient;
 import java.util.logging.Logger;
 import junit.framework.Assert;
 import net.named_data.jndn.Data;
@@ -22,7 +22,6 @@ import net.named_data.jndn.Face;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.security.KeyChain;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test functionality for LocalControlHeader
