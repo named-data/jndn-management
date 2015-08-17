@@ -15,7 +15,7 @@ package com.intel.jndn.management;
 
 import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.FaceStatus;
-import com.intel.jndn.utils.client.SimpleClient;
+import com.intel.jndn.utils.client.impl.SimpleClient;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;

@@ -21,8 +21,8 @@ import com.intel.jndn.management.types.ForwarderStatus;
 import com.intel.jndn.management.types.LocalControlHeader;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.management.types.StrategyChoice;
-import com.intel.jndn.utils.client.SegmentedClient;
-import com.intel.jndn.utils.client.SimpleClient;
+import com.intel.jndn.utils.client.impl.AdvancedClient;
+import com.intel.jndn.utils.client.impl.SimpleClient;
 import java.io.IOException;
 import java.util.List;
 import net.named_data.jndn.ControlParameters;
@@ -573,7 +573,7 @@ public class NFD {
     interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
 
     // send packet
-    Data data = SegmentedClient.getDefault().getSync(forwarder, interest);
+    Data data = AdvancedClient.getDefault().getSync(forwarder, interest);
 
     // check for failed request
     if (data.getContent().buf().get(0) == ControlResponse.TLV_CONTROL_RESPONSE) {

@@ -16,7 +16,7 @@ package com.intel.jndn.management;
 import com.intel.jndn.management.types.StatusDataset;
 import com.intel.jndn.management.types.NextHopRecord;
 import com.intel.jndn.management.types.FibEntry;
-import com.intel.jndn.utils.client.SimpleClient;
+import com.intel.jndn.utils.client.impl.SimpleClient;
 import java.util.List;
 import junit.framework.Assert;
 import net.named_data.jndn.Data;
