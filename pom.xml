@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.intel.jndn.management</groupId>
   <artifactId>jndn-management</artifactId>
-  <version>0.10.2</version>
+  <version>1.0.0</version>
   <name>jndn-management</name>
   <description>Tools for managing an NDN forwarding daemon</description>
   <url>https://github.com/01org/jndn-management</url>
@@ -27,8 +27,8 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
   <dependencies>
     <dependency>
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>com.intel.jndn.mock</groupId>
       <artifactId>jndn-mock</artifactId>
-      <version>RELEASE</version>
+      <version>0.10.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
