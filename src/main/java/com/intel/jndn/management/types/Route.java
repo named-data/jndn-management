@@ -55,7 +55,7 @@ public class Route {
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_ExpirationPeriod, faceId);
-    encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Flags, flags.getForwardingEntryFlags());
+    encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Flags, flags.getNfdForwardingFlags());
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Cost, cost);
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Origin, origin);
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, faceId);
@@ -85,7 +85,7 @@ public class Route {
     this.faceId = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId);
     this.origin = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Origin);
     this.cost = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Cost);
-    this.flags.setForwardingEntryFlags((int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Flags));
+    this.flags.setNfdForwardingFlags((int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Flags));
     this.expirationPeriod = (int) decoder.readOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_ExpirationPeriod, endOffset);
     decoder.finishNestedTlvs(endOffset);
   }
