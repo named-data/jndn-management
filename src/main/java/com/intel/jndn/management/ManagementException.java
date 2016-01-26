@@ -11,11 +11,10 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  */
+
 package com.intel.jndn.management;
 
 import com.intel.jndn.management.types.ControlResponse;
-import net.named_data.jndn.encoding.EncodingException;
-import net.named_data.jndn.util.Blob;
 
 /**
  * Represent a failure to correctly manage the NDN Forwarding Daemon (NFD).
@@ -25,19 +24,15 @@ import net.named_data.jndn.util.Blob;
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class ManagementException extends Exception {
-
   /**
-   *
-   * @param message
+   * Constructor from the message
    */
   public ManagementException(String message) {
     super(message);
   }
 
   /**
-   *
-   * @param message
-   * @param cause
+   * Constructor from the message and the cause
    */
   public ManagementException(String message, Throwable cause) {
     super(message, cause);
@@ -45,26 +40,6 @@ public class ManagementException extends Exception {
 
   /**
    * Parse an NFD response to create a ManagementException.
-   *
-   * @param forwarderResponse
-   * @return
-   */
-  public static ManagementException fromResponse(Blob forwarderResponse) {
-    ControlResponse response = new ControlResponse();
-    try {
-      response.wireDecode(forwarderResponse.buf());
-      String message = "Action failed, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText();
-      return new ManagementException(message);
-    } catch (EncodingException e) {
-      return new ManagementException("Action failed and forwarder response was unparseable.", e);
-    }
-  }
-
-  /**
-   * Parse an NFD response to create a ManagementException.
-   *
-   * @param forwarderResponse
-   * @return
    */
   public static ManagementException fromResponse(ControlResponse response) {
     String message = "Action failed, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText();

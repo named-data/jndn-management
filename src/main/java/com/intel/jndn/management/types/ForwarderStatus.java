@@ -14,31 +14,52 @@
 package com.intel.jndn.management.types;
 
 import java.nio.ByteBuffer;
+
+import com.intel.jndn.management.enums.NfdTlv;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
 /**
- * Represent a ForwarderStatus object from
- * http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus.
+ * Represent a ForwarderStatus object
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class ForwarderStatus implements Decodable {
+  private String nfdVersion = "";
+  private long startTimestamp = 0;
+  private long currentTimestamp = 0;
+  private long nNameTreeEntries = 0;
+  private long nFibEntries = 0;
+  private long nPitEntries = 0;
+  private long nMeasurementEntries = 0;
+  private long nCsEntries = 0;
+  private long nInInterests = 0;
+  private long nInDatas = 0;
+  private long nInNacks = 0;
+  private long nOutInterests = 0;
+  private long nOutDatas = 0;
+  private long nOutNacks = 0;
 
-  public static final int TLV_NFD_VERSION = 0x80;
-  public static final int TLV_START_TIMESTAMP = 0x81;
-  public static final int TLV_CURRENT_TIMESTAMP = 0x82;
-  public static final int TLV_NUM_NAME_TREE_ENTRIES = 0x83;
-  public static final int TLV_NUM_FIB_ENTRIES = 0x84;
-  public static final int TLV_NUM_PIT_ENTRIES = 0x85;
-  public static final int TLV_NUM_MEASUREMENT_ENTRIES = 0x86;
-  public static final int TLV_NUM_CS_ENTRIES = 0x87;
-  public static final int TLV_NUM_IN_INTERESTS = 0x90;
-  public static final int TLV_NUM_IN_DATAS = 0x91;
-  public static final int TLV_NUM_OUT_INTERESTS = 0x92;
-  public static final int TLV_NUM_OUT_DATAS = 0x93;
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Default constructor
+   */
+  public ForwarderStatus() {
+    // nothing to do
+  }
+
+  /**
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
+   */
+  public ForwarderStatus(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
 
   /**
    * Encode using a new TLV encoder.
@@ -53,22 +74,22 @@ public class ForwarderStatus implements Decodable {
 
   /**
    * Encode as part of an existing encode context.
-   *
-   * @param encoder
    */
   public final void wireEncode(TlvEncoder encoder) {
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_OUT_DATAS, numOutDatas);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_OUT_INTERESTS, numOutInterests);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_IN_DATAS, numInDatas);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_IN_INTERESTS, numInInterests);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_CS_ENTRIES, numCsEntries);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_MEASUREMENT_ENTRIES, numMeasurementEntries);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_PIT_ENTRIES, numPitEntries);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_FIB_ENTRIES, numFibEntries);
-    encoder.writeNonNegativeIntegerTlv(TLV_NUM_NAME_TREE_ENTRIES, numNameTreeEntries);
-    encoder.writeNonNegativeIntegerTlv(TLV_CURRENT_TIMESTAMP, currentTimestamp);
-    encoder.writeNonNegativeIntegerTlv(TLV_START_TIMESTAMP, startTimestamp);
-    encoder.writeBlobTlv(TLV_NFD_VERSION, new Blob(nfdVersion).buf());
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutNacks, nOutNacks);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutDatas, nOutDatas);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutInterests, nOutInterests);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInNacks, nInNacks);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInDatas, nInDatas);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInInterests, nInInterests);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NCsEntries, nCsEntries);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NMeasurementsEntries, nMeasurementEntries);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NPitEntries, nPitEntries);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NFibEntries, nFibEntries);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NNameTreeEntries, nNameTreeEntries);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.CurrentTimestamp, currentTimestamp);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.StartTimestamp, startTimestamp);
+    encoder.writeBlobTlv(NfdTlv.NfdVersion, new Blob(nfdVersion).buf());
   }
 
   /**
@@ -84,25 +105,24 @@ public class ForwarderStatus implements Decodable {
   }
 
   /**
-   * Decode as part of an existing decode context.
-   *
-   * @param decoder
-   * @throws EncodingException
+   * Decode as part of an existing decode context
    */
   @Override
   public void wireDecode(TlvDecoder decoder) throws EncodingException {
-    this.nfdVersion = new Blob(decoder.readBlobTlv(TLV_NFD_VERSION), true).toString();
-    this.startTimestamp = decoder.readNonNegativeIntegerTlv(TLV_START_TIMESTAMP);
-    this.currentTimestamp = decoder.readNonNegativeIntegerTlv(TLV_CURRENT_TIMESTAMP);
-    this.numNameTreeEntries = decoder.readNonNegativeIntegerTlv(TLV_NUM_NAME_TREE_ENTRIES);
-    this.numFibEntries = decoder.readNonNegativeIntegerTlv(TLV_NUM_FIB_ENTRIES);
-    this.numPitEntries = decoder.readNonNegativeIntegerTlv(TLV_NUM_PIT_ENTRIES);
-    this.numMeasurementEntries = decoder.readNonNegativeIntegerTlv(TLV_NUM_MEASUREMENT_ENTRIES);
-    this.numCsEntries = decoder.readNonNegativeIntegerTlv(TLV_NUM_CS_ENTRIES);
-    this.numInInterests = decoder.readNonNegativeIntegerTlv(TLV_NUM_IN_INTERESTS);
-    this.numInDatas = decoder.readNonNegativeIntegerTlv(TLV_NUM_IN_DATAS);
-    this.numOutInterests = decoder.readNonNegativeIntegerTlv(TLV_NUM_OUT_INTERESTS);
-    this.numOutDatas = decoder.readNonNegativeIntegerTlv(TLV_NUM_OUT_DATAS);
+    this.nfdVersion = new Blob(decoder.readBlobTlv(NfdTlv.NfdVersion), true).toString();
+    this.startTimestamp = decoder.readNonNegativeIntegerTlv(NfdTlv.StartTimestamp);
+    this.currentTimestamp = decoder.readNonNegativeIntegerTlv(NfdTlv.CurrentTimestamp);
+    this.nNameTreeEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NNameTreeEntries);
+    this.nFibEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NFibEntries);
+    this.nPitEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NPitEntries);
+    this.nMeasurementEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NMeasurementsEntries);
+    this.nCsEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NCsEntries);
+    this.nInInterests = decoder.readNonNegativeIntegerTlv(NfdTlv.NInInterests);
+    this.nInDatas = decoder.readNonNegativeIntegerTlv(NfdTlv.NInDatas);
+    this.nInNacks = decoder.readNonNegativeIntegerTlv(NfdTlv.NInNacks);
+    this.nOutInterests = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutInterests);
+    this.nOutDatas = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutDatas);
+    this.nOutNacks = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutNacks);
   }
 
   public String getNfdVersion() {
@@ -129,88 +149,91 @@ public class ForwarderStatus implements Decodable {
     this.currentTimestamp = currentTimestamp;
   }
 
-  public long getNumNameTreeEntries() {
-    return numNameTreeEntries;
+  public long getNNameTreeEntries() {
+    return nNameTreeEntries;
   }
 
-  public void setNumNameTreeEntries(long numNameTreeEntries) {
-    this.numNameTreeEntries = numNameTreeEntries;
+  public void setNNameTreeEntries(long nNameTreeEntries) {
+    this.nNameTreeEntries = nNameTreeEntries;
   }
 
-  public long getNumFibEntries() {
-    return numFibEntries;
+  public long getNFibEntries() {
+    return nFibEntries;
   }
 
-  public void setNumFibEntries(long numFibEntries) {
-    this.numFibEntries = numFibEntries;
+  public void setNFibEntries(long nFibEntries) {
+    this.nFibEntries = nFibEntries;
   }
 
-  public long getNumPitEntries() {
-    return numPitEntries;
+  public long getNPitEntries() {
+    return nPitEntries;
   }
 
-  public void setNumPitEntries(long numPitEntries) {
-    this.numPitEntries = numPitEntries;
+  public void setNPitEntries(long nPitEntries) {
+    this.nPitEntries = nPitEntries;
   }
 
-  public long getNumMeasurementEntries() {
-    return numMeasurementEntries;
+  public long getNMeasurementsEntries() {
+    return nMeasurementEntries;
   }
 
-  public void setNumMeasurementEntries(long numMeasurementEntries) {
-    this.numMeasurementEntries = numMeasurementEntries;
+  public void setNMeasurementsEntries(long nMeasurementEntries) {
+    this.nMeasurementEntries = nMeasurementEntries;
   }
 
-  public long getNumCsEntries() {
-    return numCsEntries;
+  public long getNCsEntries() {
+    return nCsEntries;
   }
 
-  public void setNumCsEntries(long numCsEntries) {
-    this.numCsEntries = numCsEntries;
+  public void setNCsEntries(long nCsEntries) {
+    this.nCsEntries = nCsEntries;
   }
 
-  public long getNumInInterests() {
-    return numInInterests;
+  public long getNInInterests() {
+    return nInInterests;
   }
 
-  public void setNumInInterests(long numInInterests) {
-    this.numInInterests = numInInterests;
+  public void setNInInterests(long nInInterests) {
+    this.nInInterests = nInInterests;
   }
 
-  public long getNumInDatas() {
-    return numInDatas;
+  public long getNInDatas() {
+    return nInDatas;
   }
 
-  public void setNumInDatas(long numInDatas) {
-    this.numInDatas = numInDatas;
+  public void setNInDatas(long nInDatas) {
+    this.nInDatas = nInDatas;
   }
 
-  public long getNumOutInterests() {
-    return numOutInterests;
+  public long getNOutInterests() {
+    return nOutInterests;
   }
 
-  public void setNumOutInterests(long numOutInterests) {
-    this.numOutInterests = numOutInterests;
+  public void setNOutInterests(long nOutInterests) {
+    this.nOutInterests = nOutInterests;
   }
 
-  public long getNumOutDatas() {
-    return numOutDatas;
+  public long getNOutDatas() {
+    return nOutDatas;
   }
 
-  public void setNumOutDatas(long numOutDatas) {
-    this.numOutDatas = numOutDatas;
+  public void setNOutDatas(long nOutDatas) {
+    this.nOutDatas = nOutDatas;
   }
 
-  private String nfdVersion = "";
-  private long startTimestamp;
-  private long currentTimestamp;
-  private long numNameTreeEntries;
-  private long numFibEntries;
-  private long numPitEntries;
-  private long numMeasurementEntries;
-  private long numCsEntries;
-  private long numInInterests;
-  private long numInDatas;
-  private long numOutInterests;
-  private long numOutDatas;
+  public long getNInNacks() {
+    return nInNacks;
+  }
+
+  public void setNInNacks(long nInNacks) {
+    this.nInNacks = nInNacks;
+  }
+
+  public long getNOutNacks() {
+    return nOutNacks;
+  }
+
+  public void setNOutNacks(long nOutNacks) {
+    this.nOutNacks = nOutNacks;
+  }
 }

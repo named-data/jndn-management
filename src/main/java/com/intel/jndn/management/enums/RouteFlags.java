@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015, Intel Corporation.
+ * Copyright (c) 2015-2016, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -11,26 +11,26 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  */
-package com.intel.jndn.management.types;
+package com.intel.jndn.management.enums;
 
 /**
- * Indicate whether the face is local for scope control purposes; used by
- * FaceStatus See
- * <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">http://redmine.named-data.net/projects/nfd/widi/FaceMgmt</a>
- *
- * @author andrew
+ * NFD route flags
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RibMgmt</a>
  */
-public enum FaceScope {
+public enum RouteFlags {
+  NONE          (0),
+  CHILD_INHERIT (1),
+  CAPTURE       (2);
 
-  LOCAL(0),
-  NON_LOCAL(1);
+  private final int value;
 
-  FaceScope(int value) {
-    value_ = value;
+  /////////////////////////////////////////////////////////////////////////////
+
+  RouteFlags(int value) {
+    this.value = value;
   }
 
-  public final int getNumericValue() {
-    return value_;
+  public final int toInteger() {
+    return value;
   }
-  private final int value_;
 }

@@ -13,10 +13,13 @@
  */
 package com.intel.jndn.management.types;
 
-import com.intel.jndn.management.EncodingHelper;
+import com.intel.jndn.management.helpers.EncodingHelper;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
+import com.intel.jndn.management.enums.NfdTlv;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
@@ -24,14 +27,32 @@ import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
 /**
- * Represent a FibEntry returned from /localhost/nfd/fib/list; see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset</a>
+ * Represent a FibEntry returned from /localhost/nfd/fib/list
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">FIB Dataset</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class FibEntry implements Decodable {
+  private Name name = new Name();
+  private List<NextHopRecord> records = new ArrayList<>();
 
-  public final static int TLV_FIB_ENTRY = 128;
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Default constructor
+   */
+  public FibEntry() {
+    // nothing to do
+  }
+
+  /**
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
+   */
+  public FibEntry(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
 
   /**
    * Encode using a new TLV encoder.
@@ -45,24 +66,23 @@ public class FibEntry implements Decodable {
   }
 
   /**
-   * Encode as part of an existing encode context.
-   *
-   * @param encoder
+   * Encode as part of an existing encode context
    */
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
-    for (NextHopRecord record : records) {
-      record.wireEncode(encoder);
+    ListIterator<NextHopRecord> nh = records.listIterator(records.size());
+    while (nh.hasPrevious()) {
+      nh.previous().wireEncode(encoder);
     }
     EncodingHelper.encodeName(name, encoder);
-    encoder.writeTypeAndLength(TLV_FIB_ENTRY, encoder.getLength() - saveLength);
+    encoder.writeTypeAndLength(NfdTlv.FibEntry, encoder.getLength() - saveLength);
   }
 
   /**
    * Decode the input from its TLV format.
    *
    * @param input The input buffer to decode. This reads from position() to
-   * limit(), but does not change the position.
+   *              limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
   public final void wireDecode(ByteBuffer input) throws EncodingException {
@@ -71,14 +91,11 @@ public class FibEntry implements Decodable {
   }
 
   /**
-   * Decode as part of an existing decode context.
-   *
-   * @param decoder
-   * @throws EncodingException
+   * Decode as part of an existing decode context
    */
   @Override
   public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_FIB_ENTRY);
+    int endOffset = decoder.readNestedTlvsStart(NfdTlv.FibEntry);
     name = EncodingHelper.decodeName(decoder);
     while (decoder.getOffset() < endOffset) {
       NextHopRecord record = new NextHopRecord();
@@ -90,40 +107,36 @@ public class FibEntry implements Decodable {
 
   /**
    * Get name
-   *
-   * @return
    */
-  public Name getName() {
+  public Name getPrefix() {
     return name;
   }
 
   /**
    * Set name
-   *
-   * @param name
    */
-  public void setName(Name name) {
+  public FibEntry setPrefix(Name name) {
     this.name = name;
+    return this;
   }
 
   /**
    * Get records
-   *
-   * @return
    */
-  public List<NextHopRecord> getRecords() {
+  public List<NextHopRecord> getNextHopRecords() {
     return records;
   }
 
   /**
    * Set records
-   *
-   * @param records
    */
-  public void setRecords(List<NextHopRecord> records) {
+  public FibEntry setNextHopRecords(List<NextHopRecord> records) {
     this.records = records;
+    return this;
   }
 
-  private Name name = new Name();
-  private List<NextHopRecord> records = new ArrayList<>();
+  public FibEntry addNextHopRecord(NextHopRecord record) {
+    this.records.add(record);
+    return this;
+  }
 }

@@ -14,6 +14,8 @@
 package com.intel.jndn.management.types;
 
 import java.nio.ByteBuffer;
+
+import com.intel.jndn.management.enums.NfdTlv;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.Tlv;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
@@ -21,19 +23,37 @@ import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
 /**
- * Represent a NextHopRecord in a FibEntry; see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset</a>
+ * Represent a NextHopRecord in a FibEntry
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">FIB Dataset</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class NextHopRecord {
+  private int faceId;
+  private int cost;
 
-  public final static int TLV_NEXT_HOP_RECORD = 129;
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Encode using a new TLV encoder.
+   * Default constructor
+   */
+  public NextHopRecord() {
+    // nothing to do
+  }
+
+  /**
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
+   */
+  public NextHopRecord(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
+
+  /**
+   * Encode using a new TLV encoder
    *
-   * @return The encoded buffer.
+   * @return The encoded buffer
    */
   public final Blob wireEncode() {
     TlvEncoder encoder = new TlvEncoder();
@@ -42,15 +62,13 @@ public class NextHopRecord {
   }
 
   /**
-   * Encode as part of an existing encode context.
-   *
-   * @param encoder
+   * Encode as part of an existing encode context
    */
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Cost, cost);
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, faceId);
-    encoder.writeTypeAndLength(TLV_NEXT_HOP_RECORD, encoder.getLength() - saveLength);
+    encoder.writeTypeAndLength(NfdTlv.NextHopRecord, encoder.getLength() - saveLength);
   }
 
   /**
@@ -66,13 +84,10 @@ public class NextHopRecord {
   }
 
   /**
-   * Decode as part of an existing decode context.
-   *
-   * @param decoder
-   * @throws EncodingException
+   * Decode as part of an existing decode context
    */
   public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_NEXT_HOP_RECORD);
+    int endOffset = decoder.readNestedTlvsStart(NfdTlv.NextHopRecord);
     this.faceId = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId);
     this.cost = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Cost);
     decoder.finishNestedTlvs(endOffset);
@@ -80,8 +95,6 @@ public class NextHopRecord {
 
   /**
    * Get face ID
-   *
-   * @return
    */
   public int getFaceId() {
     return faceId;
@@ -89,8 +102,6 @@ public class NextHopRecord {
 
   /**
    * Set face ID
-   *
-   * @param faceId
    */
   public void setFaceId(int faceId) {
     this.faceId = faceId;
@@ -98,8 +109,6 @@ public class NextHopRecord {
 
   /**
    * Get cost
-   *
-   * @return
    */
   public int getCost() {
     return cost;
@@ -107,13 +116,8 @@ public class NextHopRecord {
 
   /**
    * Set cost
-   *
-   * @param cost
    */
   public void setCost(int cost) {
     this.cost = cost;
   }
-
-  private int faceId;
-  private int cost;
 }

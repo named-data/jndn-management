@@ -55,7 +55,6 @@ configurations {
 
 dependencies {
   compile 'net.named-data:jndn:0.10'
-  compile 'com.intel.jndn.utils:jndn-utils:1.0.0'
 
   testCompile 'junit:junit:4.12'
   testCompile 'com.intel.jndn.mock:jndn-mock:1.0.1'

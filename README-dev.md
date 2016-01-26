@@ -43,7 +43,7 @@ To run unit tests:
 To run a specific test or test case, use `--tests=<test-name>[.<test-case>]` command-line option. For example,
 
     ./gradlew test --tests *FaceStatusTest
-    ./gradlew test --tests *FaceStatusTest.Encode
+    ./gradlew test --tests *FaceStatusTest.testEncode
 
 ### Integration Tests
 

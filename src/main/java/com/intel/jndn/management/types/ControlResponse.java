@@ -13,7 +13,7 @@
  */
 package com.intel.jndn.management.types;
 
-import com.intel.jndn.management.EncodingHelper;
+import com.intel.jndn.management.helpers.EncodingHelper;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;

@@ -13,28 +13,47 @@
  */
 package com.intel.jndn.management.types;
 
-import net.named_data.jndn.encoding.tlv.Tlv;
 import java.nio.ByteBuffer;
-import net.named_data.jndn.ForwardingFlags;
+
+import com.intel.jndn.management.enums.NfdTlv;
+import com.intel.jndn.management.enums.RouteFlags;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
 /**
- * Represent a Route object from /localhost/nfd/rib/list; see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset</a>
- * for details.
+ * Represent a Route object from /localhost/nfd/rib/list
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class Route {
+  public static final int INFINITE_EXPIRATION_PERIOD = -1;
+
+  private int faceId = -1;
+  private int origin = -1;
+  private int cost = -1;
+  private int flags = RouteFlags.CHILD_INHERIT.toInteger();
+  private int expirationPeriod = INFINITE_EXPIRATION_PERIOD;
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * TLV type, see
-   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments</a>
+   * Default constructor
    */
-  public final static int TLV_ROUTE = 129;
+  public Route() {
+    // nothing to do
+  }
+
+  /**
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
+   */
+  public Route(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
 
   /**
    * Encode using a new TLV encoder.
@@ -54,19 +73,19 @@ public class Route {
    */
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
-    encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_ExpirationPeriod, faceId);
-    encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Flags, flags.getNfdForwardingFlags());
-    encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Cost, cost);
-    encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Origin, origin);
-    encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, faceId);
-    encoder.writeTypeAndLength(TLV_ROUTE, encoder.getLength() - saveLength);
+    encoder.writeOptionalNonNegativeIntegerTlv(NfdTlv.ExpirationPeriod, expirationPeriod);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.Flags, flags);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.Cost, cost);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.Origin, origin);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.FaceId, faceId);
+    encoder.writeTypeAndLength(NfdTlv.Route, encoder.getLength() - saveLength);
   }
 
   /**
    * Decode the input from its TLV format.
    *
    * @param input The input buffer to decode. This reads from position() to
-   * limit(), but does not change the position.
+   *              limit(), but does not change the position.
    * @throws net.named_data.jndn.encoding.EncodingException
    */
   public final void wireDecode(ByteBuffer input) throws EncodingException {
@@ -81,19 +100,17 @@ public class Route {
    * @throws EncodingException
    */
   public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_ROUTE);
-    this.faceId = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId);
-    this.origin = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Origin);
-    this.cost = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Cost);
-    this.flags.setNfdForwardingFlags((int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Flags));
-    this.expirationPeriod = (int) decoder.readOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_ExpirationPeriod, endOffset);
+    int endOffset = decoder.readNestedTlvsStart(NfdTlv.Route);
+    this.faceId = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.FaceId);
+    this.origin = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.Origin);
+    this.cost = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.Cost);
+    this.flags = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.Flags);
+    this.expirationPeriod = (int) decoder.readOptionalNonNegativeIntegerTlv(NfdTlv.ExpirationPeriod, endOffset);
     decoder.finishNestedTlvs(endOffset);
   }
 
   /**
    * Get Face ID
-   *
-   * @return
    */
   public int getFaceId() {
     return faceId;
@@ -101,17 +118,14 @@ public class Route {
 
   /**
    * Set Face ID
-   *
-   * @param faceId
    */
-  public void setFaceId(int faceId) {
+  public Route setFaceId(int faceId) {
     this.faceId = faceId;
+    return this;
   }
 
   /**
    * Get origin
-   *
-   * @return
    */
   public int getOrigin() {
     return origin;
@@ -119,17 +133,14 @@ public class Route {
 
   /**
    * Set origin
-   *
-   * @param origin
    */
-  public void setOrigin(int origin) {
+  public Route setOrigin(int origin) {
     this.origin = origin;
+    return this;
   }
 
   /**
    * Get cost
-   *
-   * @return
    */
   public int getCost() {
     return cost;
@@ -137,38 +148,38 @@ public class Route {
 
   /**
    * Set cost
-   *
-   * @param cost
    */
-  public void setCost(int cost) {
+  public Route setCost(int cost) {
     this.cost = cost;
+    return this;
   }
 
   /**
    * Get flags
-   *
-   * @return
    */
-  public ForwardingFlags getFlags() {
+  public int getFlags() {
     return flags;
   }
 
   /**
    * Set flags
-   *
-   * @param flags
    */
-  public void setFlags(ForwardingFlags flags) {
+  public void setFlags(int flags) {
     this.flags = flags;
   }
 
   /**
-   * Get expiration period
-   *
-   * @return
+   * Get expiration period (in milliseconds)
    */
-  public double getExpirationPeriod() {
+  public int getExpirationPeriod() {
     return expirationPeriod;
+  }
+
+  /**
+   * Check if route should not expire
+   */
+  public boolean hasInfiniteExpirationPeriod() {
+    return expirationPeriod < 0;
   }
 
   /**
@@ -176,13 +187,29 @@ public class Route {
    *
    * @param expirationPeriod
    */
-  public void setExpirationPeriod(double expirationPeriod) {
+  public void setExpirationPeriod(int expirationPeriod) {
     this.expirationPeriod = expirationPeriod;
   }
 
-  private int faceId = -1;
-  private int origin = -1;
-  private int cost = -1;
-  private ForwardingFlags flags = new ForwardingFlags();
-  private double expirationPeriod = -1.0;
+  /**
+   * Get human-readable representation of Route
+   */
+  @Override
+  public String toString() {
+    StringBuilder out = new StringBuilder();
+    out.append("Route(");
+    out.append("FaceId: "); out.append(getFaceId()); out.append(", ");
+    out.append("Origin: "); out.append(getOrigin()); out.append(", ");
+    out.append("Cost: "); out.append(getCost()); out.append(", ");
+    out.append("Flags: "); out.append(getFlags()); out.append(", ");
+
+    if (!hasInfiniteExpirationPeriod()) {
+      out.append("ExpirationPeriod: "); out.append(getExpirationPeriod()); out.append(" milliseconds");
+    }
+    else {
+      out.append("ExpirationPeriod: Infinity");
+    }
+    out.append(")");
+    return out.toString();
+  }
 }

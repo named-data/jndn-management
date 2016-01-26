@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015, Intel Corporation.
+ * Copyright (c) 2015-2016, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -11,9 +11,11 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  */
-package com.intel.jndn.management;
+package com.intel.jndn.management.helpers;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
 import net.named_data.jndn.ControlParameters;
 import net.named_data.jndn.ForwardingFlags;
 import net.named_data.jndn.Name;
@@ -195,5 +197,15 @@ public class EncodingHelper {
     }
 
     encoder.writeTypeAndLength(Tlv.ControlParameters_ControlParameters, encoder.getLength() - saveLength);
+  }
+
+  /**
+   * Convert ByteBuffer to string, assuming UTF-8 encoding in the buffer
+   */
+  public static String
+  toString(ByteBuffer buffer) {
+    byte[] array = new byte[buffer.remaining()];
+    buffer.get(array);
+    return new String(array, Charset.forName("UTF-8"));
   }
 }

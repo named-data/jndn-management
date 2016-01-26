@@ -13,8 +13,10 @@
  */
 package com.intel.jndn.management.types;
 
-import com.intel.jndn.management.EncodingHelper;
+import com.intel.jndn.management.helpers.EncodingHelper;
 import java.nio.ByteBuffer;
+
+import com.intel.jndn.management.enums.NfdTlv;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
@@ -23,17 +25,31 @@ import net.named_data.jndn.util.Blob;
 
 /**
  * Represent a strategy choice entry.
- *
- * @see http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice">StrategyChoice</a>
+
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class StrategyChoice implements Decodable {
+  private Name name;
+  private Name strategy;
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * TLV type, see
-   * <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#TLV-TYPE-assignments">http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#TLV-TYPE-assignments</a>
+   * Default constructor
    */
-  public final static int TLV_STRATEGY_CHOICE = 128;
+  public StrategyChoice() {
+    // nothing to do
+  }
+
+  /**
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
+   */
+  public StrategyChoice(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
 
   /**
    * Encode using a new TLV encoder.
@@ -55,7 +71,7 @@ public class StrategyChoice implements Decodable {
     int saveLength = encoder.getLength();
     EncodingHelper.encodeStrategy(strategy, encoder);
     EncodingHelper.encodeName(name, encoder);
-    encoder.writeTypeAndLength(TLV_STRATEGY_CHOICE, encoder.getLength() - saveLength);
+    encoder.writeTypeAndLength(NfdTlv.StrategyChoice, encoder.getLength() - saveLength);
   }
 
   /**
@@ -78,7 +94,7 @@ public class StrategyChoice implements Decodable {
    */
   @Override
   public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_STRATEGY_CHOICE);
+    int endOffset = decoder.readNestedTlvsStart(NfdTlv.StrategyChoice);
     name = EncodingHelper.decodeName(decoder);
     strategy = EncodingHelper.decodeStrategy(decoder);
     decoder.finishNestedTlvs(endOffset);
@@ -101,17 +117,16 @@ public class StrategyChoice implements Decodable {
   /**
    * @param name the {@link Name} to set
    */
-  public void setName(Name name) {
+  public StrategyChoice setName(Name name) {
     this.name = name;
+    return this;
   }
 
   /**
    * @param strategy the {@link Name} to set
    */
-  public void setStrategy(Name strategy) {
+  public StrategyChoice setStrategy(Name strategy) {
     this.strategy = strategy;
+    return this;
   }
-
-  private Name name;
-  private Name strategy;
 }

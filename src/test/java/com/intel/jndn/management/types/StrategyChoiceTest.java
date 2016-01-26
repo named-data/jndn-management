@@ -11,41 +11,53 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  */
-package com.intel.jndn.management.types;
+package com.intel.jndn.management;
 
-import com.intel.jndn.management.Strategies;
-import junit.framework.Assert;
+import com.intel.jndn.management.types.StrategyChoice;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
-import net.named_data.jndn.util.Blob;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- * Test StrategyCHoice encoding/decoding
+ * Test StrategyChoice encoding/decoding
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class StrategyChoiceTest {
+  ByteBuffer TestStrategyChoice;
 
-  /**
-   * Test of wireEncode method, of class StrategyChoice.
-   * @throws net.named_data.jndn.encoding.EncodingException
-   */
+  @Before
+  public void setUp() throws Exception {
+    TestStrategyChoice = TestHelper.bufferFromIntArray(new int[] {
+      0x80, 0x39, 0x07, 0x0e, 0x08, 0x05, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x08, 0x05, 0x77,
+      0x6f, 0x72, 0x6c, 0x64, 0x6b, 0x27, 0x07, 0x25, 0x08, 0x04, 0x73, 0x6f, 0x6d, 0x65,
+      0x08, 0x03, 0x6e, 0x6f, 0x6e, 0x08, 0x08, 0x65, 0x78, 0x69, 0x73, 0x74, 0x69, 0x6e,
+      0x67, 0x08, 0x08, 0x73, 0x74, 0x72, 0x61, 0x74, 0x65, 0x67, 0x79, 0x08, 0x04, 0x6e,
+      0x61, 0x6d, 0x65
+    });
+  }
+
   @Test
-  public void testEncodeDecode() throws EncodingException {
-    StrategyChoice choice = new StrategyChoice();
-    choice.setName(new Name("/a/b"));
-    choice.setStrategy(Strategies.NCC);
+  public void testEncode() {
+    StrategyChoice strategyChoice = new StrategyChoice();
+    strategyChoice
+      .setName(new Name("/hello/world"))
+      .setStrategy(new Name("/some/non/existing/strategy/name"))
+    ;
 
-    // encode
-    Blob encoded = choice.wireEncode();
+    ByteBuffer wire = strategyChoice.wireEncode().buf();
+    assertEquals(TestStrategyChoice, wire);
+  }
 
-    // decode
-    StrategyChoice decoded = new StrategyChoice();
-    decoded.wireDecode(encoded.buf());
-
-    // test
-    Assert.assertEquals(choice.getName().toUri(), decoded.getName().toUri());
-    Assert.assertEquals(choice.getStrategy().toUri(), decoded.getStrategy().toUri());
+  @Test
+  public void testDecode() throws EncodingException {
+    StrategyChoice strategyChoice = new StrategyChoice(TestStrategyChoice);
+    assertEquals("/hello/world", strategyChoice.getName().toUri());
+    assertEquals("/some/non/existing/strategy/name", strategyChoice.getStrategy().toUri());
   }
 }

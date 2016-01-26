@@ -14,44 +14,59 @@
 package com.intel.jndn.management.types;
 
 import java.nio.ByteBuffer;
+import com.intel.jndn.management.enums.NfdTlv;
+import com.intel.jndn.management.enums.FacePersistency;
+import com.intel.jndn.management.enums.FaceScope;
+import com.intel.jndn.management.enums.LinkType;
+import com.intel.jndn.management.helpers.EncodingHelper;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
 /**
- * Represent a FaceStatus object from /localhost/nfd/faces/list; see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt</a>
- * for details
+ * Represent a FaceStatus object from /localhost/nfd/faces/list
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class FaceStatus implements Decodable {
+  private int faceId = 0;
+  private String remoteUri = "";
+  private String localUri = "";
+  private FaceScope faceScope = FaceScope.LOCAL;
+  private FacePersistency facePersistency = FacePersistency.PERSISTENT;
+  private LinkType linkType = LinkType.POINT_TO_POINT;
+
+  private int expirationPeriod = 0;
+  private int inInterests = 0;
+  private int inDatas = 0;
+  private int inNacks = 0;
+
+  private int outInterests = 0;
+  private int outDatas = 0;
+  private int outNacks = 0;
+
+  private int inBytes = 0;
+  private int outBytes = 0;
+
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Spec from
-   * <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand">http://redmine.named-data.net/projects/nfd/wiki/ControlCommand</a>
+   * Default constructor
    */
-  public static final int TLV_FACE_ID = 105;
-  public static final int TLV_URI = 114;
-  public static final int TLV_EXPIRATION_PERIOD = 109;
+  public FaceStatus() {
+    // nothing to do
+  }
 
   /**
-   * Spec from
-   * <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">http://redmine.named-data.net/projects/nfd/widi/FaceMgmt</a>
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
    */
-  public static final int TLV_FACE_STATUS = 128;
-  public static final int TLV_LOCAL_URI = 129;
-  public static final int TLV_CHANNEL_STATUS = 130;
-  public static final int TLV_FACE_SCOPE = 132;
-  public static final int TLV_FACE_PERSISTENCY = 133;
-  public static final int TLV_LINK_TYPE = 134;
-  public static final int TLV_N_IN_INTERESTS = 144;
-  public static final int TLV_N_IN_DATAS = 145;
-  public static final int TLV_N_OUT_INTERESTS = 146;
-  public static final int TLV_N_OUT_DATAS = 147;
-  public static final int TLV_N_IN_BYTES = 148;
-  public static final int TLV_N_OUT_BYTES = 149;
+  public FaceStatus(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
 
   /**
    * Encode using a new TLV encoder.
@@ -65,33 +80,38 @@ public class FaceStatus implements Decodable {
   }
 
   /**
-   * Encode as part of an existing encode context.
-   *
-   * @param encoder
+   * Encode as part of an existing encode context
    */
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
-    encoder.writeNonNegativeIntegerTlv(TLV_N_OUT_BYTES, outBytes);
-    encoder.writeNonNegativeIntegerTlv(TLV_N_IN_BYTES, inBytes);
-    encoder.writeNonNegativeIntegerTlv(TLV_N_OUT_DATAS, outDatas);
-    encoder.writeNonNegativeIntegerTlv(TLV_N_OUT_INTERESTS, outInterests);
-    encoder.writeNonNegativeIntegerTlv(TLV_N_IN_DATAS, inDatas);
-    encoder.writeNonNegativeIntegerTlv(TLV_N_IN_INTERESTS, inInterests);
-    encoder.writeNonNegativeIntegerTlv(TLV_LINK_TYPE, linkType.getNumericValue());
-    encoder.writeNonNegativeIntegerTlv(TLV_FACE_PERSISTENCY, facePersistency.getNumericValue());
-    encoder.writeNonNegativeIntegerTlv(TLV_FACE_SCOPE, faceScope.getNumericValue());
-    encoder.writeOptionalNonNegativeIntegerTlv(TLV_EXPIRATION_PERIOD, expirationPeriod);
-    encoder.writeBlobTlv(TLV_LOCAL_URI, new Blob(localUri).buf());
-    encoder.writeBlobTlv(TLV_URI, new Blob(uri).buf());
-    encoder.writeNonNegativeIntegerTlv(TLV_FACE_ID, faceId);
-    encoder.writeTypeAndLength(TLV_FACE_STATUS, encoder.getLength() - saveLength);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutBytes, outBytes);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInBytes, inBytes);
+
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutNacks, outNacks);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutDatas, outDatas);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutInterests, outInterests);
+
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInNacks, inNacks);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInDatas, inDatas);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInInterests, inInterests);
+
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.LinkType, linkType.toInteger());
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.FacePersistency, facePersistency.toInteger());
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.FaceScope, faceScope.toInteger());
+
+    encoder.writeOptionalNonNegativeIntegerTlv(NfdTlv.ExpirationPeriod, expirationPeriod);
+    encoder.writeBlobTlv(NfdTlv.LocalUri, new Blob(localUri).buf());
+    encoder.writeBlobTlv(NfdTlv.Uri, new Blob(remoteUri).buf());
+
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.FaceId, faceId);
+    encoder.writeTypeAndLength(NfdTlv.FaceStatus, encoder.getLength() - saveLength);
   }
 
   /**
    * Decode the input from its TLV format.
    *
    * @param input The input buffer to decode. This reads from position() to
-   * limit(), but does not change the position.
+   *              limit(), but does not change the position.
    * @throws net.named_data.jndn.encoding.EncodingException
    */
   public final void wireDecode(ByteBuffer input) throws EncodingException {
@@ -100,37 +120,38 @@ public class FaceStatus implements Decodable {
   }
 
   /**
-   * Decode as part of an existing decode context.
-   *
-   * @param decoder
-   * @throws EncodingException
+   * Decode as part of an existing decode context
    */
   @Override
   public void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_FACE_STATUS);
+    int endOffset = decoder.readNestedTlvsStart(NfdTlv.FaceStatus);
     // parse
-    this.faceId = (int) decoder.readNonNegativeIntegerTlv(TLV_FACE_ID);
-    Blob uri_ = new Blob(decoder.readBlobTlv(TLV_URI), true); // copy because buffer is immutable
-    this.uri = uri_.toString();
-    Blob localUri_ = new Blob(decoder.readBlobTlv(TLV_LOCAL_URI), true); // copy because buffer is immutable
-    this.localUri = localUri_.toString();
-    this.expirationPeriod = (int) decoder.readOptionalNonNegativeIntegerTlv(TLV_EXPIRATION_PERIOD, endOffset);
-    this.faceScope = FaceScope.values()[(int) decoder.readNonNegativeIntegerTlv(TLV_FACE_SCOPE)];
-    this.facePersistency = FacePersistency.values()[(int) decoder.readNonNegativeIntegerTlv(TLV_FACE_PERSISTENCY)];
-    this.linkType = LinkType.values()[(int) decoder.readNonNegativeIntegerTlv(TLV_LINK_TYPE)];
-    this.inInterests = (int) decoder.readNonNegativeIntegerTlv(TLV_N_IN_INTERESTS);
-    this.inDatas = (int) decoder.readNonNegativeIntegerTlv(TLV_N_IN_DATAS);
-    this.outInterests = (int) decoder.readNonNegativeIntegerTlv(TLV_N_OUT_INTERESTS);
-    this.outDatas = (int) decoder.readNonNegativeIntegerTlv(TLV_N_OUT_DATAS);
-    this.inBytes = (int) decoder.readNonNegativeIntegerTlv(TLV_N_IN_BYTES);
-    this.outBytes = (int) decoder.readNonNegativeIntegerTlv(TLV_N_OUT_BYTES);
+    this.faceId = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.FaceId);
+
+    this.remoteUri = EncodingHelper.toString(decoder.readBlobTlv(NfdTlv.Uri));
+    this.localUri = EncodingHelper.toString(decoder.readBlobTlv(NfdTlv.LocalUri));
+
+    this.expirationPeriod = (int) decoder.readOptionalNonNegativeIntegerTlv(NfdTlv.ExpirationPeriod, endOffset);
+    this.faceScope = FaceScope.fromInteger((int) decoder.readNonNegativeIntegerTlv(NfdTlv.FaceScope));
+    this.facePersistency = FacePersistency.fromInteger((int) decoder.readNonNegativeIntegerTlv(NfdTlv.FacePersistency));
+    this.linkType = LinkType.fromInteger((int) decoder.readNonNegativeIntegerTlv(NfdTlv.LinkType));
+
+    this.inInterests = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NInInterests);
+    this.inDatas = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NInDatas);
+    this.inNacks = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NInNacks);
+
+    this.outInterests = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NOutInterests);
+    this.outDatas = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NOutDatas);
+    this.outNacks = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NOutNacks);
+
+    this.inBytes = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NInBytes);
+    this.outBytes = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.NOutBytes);
+
     decoder.finishNestedTlvs(endOffset);
   }
 
   /**
    * Get face ID
-   *
-   * @return
    */
   public int getFaceId() {
     return faceId;
@@ -138,35 +159,29 @@ public class FaceStatus implements Decodable {
 
   /**
    * Set face ID
-   *
-   * @param faceId
    */
-  public void setFaceId(int faceId) {
+  public FaceStatus setFaceId(int faceId) {
     this.faceId = faceId;
+    return this;
   }
 
   /**
    * Get face ID
-   *
-   * @return
    */
-  public String getUri() {
-    return uri;
+  public String getRemoteUri() {
+    return remoteUri;
   }
 
   /**
    * Set URI
-   *
-   * @param uri
    */
-  public void setUri(String uri) {
-    this.uri = uri;
+  public FaceStatus setRemoteUri(String uri) {
+    this.remoteUri = uri;
+    return this;
   }
 
   /**
    * Get face ID
-   *
-   * @return
    */
   public String getLocalUri() {
     return localUri;
@@ -174,17 +189,21 @@ public class FaceStatus implements Decodable {
 
   /**
    * Set local URI
-   *
-   * @param localUri
    */
-  public void setLocalUri(String localUri) {
+  public FaceStatus setLocalUri(String localUri) {
     this.localUri = localUri;
+    return this;
+  }
+
+  /**
+   * Check if Face has expiration period set
+   */
+  public boolean hasExpirationPeriod() {
+    return expirationPeriod > 0;
   }
 
   /**
    * Get expiration period
-   *
-   * @return
    */
   public int getExpirationPeriod() {
     return expirationPeriod;
@@ -192,17 +211,14 @@ public class FaceStatus implements Decodable {
 
   /**
    * Set expiration period
-   *
-   * @param expirationPeriod
    */
-  public void setExpirationPeriod(int expirationPeriod) {
+  public FaceStatus setExpirationPeriod(int expirationPeriod) {
     this.expirationPeriod = expirationPeriod;
+    return this;
   }
 
   /**
    * Get face scope value
-   *
-   * @return
    */
   public FaceScope getFaceScope() {
     return faceScope;
@@ -210,17 +226,14 @@ public class FaceStatus implements Decodable {
 
   /**
    * Set face scope value
-   *
-   * @param faceScope
    */
-  public void setFaceScope(FaceScope faceScope) {
+  public FaceStatus setFaceScope(FaceScope faceScope) {
     this.faceScope = faceScope;
+    return this;
   }
 
   /**
    * Get face persistency value
-   *
-   * @return
    */
   public FacePersistency getFacePersistency() {
     return facePersistency;
@@ -228,17 +241,14 @@ public class FaceStatus implements Decodable {
 
   /**
    * Set face persistency value
-   *
-   * @param facePersistency
    */
-  public void setFacePersistency(FacePersistency facePersistency) {
+  public FaceStatus setFacePersistency(FacePersistency facePersistency) {
     this.facePersistency = facePersistency;
+    return this;
   }
 
   /**
    * Get link type
-   *
-   * @return
    */
   public LinkType getLinkType() {
     return linkType;
@@ -246,132 +256,130 @@ public class FaceStatus implements Decodable {
 
   /**
    * Set link type
-   *
-   * @param linkType
    */
-  public void setLinkType(LinkType linkType) {
+  public FaceStatus setLinkType(LinkType linkType) {
     this.linkType = linkType;
+    return this;
   }
 
   /**
    * Get number of received Interest packets
-   *
-   * @return
    */
-  public int getInInterests() {
+  public int getNInInterests() {
     return inInterests;
   }
 
   /**
    * Set number of received Interest packets
-   *
-   * @param inInterests
    */
-  public void setInInterests(int inInterests) {
+  public FaceStatus setNInInterests(int inInterests) {
     this.inInterests = inInterests;
+    return this;
   }
 
   /**
    * Get number of sent Interest packets
-   *
-   * @return
    */
-  public int getOutInterests() {
+  public int getNOutInterests() {
     return outInterests;
   }
 
   /**
    * Set number of sent Interest packets
-   *
-   * @param outInterests
    */
-  public void setOutInterests(int outInterests) {
+  public FaceStatus setNOutInterests(int outInterests) {
     this.outInterests = outInterests;
+    return this;
   }
 
   /**
    * Get number of received Data packets
-   *
-   * @return
    */
-  public int getInDatas() {
+  public int getNInDatas() {
     return inDatas;
   }
 
   /**
    * Set number of received Data packets
-   *
-   * @param inDatas
    */
-  public void setInDatas(int inDatas) {
+  public FaceStatus setNInDatas(int inDatas) {
     this.inDatas = inDatas;
+    return this;
   }
 
   /**
    * Get number of sent Data packets
-   *
-   * @return
    */
-  public int getOutDatas() {
+  public int getNOutDatas() {
     return outDatas;
   }
 
   /**
    * Set number of sent Data packets
-   *
-   * @param outDatas
    */
-  public void setOutDatas(int outDatas) {
+  public FaceStatus setNOutDatas(int outDatas) {
     this.outDatas = outDatas;
+    return this;
   }
 
   /**
-   * Get number of input bytes
-   *
-   * @return
+   * Get number of received Data packets
    */
-  public int getInBytes() {
+  public int getNInNacks() {
+    return inNacks;
+  }
+
+  /**
+   * Set number of received Data packets
+   */
+  public FaceStatus setNInNacks(int inNacks) {
+    this.inNacks = inNacks;
+    return this;
+  }
+
+  /**
+   * Get number of sent Data packets
+   */
+  public int getNOutNacks() {
+    return outNacks;
+  }
+
+  /**
+   * Set number of sent Data packets
+   */
+  public FaceStatus setNOutNacks(int outNacks) {
+    this.outNacks = outNacks;
+    return this;
+  }
+
+
+  /**
+   * Get number of input bytes
+   */
+  public int getNInBytes() {
     return inBytes;
   }
 
   /**
    * Set number of input bytes
-   *
-   * @param inBytes
    */
-  public void setInBytes(int inBytes) {
+  public FaceStatus setNInBytes(int inBytes) {
     this.inBytes = inBytes;
+    return this;
   }
 
   /**
    * Get number of output bytes
-   *
-   * @return
    */
-  public int getOutBytes() {
+  public int getNOutBytes() {
     return outBytes;
   }
 
   /**
    * Set number of output bytes
-   *
-   * @param outBytes
    */
-  public void setOutBytes(int outBytes) {
+  public FaceStatus setNOutBytes(int outBytes) {
     this.outBytes = outBytes;
+    return this;
   }
-
-  private int faceId = -1;
-  private String uri = ""; // can't use URI because some are invalid syntax
-  private String localUri = ""; // can't use URI because some are invalid syntax
-  private int expirationPeriod = 0;
-  private FaceScope faceScope = FaceScope.LOCAL;
-  private FacePersistency facePersistency = FacePersistency.ON_DEMAND;
-  private LinkType linkType = LinkType.POINT_TO_POINT;
-  private int inInterests = 0;
-  private int outInterests = 0;
-  private int inDatas = 0;
-  private int outDatas = 0;
-  private int inBytes = 0;
-  private int outBytes = 0;
 }

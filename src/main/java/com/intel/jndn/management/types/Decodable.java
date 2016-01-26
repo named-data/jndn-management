@@ -17,12 +17,11 @@ import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 
 /**
- * Interface used by StatusDataset to decode generic message types; if they are
- * Decodable, then StatusDataset will instantiate and decode them.
+ * Interface used by StatusDatasetHelper to decode generic message types; if they are
+ * Decodable, then StatusDatasetHelper will instantiate and decode them.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public interface Decodable {
-
-  public void wireDecode(TlvDecoder decoder) throws EncodingException;
+  void wireDecode(TlvDecoder decoder) throws EncodingException;
 }

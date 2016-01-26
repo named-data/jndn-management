@@ -13,10 +13,13 @@
  */
 package com.intel.jndn.management.types;
 
-import com.intel.jndn.management.EncodingHelper;
+import com.intel.jndn.management.enums.NfdTlv;
+import com.intel.jndn.management.helpers.EncodingHelper;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
@@ -24,19 +27,30 @@ import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
 /**
- * Represent a entry in the RIB; see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset</a>
- * for details
+ * Represent a entry in the RIB
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class RibEntry implements Decodable {
+  private Name name = new Name();
+  private List<Route> routes = new ArrayList<>();
 
   /**
-   * TLV type, see
-   * <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments">http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#TLV-TYPE-assignments</a>
+   * Default constructor
    */
-  public final static int TLV_RIB_ENTRY = 128;
+  public RibEntry() {
+    // nothing to do
+  }
+
+  /**
+   * Constructor from wire format
+   * @param input wire format
+   * @throws EncodingException
+   */
+  public RibEntry(ByteBuffer input) throws EncodingException {
+    wireDecode(input);
+  }
 
   /**
    * Encode using a new TLV encoder.
@@ -51,16 +65,15 @@ public class RibEntry implements Decodable {
 
   /**
    * Encode as part of an existing encode context.
-   *
-   * @param encoder
    */
   public final void wireEncode(TlvEncoder encoder) {
     int saveLength = encoder.getLength();
-    for (Route route : routes) {
-      route.wireEncode(encoder);
+    ListIterator<Route> route = routes.listIterator(routes.size());
+    while (route.hasPrevious()) {
+      route.previous().wireEncode(encoder);
     }
     EncodingHelper.encodeName(name, encoder);
-    encoder.writeTypeAndLength(TLV_RIB_ENTRY, encoder.getLength() - saveLength);
+    encoder.writeTypeAndLength(NfdTlv.RibEntry, encoder.getLength() - saveLength);
   }
 
   /**
@@ -77,13 +90,10 @@ public class RibEntry implements Decodable {
 
   /**
    * Decode as part of an existing decode context.
-   *
-   * @param decoder
-   * @throws EncodingException
    */
   @Override
   public final void wireDecode(TlvDecoder decoder) throws EncodingException {
-    int endOffset = decoder.readNestedTlvsStart(TLV_RIB_ENTRY);
+    int endOffset = decoder.readNestedTlvsStart(NfdTlv.RibEntry);
     name = EncodingHelper.decodeName(decoder);
     while (decoder.getOffset() < endOffset) {
       Route route = new Route();
@@ -95,8 +105,6 @@ public class RibEntry implements Decodable {
 
   /**
    * Get name
-   *
-   * @return
    */
   public Name getName() {
     return name;
@@ -104,8 +112,6 @@ public class RibEntry implements Decodable {
 
   /**
    * Set name
-   *
-   * @param name
    */
   public void setName(Name name) {
     this.name = name;
@@ -113,22 +119,46 @@ public class RibEntry implements Decodable {
 
   /**
    * Get routes
-   *
-   * @return
    */
   public List<Route> getRoutes() {
     return routes;
   }
 
   /**
+   * Add route
+   */
+  public RibEntry addRoute(Route route) {
+    getRoutes().add(route);
+    return this;
+  }
+
+  /**
+   * Clear all routes
+   */
+  public void clearRoutes() {
+    getRoutes().clear();
+  }
+
+  /**
    * Set routes
-   *
-   * @param routes
    */
   public void setRoutes(List<Route> routes) {
     this.routes = routes;
   }
 
-  private Name name = new Name();
-  private List<Route> routes = new ArrayList<>();
+  /**
+   * Get human-readable representation of RibEntry
+   */
+  @Override
+  public String toString() {
+    StringBuilder out = new StringBuilder();
+    out.append("RibEntry{\n");
+    out.append("  Name: ").append(getName().toUri()).append("\n");
+
+    for (Route route : getRoutes()) {
+      out.append("  ").append(route.toString()).append("\n");
+    }
+    out.append("}");
+    return out.toString();
+  }
 }

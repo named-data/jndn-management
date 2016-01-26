@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  */
-package com.intel.jndn.management.types;
+package com.intel.jndn.management.enums;
 
 /**
  * Define constants for local control header options. See
@@ -25,12 +25,15 @@ public enum LocalControlHeader {
   NEXT_HOP_FACE_ID(2),
   CACHING_POLICY(3);
 
+  private final int value;
+
+  /////////////////////////////////////////////////////////////////////////////
+
   LocalControlHeader(int value) {
-    value_ = value;
+    this.value = value;
   }
 
-  public final int getNumericValue() {
-    return value_;
+  public final int toInteger() {
+    return value;
   }
-  private final int value_;
 }
