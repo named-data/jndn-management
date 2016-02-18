@@ -17,7 +17,6 @@ import com.intel.jndn.management.enums.RouteOrigin;
 import com.intel.jndn.management.helpers.FetchHelper;
 import com.intel.jndn.management.helpers.StatusDatasetHelper;
 import net.named_data.jndn.*;
-import com.intel.jndn.management.types.ControlResponse;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.ForwarderStatus;
@@ -191,7 +190,7 @@ public class Nfdc {
       ControlResponse response = sendCommand(face, command);
 
       // return
-      return response.getBody().get(0).getFaceId();
+      return response.getBodyAsControlParameters().getFaceId();
     }
     catch (IOException|EncodingException e) {
       throw new ManagementException(e.getMessage(), e);

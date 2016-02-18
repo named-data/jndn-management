@@ -14,7 +14,8 @@
 
 package com.intel.jndn.management;
 
-import com.intel.jndn.management.types.ControlResponse;
+import net.named_data.jndn.ControlResponse;
+
 
 /**
  * Represent a failure to correctly manage the NDN Forwarding Daemon (NFD).
