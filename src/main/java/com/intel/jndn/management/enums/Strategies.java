@@ -16,15 +16,20 @@ package com.intel.jndn.management.enums;
 import net.named_data.jndn.Name;
 
 /**
- * A reference list of the strategies available in NFD; should match
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategy">
- * http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategy</a>
+ * A reference list of the strategies available in NFD.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategy">Strategies</a>
  */
-public class Strategies {
+public final class Strategies {
   public static final Name BEST_ROUTE = new Name("/localhost/nfd/strategy/best-route");
   public static final Name BROADCAST = new Name("/localhost/nfd/strategy/broadcast");
   public static final Name CLIENT_CONTROL = new Name("/localhost/nfd/strategy/client-control");
   public static final Name NCC = new Name("/localhost/nfd/strategy/ncc");
+
+  /**
+   * Prevent instances of Strategies.
+   */
+  private Strategies() {
+  }
 }

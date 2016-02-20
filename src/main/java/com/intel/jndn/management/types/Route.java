@@ -13,8 +13,6 @@
  */
 package com.intel.jndn.management.types;
 
-import java.nio.ByteBuffer;
-
 import com.intel.jndn.management.enums.NfdTlv;
 import com.intel.jndn.management.enums.RouteFlags;
 import net.named_data.jndn.encoding.EncodingException;
@@ -22,13 +20,15 @@ import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+
 /**
- * Represent a Route object from /localhost/nfd/rib/list
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
+ * Represent a Route object from /localhost/nfd/rib/list.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
  */
-public class Route {
+public class Route implements Decodable {
   public static final int INFINITE_EXPIRATION_PERIOD = -1;
 
   private int faceId = -1;
@@ -40,18 +40,19 @@ public class Route {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public Route() {
     // nothing to do
   }
 
   /**
-   * Constructor from wire format
+   * Constructor from wire format.
+   *
    * @param input wire format
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public Route(ByteBuffer input) throws EncodingException {
+  public Route(final ByteBuffer input) throws EncodingException {
     wireDecode(input);
   }
 
@@ -69,9 +70,9 @@ public class Route {
   /**
    * Encode as part of an existing encode context.
    *
-   * @param encoder
+   * @param encoder TlvEncoder instance
    */
-  public final void wireEncode(TlvEncoder encoder) {
+  public final void wireEncode(final TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     encoder.writeOptionalNonNegativeIntegerTlv(NfdTlv.ExpirationPeriod, expirationPeriod);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.Flags, flags);
@@ -86,20 +87,18 @@ public class Route {
    *
    * @param input The input buffer to decode. This reads from position() to
    *              limit(), but does not change the position.
-   * @throws net.named_data.jndn.encoding.EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public final void wireDecode(ByteBuffer input) throws EncodingException {
+  public final void wireDecode(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     wireDecode(decoder);
   }
 
   /**
-   * Decode as part of an existing decode context.
-   *
-   * @param decoder
-   * @throws EncodingException
+   * {@inheritDoc}
    */
-  public final void wireDecode(TlvDecoder decoder) throws EncodingException {
+  @Override
+  public final void wireDecode(final TlvDecoder decoder) throws EncodingException {
     int endOffset = decoder.readNestedTlvsStart(NfdTlv.Route);
     this.faceId = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.FaceId);
     this.origin = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.Origin);
@@ -110,103 +109,144 @@ public class Route {
   }
 
   /**
-   * Get Face ID
+   * Get Face ID.
+   *
+   * @return Face ID
    */
   public int getFaceId() {
     return faceId;
   }
 
   /**
-   * Set Face ID
+   * Set Face ID.
+   *
+   * @param faceId Face ID
+   * @return this
    */
-  public Route setFaceId(int faceId) {
+  public Route setFaceId(final int faceId) {
     this.faceId = faceId;
     return this;
   }
 
   /**
-   * Get origin
+   * Get route origin.
+   *
+   * @return origin code
+   * @see com.intel.jndn.management.enums.RouteOrigin
    */
   public int getOrigin() {
     return origin;
   }
 
   /**
-   * Set origin
+   * Set route origin.
+   *
+   * @param origin Route origin code
+   * @return this
+   * @see com.intel.jndn.management.enums.RouteOrigin
    */
-  public Route setOrigin(int origin) {
+  public Route setOrigin(final int origin) {
     this.origin = origin;
     return this;
   }
 
   /**
-   * Get cost
+   * Get route cost.
+   *
+   * @return route cost
    */
   public int getCost() {
     return cost;
   }
 
   /**
-   * Set cost
+   * Set cost.
+   *
+   * @param cost Route cost
+   * @return this
    */
-  public Route setCost(int cost) {
+  public Route setCost(final int cost) {
     this.cost = cost;
     return this;
   }
 
   /**
-   * Get flags
+   * Get flags.
+   *
+   * @return route flags
    */
   public int getFlags() {
     return flags;
   }
 
   /**
-   * Set flags
+   * Set flags.
+   *
+   * @param flags NFD Route flags
+   * @return this
+   * @see RouteFlags
    */
-  public void setFlags(int flags) {
+  public Route setFlags(final int flags) {
     this.flags = flags;
+    return this;
   }
 
   /**
-   * Get expiration period (in milliseconds)
+   * Get expiration period (in milliseconds).
+   *
+   * @return expiration period (in milliseconds)
    */
   public int getExpirationPeriod() {
     return expirationPeriod;
   }
 
   /**
-   * Check if route should not expire
+   * Check if route should not expire.
+   *
+   * @return true if route has associated expiration period, false otherwise
    */
   public boolean hasInfiniteExpirationPeriod() {
     return expirationPeriod < 0;
   }
 
   /**
-   * Set expiration period
+   * Set expiration period.
    *
-   * @param expirationPeriod
+   * @param expirationPeriod Expiration period in milliseconds
+   * @return this
    */
-  public void setExpirationPeriod(int expirationPeriod) {
+  public Route setExpirationPeriod(final int expirationPeriod) {
     this.expirationPeriod = expirationPeriod;
+    return this;
   }
 
   /**
-   * Get human-readable representation of Route
+   * Get a human-readable representation of the Route.
+   *
+   * @return Human-readable representation of the Route
    */
   @Override
   public String toString() {
     StringBuilder out = new StringBuilder();
     out.append("Route(");
-    out.append("FaceId: "); out.append(getFaceId()); out.append(", ");
-    out.append("Origin: "); out.append(getOrigin()); out.append(", ");
-    out.append("Cost: "); out.append(getCost()); out.append(", ");
-    out.append("Flags: "); out.append(getFlags()); out.append(", ");
+    out.append("FaceId: ");
+    out.append(getFaceId());
+    out.append(", ");
+    out.append("Origin: ");
+    out.append(getOrigin());
+    out.append(", ");
+    out.append("Cost: ");
+    out.append(getCost());
+    out.append(", ");
+    out.append("Flags: ");
+    out.append(getFlags());
+    out.append(", ");
 
     if (!hasInfiniteExpirationPeriod()) {
-      out.append("ExpirationPeriod: "); out.append(getExpirationPeriod()); out.append(" milliseconds");
-    }
-    else {
+      out.append("ExpirationPeriod: ");
+      out.append(getExpirationPeriod());
+      out.append(" milliseconds");
+    } else {
       out.append("ExpirationPeriod: Infinity");
     }
     out.append(")");

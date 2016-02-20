@@ -14,22 +14,33 @@
 package com.intel.jndn.management.enums;
 
 /**
- * NFD route flags
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RibMgmt</a>
+ * NFD route flags.
+ *
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
  */
 public enum RouteFlags {
-  NONE          (0),
-  CHILD_INHERIT (1),
-  CAPTURE       (2);
+  NONE(0),
+  CHILD_INHERIT(1),
+  CAPTURE(2);
 
   private final int value;
 
   /////////////////////////////////////////////////////////////////////////////
 
-  RouteFlags(int value) {
+  /**
+   * Create enum using NFD's RouteFlags code.
+   *
+   * @param value NFD's RouteFlags code
+   */
+  RouteFlags(final int value) {
     this.value = value;
   }
 
+  /**
+   * Convert RouteFlags to the NFD code.
+   *
+   * @return NFD's RouteFlags code
+   */
   public final int toInteger() {
     return value;
   }

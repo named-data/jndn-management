@@ -15,32 +15,36 @@ package com.intel.jndn.management.helpers;
 
 import com.intel.jndn.management.ManagementException;
 import com.intel.jndn.management.types.Decodable;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.named_data.jndn.Data;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Helper class to handle StatusDatasets, see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
+ * Helper class to handle StatusDatasets.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">StatusDataset</a>
  */
-public class StatusDatasetHelper {
-
+public final class StatusDatasetHelper {
   /**
-   * Prevent instances of StatusDatasetHelper
+   * Prevent instances of StatusDatasetHelper.
    */
   private StatusDatasetHelper() {
   }
 
+  /**
+   * Combine payload of Data packet segments into a single buffer.
+   *
+   * @param segments list of Data packets
+   * @return single buffer containing combined payload
+   */
   public static ByteBuffer
-  combine(List<Data> segments) {
+  combine(final List<Data> segments) {
     int size = 0;
     for (Data segment : segments) {
       size += segment.getContent().size();
@@ -55,11 +59,17 @@ public class StatusDatasetHelper {
   }
 
   /**
-   * Decode multiple status entries as part of a StatusDatasetHelper, see
-   * <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">http://redmine.named-data.net/projects/nfd/wiki/StatusDataset</a>
+   * Decode multiple status entries as part of a StatusDatasetHelper.
+   *
+   * @param <T>      Class implementing Decodable interface
+   * @param segments list of Data packets
+   * @param type     class implementing Decodable interface
+   * @return List decoded status entries
+   * @throws ManagementException when decoding fails
+   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">StatusDataset</a>
    */
-  public static final <T extends Decodable> List<T>
-  wireDecode(List<Data> segments, Class<T> type) throws ManagementException {
+  public static <T extends Decodable> List<T>
+  wireDecode(final List<Data> segments, final Class<T> type) throws ManagementException {
     Blob payload = new Blob(combine(segments), false);
 
     List<T> entries = new ArrayList<>();
@@ -70,7 +80,7 @@ public class StatusDatasetHelper {
         T entry = type.newInstance();
         entry.wireDecode(decoder);
         entries.add(entry);
-      } catch (IllegalAccessException|InstantiationException|EncodingException e) {
+      } catch (IllegalAccessException | InstantiationException | EncodingException e) {
         throw new ManagementException("Failed to read status dataset.", e);
       }
     }

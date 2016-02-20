@@ -13,29 +13,17 @@
  */
 package com.intel.jndn.management;
 
-import com.intel.jndn.management.enums.Strategies;
-import com.intel.jndn.management.types.RibEntry;
-import com.intel.jndn.management.types.StrategyChoice;
-import com.intel.jndn.mock.MockKeyChain;
 import net.named_data.jndn.Face;
-import net.named_data.jndn.KeyLocator;
-import net.named_data.jndn.Name;
-import net.named_data.jndn.encoding.EncodingException;
-import net.named_data.jndn.security.KeyChain;
 import net.named_data.jndn.security.SecurityException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Testing basic pining using real NFD instance (NFD must be run locally while executing the test)
+ * Testing basic pining using real NFD instance (NFD must be run locally while executing the test).
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */

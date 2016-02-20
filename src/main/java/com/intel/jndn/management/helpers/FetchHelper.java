@@ -13,7 +13,12 @@
  */
 package com.intel.jndn.management.helpers;
 
-import net.named_data.jndn.*;
+import net.named_data.jndn.Data;
+import net.named_data.jndn.Face;
+import net.named_data.jndn.Interest;
+import net.named_data.jndn.Name;
+import net.named_data.jndn.OnData;
+import net.named_data.jndn.OnTimeout;
 import net.named_data.jndn.encoding.EncodingException;
 
 import java.io.IOException;
@@ -22,10 +27,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class FetchHelper implements OnData, OnTimeout {
+/**
+ * Trival NDN client to fetch one or multiple Data packets.
+ */
+public final class FetchHelper implements OnData, OnTimeout {
   public static final long DEFAULT_TIMEOUT = 2000;
 
   private static final Logger LOG = Logger.getLogger(FetchHelper.class.getName());
+  private static final int SLEEP_TIMEOUT = 20;
+  private static final int SEGMENT_NAME_COMPONENT_OFFSET = -1;
+  private static final int VERSION_NAME_COMPONENT_OFFSET = -2;
 
   private State state;
   private Face face;
@@ -33,42 +44,44 @@ public class FetchHelper implements OnData, OnTimeout {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Prevent creation of FetchHelper instances: use getData or getSegmentedData
+   * Prevent creation of FetchHelper instances: use getData or getSegmentedData.
    */
-  private FetchHelper()
-  {
+  private FetchHelper() {
   }
 
   /**
-   * Private constructor: use getData or getSegmentedData
+   * Private constructor: use getData or getSegmentedData.
    */
-  private FetchHelper(Face face)
-  {
+  private FetchHelper(final Face face) {
     this.face = face;
   }
 
   /**
-   * Get a single Data packet
-   * @param face Face instance
+   * Get a single Data packet.
+   *
+   * @param face     Face instance
    * @param interest Interest to retrieve Data
    * @return Data packet
    * @throws IOException if failed to retrieve packet, e.g., timeout occured
    */
   public static Data
-  getData(Face face, Interest interest) throws IOException {
+  getData(final Face face, final Interest interest) throws IOException {
     FetchHelper fetcher = new FetchHelper(face);
     return fetcher.getData(interest);
   }
 
   /**
-   * Get data using the exact name (without implicit digest)
+   * Get data using the exact name (without implicit digest).
+   * <p/>
+   * TODO: Allow authentication of retrieved data packets
+   *
    * @param face Face instance
    * @param name Exact name of the data packet to retrieve
-   *
-   * TODO: Allow authentication of retrieved data packets
+   * @return retrieved Data packet
+   * @throws IOException when communication with NFD fails
    */
   public static Data
-  getData(Face face, Name name) throws IOException {
+  getData(final Face face, final Name name) throws IOException {
     FetchHelper fetcher = new FetchHelper(face);
 
     Interest interest = new Interest(name);
@@ -80,18 +93,21 @@ public class FetchHelper implements OnData, OnTimeout {
   }
 
   /**
-   * Get concatenated data from the segmented
-   * @param face Face instance
+   * Get concatenated data from the segmented.
+   * <p/>
+   * Note that this method will first send interest with MustBeFresh selector to discover "latest" version of the
+   * stream and then retrieve the rest of the stream
+   * <p/>
+   * TODO: Allow authentication of retrieved data packets
+   *
+   * @param face   Face instance
    * @param prefix Prefix of the retrieved data. The retrieved data must have version and segment numbers after this
    *               prefix
-   *
-   * Note that this method will first send interest with MustBeFresh selector to discover "latest" version of the
-   *               stream and then retrieve the rest of the stream
-   *
-   * TODO: Allow authentication of retrieved data packets
+   * @return list of retrieved Data packets
+   * @throws IOException when communication with NFD fails
    */
   public static List<Data>
-  getSegmentedData(Face face, Name prefix) throws IOException {
+  getSegmentedData(final Face face, final Name prefix) throws IOException {
     FetchHelper fetcher = new FetchHelper(face);
 
     Interest interest = new Interest(new Name(prefix));
@@ -104,9 +120,8 @@ public class FetchHelper implements OnData, OnTimeout {
     Data data = fetcher.getData(interest);
 
     try {
-      data.getName().get(-1).toSegment();
-    }
-    catch (EncodingException e) {
+      data.getName().get(SEGMENT_NAME_COMPONENT_OFFSET).toSegment();
+    } catch (EncodingException e) {
       throw new IOException("Retrieved data does not have segment number as the last name component", e);
     }
     if (data.getName().size() != prefix.size() + 2) {
@@ -116,15 +131,14 @@ public class FetchHelper implements OnData, OnTimeout {
     long finalBlockId = 0;
     try {
       finalBlockId = data.getMetaInfo().getFinalBlockId().toSegment();
-    }
-    catch (EncodingException e) {
+    } catch (EncodingException e) {
       throw new IOException("Requested segmented stream is unbounded", e);
     }
 
     List<Data> segments = new ArrayList<>();
     segments.add(data);
 
-    prefix.append(data.getName().get(-2));
+    prefix.append(data.getName().get(VERSION_NAME_COMPONENT_OFFSET));
     for (int i = 0; i < finalBlockId; i++) {
       interest = new Interest(new Name(prefix).appendSegment(i));
       interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
@@ -140,7 +154,7 @@ public class FetchHelper implements OnData, OnTimeout {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  private Data getData(Interest interest) throws IOException {
+  private Data getData(final Interest interest) throws IOException {
     this.state = new State();
     this.face.expressInterest(interest, this, this);
 
@@ -151,7 +165,7 @@ public class FetchHelper implements OnData, OnTimeout {
         LOG.log(Level.INFO, "Decoding error: " + e.getMessage(), e);
       }
       try {
-        Thread.sleep(20);
+        Thread.sleep(SLEEP_TIMEOUT);
       } catch (InterruptedException e) {
         // ok
       }
@@ -165,13 +179,13 @@ public class FetchHelper implements OnData, OnTimeout {
   }
 
   @Override
-  public void onData(Interest interest, Data data) {
+  public void onData(final Interest interest, final Data data) {
     state.response = data;
     state.isDone = true;
   }
 
   @Override
-  public void onTimeout(Interest interest) {
+  public void onTimeout(final Interest interest) {
     state.nRetries--;
     if (state.nRetries > 0) {
       try {
@@ -179,8 +193,7 @@ public class FetchHelper implements OnData, OnTimeout {
       } catch (IOException e) {
         LOG.log(Level.INFO, "Error while expressing interest: " + e.toString(), e);
       }
-    }
-    else {
+    } else {
       state.isDone = true;
     }
   }
@@ -188,8 +201,10 @@ public class FetchHelper implements OnData, OnTimeout {
   /////////////////////////////////////////////////////////////////////////////
 
   private static class State {
-    public int nRetries = 3;
-    public Data response = null;
-    public boolean isDone = false;
+    private static final int DEFAULT_NUMBER_OF_RETRIES = 3;
+
+    private int nRetries = DEFAULT_NUMBER_OF_RETRIES;
+    private Data response = null;
+    private boolean isDone = false;
   }
 }

@@ -14,37 +14,46 @@
 package com.intel.jndn.management.enums;
 
 /**
- * NFD face link type
- * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">FaceMgmt</a>
+ * NFD face link type.
+ *
+ * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">Face Management</a>
  */
 public enum LinkType {
 
-  NONE(-1), // invalid value
-
-  /**
-   * Link is point-to-point
-   */
+  NONE(-1),
   POINT_TO_POINT(0),
-
-  /**
-   * Link is multi-access
-   */
   MULTI_ACCESS(1);
 
   private final int value;
 
   /////////////////////////////////////////////////////////////////////////////
 
-  LinkType(int value) {
+  /**
+   * Create enum using NFD's LinkType code.
+   *
+   * @param value NFD's LinkType code
+   */
+  LinkType(final int value) {
     this.value = value;
   }
 
+  /**
+   * Convert LinkType to the NFD code.
+   *
+   * @return NFD's LinkType code
+   */
   public final int toInteger() {
     return value;
   }
 
+  /**
+   * Convert NFD code to LinkType enum.
+   *
+   * @param value NFD's LinkType code
+   * @return enum value
+   */
   public static LinkType
-  fromInteger(int value) {
+  fromInteger(final int value) {
     switch (value) {
       case 0:
         return POINT_TO_POINT;

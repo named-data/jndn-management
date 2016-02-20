@@ -15,40 +15,41 @@ package com.intel.jndn.management.types;
 
 import com.intel.jndn.management.enums.NfdTlv;
 import com.intel.jndn.management.helpers.EncodingHelper;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 /**
- * Represent a entry in the RIB
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
+ * Represent a entry in the RIB.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
  */
 public class RibEntry implements Decodable {
   private Name name = new Name();
   private List<Route> routes = new ArrayList<>();
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public RibEntry() {
     // nothing to do
   }
 
   /**
-   * Constructor from wire format
+   * Constructor from wire format.
+   *
    * @param input wire format
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public RibEntry(ByteBuffer input) throws EncodingException {
+  public RibEntry(final ByteBuffer input) throws EncodingException {
     wireDecode(input);
   }
 
@@ -65,8 +66,10 @@ public class RibEntry implements Decodable {
 
   /**
    * Encode as part of an existing encode context.
+   *
+   * @param encoder TlvEncoder instance
    */
-  public final void wireEncode(TlvEncoder encoder) {
+  public final void wireEncode(final TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     ListIterator<Route> route = routes.listIterator(routes.size());
     while (route.hasPrevious()) {
@@ -80,19 +83,19 @@ public class RibEntry implements Decodable {
    * Decode the input from its TLV format.
    *
    * @param input The input buffer to decode. This reads from position() to
-   * limit(), but does not change the position.
+   *              limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
-  public final void wireDecode(ByteBuffer input) throws EncodingException {
+  public final void wireDecode(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     wireDecode(decoder);
   }
 
   /**
-   * Decode as part of an existing decode context.
+   * {@inheritDoc}
    */
   @Override
-  public final void wireDecode(TlvDecoder decoder) throws EncodingException {
+  public void wireDecode(final TlvDecoder decoder) throws EncodingException {
     int endOffset = decoder.readNestedTlvsStart(NfdTlv.RibEntry);
     name = EncodingHelper.decodeName(decoder);
     while (decoder.getOffset() < endOffset) {
@@ -104,50 +107,59 @@ public class RibEntry implements Decodable {
   }
 
   /**
-   * Get name
+   * @return RIB entry name.
    */
   public Name getName() {
     return name;
   }
 
   /**
-   * Set name
+   * Set RIB entry name.
+   *
+   * @param name New name for the RIB entry
+   * @return this
    */
-  public void setName(Name name) {
+  public RibEntry setName(final Name name) {
     this.name = name;
+    return this;
   }
 
   /**
-   * Get routes
+   * @return List of associated routes to the RIB entry
    */
   public List<Route> getRoutes() {
     return routes;
   }
 
   /**
-   * Add route
+   * Add route.
+   *
+   * @param route Route to add to the RIB entry
+   * @return this
    */
-  public RibEntry addRoute(Route route) {
+  public RibEntry addRoute(final Route route) {
     getRoutes().add(route);
     return this;
   }
 
   /**
-   * Clear all routes
+   * Clear all routes.
    */
   public void clearRoutes() {
     getRoutes().clear();
   }
 
   /**
-   * Set routes
+   * Set routes.
+   *
+   * @param routes List of routes to associate with RIB entry.  Will replace previously associated routes.
    */
-  public void setRoutes(List<Route> routes) {
+  public void setRoutes(final List<Route> routes) {
     this.routes = routes;
   }
 
   /**
-   * Get human-readable representation of RibEntry
+   * @return Human-readable representation of RibEntry
    */
   @Override
   public String toString() {

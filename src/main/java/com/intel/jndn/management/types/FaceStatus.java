@@ -13,22 +13,23 @@
  */
 package com.intel.jndn.management.types;
 
-import java.nio.ByteBuffer;
-import com.intel.jndn.management.enums.NfdTlv;
 import com.intel.jndn.management.enums.FacePersistency;
 import com.intel.jndn.management.enums.FaceScope;
 import com.intel.jndn.management.enums.LinkType;
+import com.intel.jndn.management.enums.NfdTlv;
 import com.intel.jndn.management.helpers.EncodingHelper;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+
 /**
- * Represent a FaceStatus object from /localhost/nfd/faces/list
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
+ * Represent a FaceStatus object from /localhost/nfd/faces/list.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
  */
 public class FaceStatus implements Decodable {
   private int faceId = 0;
@@ -53,25 +54,26 @@ public class FaceStatus implements Decodable {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public FaceStatus() {
     // nothing to do
   }
 
   /**
-   * Constructor from wire format
+   * Constructor from wire format.
+   *
    * @param input wire format
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public FaceStatus(ByteBuffer input) throws EncodingException {
+  public FaceStatus(final ByteBuffer input) throws EncodingException {
     wireDecode(input);
   }
 
   /**
    * Encode using a new TLV encoder.
    *
-   * @return The encoded buffer.
+   * @return The encoded buffer
    */
   public final Blob wireEncode() {
     TlvEncoder encoder = new TlvEncoder();
@@ -80,9 +82,11 @@ public class FaceStatus implements Decodable {
   }
 
   /**
-   * Encode as part of an existing encode context
+   * Encode as part of an existing encode context.
+   *
+   * @param encoder TlvEncoder instance
    */
-  public final void wireEncode(TlvEncoder encoder) {
+  public final void wireEncode(final TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutBytes, outBytes);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NInBytes, inBytes);
@@ -112,18 +116,18 @@ public class FaceStatus implements Decodable {
    *
    * @param input The input buffer to decode. This reads from position() to
    *              limit(), but does not change the position.
-   * @throws net.named_data.jndn.encoding.EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public final void wireDecode(ByteBuffer input) throws EncodingException {
+  public final void wireDecode(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     wireDecode(decoder);
   }
 
   /**
-   * Decode as part of an existing decode context
+   * {@inheritDoc}
    */
   @Override
-  public void wireDecode(TlvDecoder decoder) throws EncodingException {
+  public void wireDecode(final TlvDecoder decoder) throws EncodingException {
     int endOffset = decoder.readNestedTlvsStart(NfdTlv.FaceStatus);
     // parse
     this.faceId = (int) decoder.readNonNegativeIntegerTlv(NfdTlv.FaceId);
@@ -151,234 +155,279 @@ public class FaceStatus implements Decodable {
   }
 
   /**
-   * Get face ID
+   * @return face ID
    */
   public int getFaceId() {
     return faceId;
   }
 
   /**
-   * Set face ID
+   * Set face ID.
+   *
+   * @param faceId face ID
+   * @return this
    */
-  public FaceStatus setFaceId(int faceId) {
+  public FaceStatus setFaceId(final int faceId) {
     this.faceId = faceId;
     return this;
   }
 
   /**
-   * Get face ID
+   * @return remote face URI
    */
   public String getRemoteUri() {
     return remoteUri;
   }
 
   /**
-   * Set URI
+   * Set remote face URI.
+   *
+   * @param uri remote face URI
+   * @return this
    */
-  public FaceStatus setRemoteUri(String uri) {
+  public FaceStatus setRemoteUri(final String uri) {
     this.remoteUri = uri;
     return this;
   }
 
   /**
-   * Get face ID
+   * @return remote face URI
    */
   public String getLocalUri() {
     return localUri;
   }
 
   /**
-   * Set local URI
+   * Set local face URI.
+   *
+   * @param localUri local face URI
+   * @return this
    */
-  public FaceStatus setLocalUri(String localUri) {
+  public FaceStatus setLocalUri(final String localUri) {
     this.localUri = localUri;
     return this;
   }
 
   /**
-   * Check if Face has expiration period set
+   * Check if Face has expiration period set.
+   * @return true if Face has expiration period set, false otherwise
    */
   public boolean hasExpirationPeriod() {
     return expirationPeriod > 0;
   }
 
   /**
-   * Get expiration period
+   * @return expiration period
    */
   public int getExpirationPeriod() {
     return expirationPeriod;
   }
 
   /**
-   * Set expiration period
+   * Set expiration period.
+   *
+   * @param expirationPeriod expiration period
+   * @return this
    */
-  public FaceStatus setExpirationPeriod(int expirationPeriod) {
+  public FaceStatus setExpirationPeriod(final int expirationPeriod) {
     this.expirationPeriod = expirationPeriod;
     return this;
   }
 
   /**
-   * Get face scope value
+   * @return face scope
    */
   public FaceScope getFaceScope() {
     return faceScope;
   }
 
   /**
-   * Set face scope value
+   * Set face scope value.
+   *
+   * @param faceScope face scope
+   * @return this
    */
-  public FaceStatus setFaceScope(FaceScope faceScope) {
+  public FaceStatus setFaceScope(final FaceScope faceScope) {
     this.faceScope = faceScope;
     return this;
   }
 
   /**
-   * Get face persistency value
+   * @return face persistency
    */
   public FacePersistency getFacePersistency() {
     return facePersistency;
   }
 
   /**
-   * Set face persistency value
+   * Set face persistency.
+   *
+   * @param facePersistency face persistency
+   * @return this
    */
-  public FaceStatus setFacePersistency(FacePersistency facePersistency) {
+  public FaceStatus setFacePersistency(final FacePersistency facePersistency) {
     this.facePersistency = facePersistency;
     return this;
   }
 
   /**
-   * Get link type
+   * @return link type
    */
   public LinkType getLinkType() {
     return linkType;
   }
 
   /**
-   * Set link type
+   * Set link type.
+   *
+   * @param linkType link type
+   * @return this
    */
-  public FaceStatus setLinkType(LinkType linkType) {
+  public FaceStatus setLinkType(final LinkType linkType) {
     this.linkType = linkType;
     return this;
   }
 
   /**
-   * Get number of received Interest packets
+   * @return number of received Interest packets
    */
   public int getNInInterests() {
     return inInterests;
   }
 
   /**
-   * Set number of received Interest packets
+   * Set number of received Interest packets.
+   *
+   * @param inInterests number of received Interest packets
+   * @return this
    */
-  public FaceStatus setNInInterests(int inInterests) {
+  public FaceStatus setNInInterests(final int inInterests) {
     this.inInterests = inInterests;
     return this;
   }
 
   /**
-   * Get number of sent Interest packets
+   * @return number of sent Interest packets
    */
   public int getNOutInterests() {
     return outInterests;
   }
 
   /**
-   * Set number of sent Interest packets
+   * Set number of sent Interest packets.
+   *
+   * @param outInterests number of sent Interest packets
+   * @return this
    */
-  public FaceStatus setNOutInterests(int outInterests) {
+  public FaceStatus setNOutInterests(final int outInterests) {
     this.outInterests = outInterests;
     return this;
   }
 
   /**
-   * Get number of received Data packets
+   * @return number of received Data packets
    */
   public int getNInDatas() {
     return inDatas;
   }
 
   /**
-   * Set number of received Data packets
+   * Set number of received Data packets.
+   *
+   * @param inDatas number of received Data packets
+   * @return this
    */
-  public FaceStatus setNInDatas(int inDatas) {
+  public FaceStatus setNInDatas(final int inDatas) {
     this.inDatas = inDatas;
     return this;
   }
 
   /**
-   * Get number of sent Data packets
+   * @return number of sent Data packets
    */
   public int getNOutDatas() {
     return outDatas;
   }
 
   /**
-   * Set number of sent Data packets
+   * Set number of sent Data packets.
+   *
+   * @param outDatas number of sent Data packets
+   * @return this
    */
-  public FaceStatus setNOutDatas(int outDatas) {
+  public FaceStatus setNOutDatas(final int outDatas) {
     this.outDatas = outDatas;
     return this;
   }
 
   /**
-   * Get number of received Data packets
+   * @return number of received Data packets
    */
   public int getNInNacks() {
     return inNacks;
   }
 
   /**
-   * Set number of received Data packets
+   * Set number of received Data packets.
+   *
+   * @param inNacks number of received Data packets
+   * @return this
    */
-  public FaceStatus setNInNacks(int inNacks) {
+  public FaceStatus setNInNacks(final int inNacks) {
     this.inNacks = inNacks;
     return this;
   }
 
   /**
-   * Get number of sent Data packets
+   * @return number of sent Data packets
    */
   public int getNOutNacks() {
     return outNacks;
   }
 
   /**
-   * Set number of sent Data packets
+   * Set number of sent Data packets.
+   *
+   * @param outNacks number of sent Data packets
+   * @return this
    */
-  public FaceStatus setNOutNacks(int outNacks) {
+  public FaceStatus setNOutNacks(final int outNacks) {
     this.outNacks = outNacks;
     return this;
   }
 
-
   /**
-   * Get number of input bytes
+   * @return number of input bytes
    */
   public int getNInBytes() {
     return inBytes;
   }
 
   /**
-   * Set number of input bytes
+   * Set number of input bytes.
+   *
+   * @param inBytes number of input bytes
+   * @return this
    */
-  public FaceStatus setNInBytes(int inBytes) {
+  public FaceStatus setNInBytes(final int inBytes) {
     this.inBytes = inBytes;
     return this;
   }
 
   /**
-   * Get number of output bytes
+   * @return number of output bytes
    */
   public int getNOutBytes() {
     return outBytes;
   }
 
   /**
-   * Set number of output bytes
+   * Set number of output bytes.
+   *
+   * @param outBytes number of output bytes
+   * @return this
    */
-  public FaceStatus setNOutBytes(int outBytes) {
+  public FaceStatus setNOutBytes(final int outBytes) {
     this.outBytes = outBytes;
     return this;
   }

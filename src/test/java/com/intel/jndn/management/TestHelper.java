@@ -16,21 +16,22 @@ package com.intel.jndn.management;
 import java.nio.ByteBuffer;
 
 /**
- * Helper methods for unit tests
+ * Helper methods for unit tests.
  */
-public class TestHelper {
+public final class TestHelper {
   /**
-   * Prevent instances of TestHelper
+   * Prevent instances of TestHelper.
    */
   private TestHelper() {
   }
 
   /**
-   * Construct ByteBuffer from int[]
+   * Construct ByteBuffer from int[].
+   *
+   * @param array array to convert
    */
   public static ByteBuffer
-  bufferFromIntArray(int[] array)
-  {
+  bufferFromIntArray(final int[] array) {
     ByteBuffer result = ByteBuffer.allocate(array.length);
     for (int value : array) {
       result.put((byte) (value & 0xFF));

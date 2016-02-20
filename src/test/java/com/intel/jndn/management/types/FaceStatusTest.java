@@ -17,26 +17,25 @@ import com.intel.jndn.management.TestHelper;
 import com.intel.jndn.management.enums.FacePersistency;
 import com.intel.jndn.management.enums.FaceScope;
 import com.intel.jndn.management.enums.LinkType;
-
-import java.nio.ByteBuffer;
 import net.named_data.jndn.util.Blob;
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- * Test whether the decoding for the face management service is working
- * correctly
+ * Test encode/decode of FaceStatus.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class FaceStatusTest {
-  ByteBuffer TestFaceStatus;
+  private ByteBuffer testFaceStatusWire;
 
   @Before
   public void setUp() throws Exception {
-    TestFaceStatus = TestHelper.bufferFromIntArray(new int[] {
+    testFaceStatusWire = TestHelper.bufferFromIntArray(new int[] {
       0x80, 0x5e, 0x69, 0x01, 0x64, 0x72, 0x15, 0x74, 0x63, 0x70,
       0x34, 0x3a, 0x2f, 0x2f, 0x31, 0x39, 0x32, 0x2e, 0x30, 0x2e,
       0x32, 0x2e, 0x31, 0x3a, 0x36, 0x33, 0x36, 0x33, 0x81, 0x16,
@@ -50,9 +49,6 @@ public class FaceStatusTest {
     });
   }
 
-  /**
-   * Test encoding
-   */
   @Test
   public void testEncode() throws Exception {
     FaceStatus status = new FaceStatus();
@@ -74,15 +70,12 @@ public class FaceStatusTest {
 
     // encode
     Blob encoded = status.wireEncode();
-    assertEquals(TestFaceStatus, encoded.buf());
+    assertEquals(testFaceStatusWire, encoded.buf());
   }
 
-  /**
-   * Test decoding
-   */
   @Test
   public void testDecode() throws Exception {
-    FaceStatus status = new FaceStatus(TestFaceStatus);
+    FaceStatus status = new FaceStatus(testFaceStatusWire);
 
     assertEquals(100, status.getFaceId());
     assertEquals("tcp4://192.0.2.1:6363", status.getRemoteUri());

@@ -13,11 +13,6 @@
  */
 package com.intel.jndn.management;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
-
 import com.intel.jndn.management.enums.LocalControlHeader;
 import com.intel.jndn.management.enums.Strategies;
 import com.intel.jndn.management.types.RibEntry;
@@ -31,13 +26,19 @@ import net.named_data.jndn.security.KeyChain;
 import net.named_data.jndn.security.SecurityException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Testing Nfdc with real NFD instance (NFD must be run locally while executing the test)
+ * Testing Nfdc with real NFD instance (NFD must be run locally while executing the test).
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -112,7 +113,7 @@ public class NfdcIT {
   }
 
   /**
-   * LocalControlHeader would work only with NFD < 0.3.4, broken otherwise
+   * LocalControlHeader works only with NFD < 0.3.4, broken otherwise.
    */
   @Test(expected = ManagementException.class)
   public void testLocalControlHeader() throws Exception {

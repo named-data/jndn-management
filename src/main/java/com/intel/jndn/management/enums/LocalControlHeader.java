@@ -14,10 +14,10 @@
 package com.intel.jndn.management.enums;
 
 /**
- * Define constants for local control header options. See
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature">http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Enable-a-LocalControlHeader-feature</a>
+ * Define constants for local control header options.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">Face Management</a>
  */
 public enum LocalControlHeader {
 
@@ -29,10 +29,20 @@ public enum LocalControlHeader {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  LocalControlHeader(int value) {
+  /**
+   * Create enum using NFD's LocalControlHeader code.
+   *
+   * @param value NFD's LocalControlHeader code
+   */
+  LocalControlHeader(final int value) {
     this.value = value;
   }
 
+  /**
+   * Convert LocalControlHeader to the NFD code.
+   *
+   * @return NFD's LocalControlHeader code
+   */
   public final int toInteger() {
     return value;
   }

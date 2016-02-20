@@ -26,23 +26,28 @@ import net.named_data.jndn.ControlResponse;
  */
 public class ManagementException extends Exception {
   /**
-   * Constructor from the message
+   * Constructor from the message.
+   * @param message Error message
    */
-  public ManagementException(String message) {
+  public ManagementException(final String message) {
     super(message);
   }
 
   /**
-   * Constructor from the message and the cause
+   * Constructor from the message and the cause.
+   * @param message Error message
+   * @param cause Chained exception
    */
-  public ManagementException(String message, Throwable cause) {
+  public ManagementException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
   /**
-   * Parse an NFD response to create a ManagementException.
+   * Create exception from NFD's ControlResponse.
+   * @param response ControlResponse from which to use status code and status text
+   * @return new instance of ManagementException
    */
-  public static ManagementException fromResponse(ControlResponse response) {
+  public static ManagementException fromResponse(final ControlResponse response) {
     String message = "Action failed, forwarder returned: " + response.getStatusCode() + " " + response.getStatusText();
     return new ManagementException(message);
   }

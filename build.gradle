@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-  id "org.sonarqube" version "1.2"
+  id 'org.sonarqube' version '1.2'
   id 'net.saliman.cobertura' version '2.3.0'
 }
 
@@ -15,6 +15,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
+apply plugin: 'checkstyle'
 
 group = 'com.intel.jndn.management'
 version = '1.0.1-SNAPSHOT'
@@ -49,8 +50,9 @@ sourceSets {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
+  checkstyleConfig
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
 }
 
 dependencies {
@@ -59,6 +61,8 @@ dependencies {
   testCompile 'junit:junit:4.12'
   testCompile 'com.intel.jndn.mock:jndn-mock:1.0.1'
   testRuntime 'org.slf4j:slf4j-api:1.7.16'
+
+  checkstyleConfig "com.puppycrawl.tools:checkstyle:6.15"
 }
 
 task javadocJar(type: Jar) {
@@ -85,6 +89,19 @@ tasks.withType(Test) {
     exceptionFormat = "full"
   }
   outputs.upToDateWhen { false }
+}
+
+tasks.withType(Checkstyle) {
+  checkstyleClasspath = project.configurations.checkstyleConfig
+  checkstyleMain {
+    exclude 'com/intel/jndn/management/enums/NfdTlv.java'
+  }
+  checkstyleTest {
+    configFile file('config/checkstyle/checkstyle-test.xml')
+  }
+  checkstyleIntegrationTest {
+    configFile file('config/checkstyle/checkstyle-test.xml')
+  }
 }
 
 if (JavaVersion.current().isJava8Compatible()) {

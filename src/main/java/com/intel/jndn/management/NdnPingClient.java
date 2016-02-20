@@ -23,12 +23,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NdnPingClient {
+/**
+ * Simplistic checker for live connection to NFD forwarder.
+ */
+public final class NdnPingClient {
   public static final long DEFAULT_TIMEOUT = 2000;
   private static final Logger LOG = Logger.getLogger(NdnPingClient.class.getName());
 
   /**
-   * Prevent creation of NdnPingClient instances
+   * Prevent creation of NdnPingClient instances.
    */
   private NdnPingClient() {
   }
@@ -42,7 +45,7 @@ public class NdnPingClient {
    * @param face only a localhost Face
    * @return true if successful, false otherwise
    */
-  public static boolean pingLocal(Face face) {
+  public static boolean pingLocal(final Face face) {
     return ping(face, new Name("/localhost/nfd"));
   }
 
@@ -55,7 +58,7 @@ public class NdnPingClient {
    * @param name a known {@link Name} that the remote node will answer to
    * @return true if successful, false otherwise
    */
-  public static boolean ping(Face face, Name name) {
+  public static boolean ping(final Face face, final Name name) {
     // build interest
     Interest interest = new Interest(name);
     interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);

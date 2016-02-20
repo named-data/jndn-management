@@ -13,8 +13,6 @@
  */
 package com.intel.jndn.management.types;
 
-import java.nio.ByteBuffer;
-
 import com.intel.jndn.management.enums.NfdTlv;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.Tlv;
@@ -22,36 +20,39 @@ import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+
 /**
- * Represent a NextHopRecord in a FibEntry
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">FIB Dataset</a>
+ * Represent a NextHopRecord in a FibEntry.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">FIB Dataset</a>
  */
-public class NextHopRecord {
+public class NextHopRecord implements Decodable {
   private int faceId;
   private int cost;
 
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public NextHopRecord() {
     // nothing to do
   }
 
   /**
-   * Constructor from wire format
+   * Constructor from wire format.
+   *
    * @param input wire format
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public NextHopRecord(ByteBuffer input) throws EncodingException {
+  public NextHopRecord(final ByteBuffer input) throws EncodingException {
     wireDecode(input);
   }
 
   /**
-   * Encode using a new TLV encoder
+   * Encode using a new TLV encoder.
    *
    * @return The encoded buffer
    */
@@ -62,9 +63,11 @@ public class NextHopRecord {
   }
 
   /**
-   * Encode as part of an existing encode context
+   * Encode as part of an existing encode context.
+   *
+   * @param encoder TlvEncoder instance
    */
-  public final void wireEncode(TlvEncoder encoder) {
+  public final void wireEncode(final TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Cost, cost);
     encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, faceId);
@@ -75,18 +78,19 @@ public class NextHopRecord {
    * Decode the input from its TLV format.
    *
    * @param input The input buffer to decode. This reads from position() to
-   * limit(), but does not change the position.
+   *              limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
-  public final void wireDecode(ByteBuffer input) throws EncodingException {
+  public final void wireDecode(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     wireDecode(decoder);
   }
 
   /**
-   * Decode as part of an existing decode context
+   * {@inheritDoc}
    */
-  public final void wireDecode(TlvDecoder decoder) throws EncodingException {
+  @Override
+  public void wireDecode(final TlvDecoder decoder) throws EncodingException {
     int endOffset = decoder.readNestedTlvsStart(NfdTlv.NextHopRecord);
     this.faceId = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId);
     this.cost = (int) decoder.readNonNegativeIntegerTlv(Tlv.ControlParameters_Cost);
@@ -94,30 +98,38 @@ public class NextHopRecord {
   }
 
   /**
-   * Get face ID
+   * @return face ID
    */
   public int getFaceId() {
     return faceId;
   }
 
   /**
-   * Set face ID
+   * Set face ID.
+   *
+   * @param faceId face ID
+   * @return this
    */
-  public void setFaceId(int faceId) {
+  public NextHopRecord setFaceId(final int faceId) {
     this.faceId = faceId;
+    return this;
   }
 
   /**
-   * Get cost
+   * @return next hop record cost
    */
   public int getCost() {
     return cost;
   }
 
   /**
-   * Set cost
+   * Set next hop record cost.
+   *
+   * @param cost next hop record cost
+   * @return this
    */
-  public void setCost(int cost) {
+  public NextHopRecord setCost(final int cost) {
     this.cost = cost;
+    return this;
   }
 }

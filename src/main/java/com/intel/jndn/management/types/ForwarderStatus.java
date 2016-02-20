@@ -13,19 +13,19 @@
  */
 package com.intel.jndn.management.types;
 
-import java.nio.ByteBuffer;
-
 import com.intel.jndn.management.enums.NfdTlv;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+
 /**
- * Represent a ForwarderStatus object
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
+ * Represent a ForwarderStatus object.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
  */
 public class ForwarderStatus implements Decodable {
   private String nfdVersion = "";
@@ -46,18 +46,19 @@ public class ForwarderStatus implements Decodable {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Default constructor
+   * Default constructor.
    */
   public ForwarderStatus() {
     // nothing to do
   }
 
   /**
-   * Constructor from wire format
+   * Constructor from wire format.
+   *
    * @param input wire format
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public ForwarderStatus(ByteBuffer input) throws EncodingException {
+  public ForwarderStatus(final ByteBuffer input) throws EncodingException {
     wireDecode(input);
   }
 
@@ -74,8 +75,10 @@ public class ForwarderStatus implements Decodable {
 
   /**
    * Encode as part of an existing encode context.
+   *
+   * @param encoder TlvEncoder instance
    */
-  public final void wireEncode(TlvEncoder encoder) {
+  public final void wireEncode(final TlvEncoder encoder) {
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutNacks, nOutNacks);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutDatas, nOutDatas);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutInterests, nOutInterests);
@@ -96,19 +99,19 @@ public class ForwarderStatus implements Decodable {
    * Decode the input from its TLV format.
    *
    * @param input The input buffer to decode. This reads from position() to
-   * limit(), but does not change the position.
+   *              limit(), but does not change the position.
    * @throws EncodingException For invalid encoding.
    */
-  public final void wireDecode(ByteBuffer input) throws EncodingException {
+  public final void wireDecode(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     wireDecode(decoder);
   }
 
   /**
-   * Decode as part of an existing decode context
+   * {@inheritDoc}
    */
   @Override
-  public void wireDecode(TlvDecoder decoder) throws EncodingException {
+  public void wireDecode(final TlvDecoder decoder) throws EncodingException {
     this.nfdVersion = new Blob(decoder.readBlobTlv(NfdTlv.NfdVersion), true).toString();
     this.startTimestamp = decoder.readNonNegativeIntegerTlv(NfdTlv.StartTimestamp);
     this.currentTimestamp = decoder.readNonNegativeIntegerTlv(NfdTlv.CurrentTimestamp);
@@ -125,115 +128,255 @@ public class ForwarderStatus implements Decodable {
     this.nOutNacks = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutNacks);
   }
 
+  /**
+   * @return NFD version string
+   */
   public String getNfdVersion() {
     return nfdVersion;
   }
 
-  public void setNfdVersion(String nfdVersion) {
+  /**
+   * Set NFD version string.
+   *
+   * @param nfdVersion NFD version string
+   * @return this
+   */
+  public ForwarderStatus setNfdVersion(final String nfdVersion) {
     this.nfdVersion = nfdVersion;
+    return this;
   }
 
+  /**
+   * @return NFD start timestamp (number of seconds since January 1, 1970)
+   */
   public long getStartTimestamp() {
     return startTimestamp;
   }
 
-  public void setStartTimestamp(long startTimestamp) {
+  /**
+   * Set NFD start timestamp (number of seconds since January 1, 1970).
+   *
+   * @param startTimestamp NFD start timestamp (number of seconds since January 1, 1970)
+   * @return this
+   */
+  public ForwarderStatus setStartTimestamp(final long startTimestamp) {
     this.startTimestamp = startTimestamp;
+    return this;
   }
 
+  /**
+   * @return NFD current timestamp (number of seconds since January 1, 1970)
+   */
   public long getCurrentTimestamp() {
     return currentTimestamp;
   }
 
-  public void setCurrentTimestamp(long currentTimestamp) {
+  /**
+   * Set NFD current timestamp (number of seconds since January 1, 1970).
+   *
+   * @param currentTimestamp NFD current timestamp (number of seconds since January 1, 1970)
+   * @return this
+   */
+  public ForwarderStatus setCurrentTimestamp(final long currentTimestamp) {
     this.currentTimestamp = currentTimestamp;
+    return this;
   }
 
+  /**
+   * @return Number of NameTree entries
+   */
   public long getNNameTreeEntries() {
     return nNameTreeEntries;
   }
 
-  public void setNNameTreeEntries(long nNameTreeEntries) {
+  /**
+   * Set the number of NameTree entries.
+   *
+   * @param nNameTreeEntries the number of NameTree entries.
+   * @return this
+   */
+  public ForwarderStatus setNNameTreeEntries(final long nNameTreeEntries) {
     this.nNameTreeEntries = nNameTreeEntries;
+    return this;
   }
 
+  /**
+   * @return Number of FIB entries
+   */
   public long getNFibEntries() {
     return nFibEntries;
   }
 
-  public void setNFibEntries(long nFibEntries) {
+  /**
+   * Set the number of FIB entries.
+   *
+   * @param nFibEntries the number of FIB entries.
+   * @return this
+   */
+  public ForwarderStatus setNFibEntries(final long nFibEntries) {
     this.nFibEntries = nFibEntries;
+    return this;
   }
 
+  /**
+   * @return Number of PIT entries
+   */
   public long getNPitEntries() {
     return nPitEntries;
   }
 
-  public void setNPitEntries(long nPitEntries) {
+  /**
+   * Set the number of PIT entries.
+   *
+   * @param nPitEntries the number of PIT entries.
+   * @return this
+   */
+  public ForwarderStatus setNPitEntries(final long nPitEntries) {
     this.nPitEntries = nPitEntries;
+    return this;
   }
 
+  /**
+   * @return Number of Measurement entries
+   */
   public long getNMeasurementsEntries() {
     return nMeasurementEntries;
   }
 
-  public void setNMeasurementsEntries(long nMeasurementEntries) {
+  /**
+   * Set the number of Measurement entries.
+   *
+   * @param nMeasurementEntries the number of Measurement entries.
+   * @return this
+   */
+  public ForwarderStatus setNMeasurementsEntries(final long nMeasurementEntries) {
     this.nMeasurementEntries = nMeasurementEntries;
+    return this;
   }
 
+  /**
+   * @return Number of CS entries
+   */
   public long getNCsEntries() {
     return nCsEntries;
   }
 
-  public void setNCsEntries(long nCsEntries) {
+  /**
+   * Set the number of CS entries.
+   *
+   * @param nCsEntries the number of CS entries.
+   * @return this
+   */
+  public ForwarderStatus setNCsEntries(final long nCsEntries) {
     this.nCsEntries = nCsEntries;
+    return this;
   }
 
+  /**
+   * @return The number of incoming Interests since NFD start
+   */
   public long getNInInterests() {
     return nInInterests;
   }
 
-  public void setNInInterests(long nInInterests) {
+  /**
+   * Set the number of incoming Interests since NFD start.
+   *
+   * @param nInInterests the number of incoming Interests since NFD start
+   * @return this
+   */
+  public ForwarderStatus setNInInterests(final long nInInterests) {
     this.nInInterests = nInInterests;
+    return this;
   }
 
+  /**
+   * @return Number of incoming Data since NFD start
+   */
   public long getNInDatas() {
     return nInDatas;
   }
 
-  public void setNInDatas(long nInDatas) {
+  /**
+   * Set the number of incoming Data since NFD start.
+   *
+   * @param nInDatas the number of incoming Interests since NFD start
+   * @return this
+   */
+  public ForwarderStatus setNInDatas(final long nInDatas) {
     this.nInDatas = nInDatas;
+    return this;
   }
 
+  /**
+   * @return Number of outgoing Interests since NFD start
+   */
   public long getNOutInterests() {
     return nOutInterests;
   }
 
-  public void setNOutInterests(long nOutInterests) {
+  /**
+   * Set the number of outgoing Interests since NFD start.
+   *
+   * @param nOutInterests the number of outgoing Interests since NFD start
+   * @return this
+   */
+  public ForwarderStatus setNOutInterests(final long nOutInterests) {
     this.nOutInterests = nOutInterests;
+    return this;
   }
 
+  /**
+   * @return Number of outgoing Data since NFD start
+   */
   public long getNOutDatas() {
     return nOutDatas;
   }
 
-  public void setNOutDatas(long nOutDatas) {
+  /**
+   * Set the number of outgoing Data since NFD start.
+   *
+   * @param nOutDatas the number of outgoing Data since NFD start
+   * @return this
+   */
+  public ForwarderStatus setNOutDatas(final long nOutDatas) {
     this.nOutDatas = nOutDatas;
+    return this;
   }
 
+  /**
+   * @return Number of incoming NACKs since NFD start
+   */
   public long getNInNacks() {
     return nInNacks;
   }
 
-  public void setNInNacks(long nInNacks) {
+  /**
+   * Set the number of incoming NACKs since NFD start.
+   *
+   * @param nInNacks the number of incoming NACKs since NFD start
+   * @return this
+   */
+  public ForwarderStatus setNInNacks(final long nInNacks) {
     this.nInNacks = nInNacks;
+    return this;
   }
 
+  /**
+   * @return Number of outgoing NACKs since NFD start
+   */
   public long getNOutNacks() {
     return nOutNacks;
   }
 
-  public void setNOutNacks(long nOutNacks) {
+  /**
+   * Set the number of outgoing NACKs since NFD start.
+   *
+   * @param nOutNacks the number of outgoing NACKs since NFD start
+   * @return this
+   */
+  public ForwarderStatus setNOutNacks(final long nOutNacks) {
     this.nOutNacks = nOutNacks;
+    return this;
   }
 }

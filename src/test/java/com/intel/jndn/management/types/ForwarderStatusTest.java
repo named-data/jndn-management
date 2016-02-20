@@ -27,11 +27,11 @@ import org.junit.Test;
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public class ForwarderStatusTest {
-  ByteBuffer TestForwarderStatus;
+  private ByteBuffer testForwarderStatusWire;
 
   @Before
   public void setUp() throws Exception {
-    TestForwarderStatus = TestHelper.bufferFromIntArray(new int[] {
+    testForwarderStatusWire = TestHelper.bufferFromIntArray(new int[] {
       0x80, 0x11, 0x30, 0x2e, 0x32, 0x2e, 0x30, 0x2d, 0x36, 0x35,
       0x2d, 0x67, 0x37, 0x35, 0x61, 0x62, 0x36, 0x62, 0x37, 0x81, 0x08, 0x00,
       0x00, 0x00, 0x57, 0x5b, 0x42, 0xa6, 0x2d, 0x82, 0x08, 0x00, 0x00, 0x00,
@@ -63,12 +63,12 @@ public class ForwarderStatusTest {
     status.setNOutNacks(4321);
 
     ByteBuffer wire = status.wireEncode().buf();
-    assertEquals(TestForwarderStatus, wire);
+    assertEquals(testForwarderStatusWire, wire);
   }
 
   @Test
   public void testDecode() throws EncodingException {
-    ForwarderStatus status = new ForwarderStatus(TestForwarderStatus);
+    ForwarderStatus status = new ForwarderStatus(testForwarderStatusWire);
 
     assertEquals("0.2.0-65-g75ab6b7", status.getNfdVersion());
     assertEquals(375193249325L,       status.getStartTimestamp());

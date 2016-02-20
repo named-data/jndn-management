@@ -14,10 +14,10 @@
 package com.intel.jndn.management.enums;
 
 /**
- * Indicate whether the face is persistent; used by FaceStatus
+ * Indicate whether the face is persistent; used by FaceStatus.
  *
- * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">FaceMgmt</a>
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">Face Management</a>
  */
 public enum FacePersistency {
   NONE(-1), // invalid value
@@ -30,16 +30,32 @@ public enum FacePersistency {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  FacePersistency(int value) {
+  /**
+   * Create enum using NFD's FacePersistency code.
+   *
+   * @param value NFD's FacePersistency code
+   */
+  FacePersistency(final int value) {
     this.value = value;
   }
 
+  /**
+   * Convert FacePersistency to the NFD code.
+   *
+   * @return NFD's FacePersistency code
+   */
   public final int toInteger() {
     return value;
   }
 
+  /**
+   * Convert NFD code to FacePersistency enum.
+   *
+   * @param value NFD's FacePersistency code
+   * @return enum value
+   */
   public static FacePersistency
-  fromInteger(int value) {
+  fromInteger(final int value) {
     switch (value) {
       case 0:
         return PERSISTENT;

@@ -13,9 +13,6 @@
  */
 package com.intel.jndn.management.helpers;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-
 import net.named_data.jndn.ControlParameters;
 import net.named_data.jndn.ForwardingFlags;
 import net.named_data.jndn.Name;
@@ -25,6 +22,9 @@ import net.named_data.jndn.encoding.tlv.TlvDecoder;
 import net.named_data.jndn.encoding.tlv.TlvEncoder;
 import net.named_data.jndn.util.Blob;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
 /**
  * Provide helper methods to cover areas too protected in Tlv0_1_1WireFormat;
  * this class can be deprecated if WireFormats allow passing in an existing
@@ -32,7 +32,13 @@ import net.named_data.jndn.util.Blob;
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
-public class EncodingHelper {
+public final class EncodingHelper {
+
+  /**
+   * Prevent instances of EncodingHelper.
+   */
+  private EncodingHelper() {
+  }
 
   /**
    * Helper to decode names since Tlv0_1_1WireFormat.java uses its own internal,
@@ -40,9 +46,9 @@ public class EncodingHelper {
    *
    * @param input the bytes to decode
    * @return a decoded {@link Name}
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public static Name decodeName(ByteBuffer input) throws EncodingException {
+  public static Name decodeName(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     return decodeName(decoder);
   }
@@ -53,9 +59,9 @@ public class EncodingHelper {
    *
    * @param decoder a current decoder context to use for decoding
    * @return a decoded {@link Name}
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public static Name decodeName(TlvDecoder decoder) throws EncodingException {
+  public static Name decodeName(final TlvDecoder decoder) throws EncodingException {
     Name name = new Name();
     int endOffset = decoder.readNestedTlvsStart(Tlv.Name);
     while (decoder.getOffset() < endOffset) {
@@ -73,7 +79,7 @@ public class EncodingHelper {
    * @param name the {@link Name} to encode
    * @return an encoded {@link Blob}
    */
-  public static Blob encodeName(Name name) {
+  public static Blob encodeName(final Name name) {
     TlvEncoder encoder = new TlvEncoder();
     encodeName(name, encoder);
     return new Blob(encoder.getOutput(), false);
@@ -83,10 +89,10 @@ public class EncodingHelper {
    * Helper to encode names using an existing encoding context; could be merged
    * to Tlv0_1_1WireFormat.java.
    *
-   * @param name the {@link Name} to encode
+   * @param name    the {@link Name} to encode
    * @param encoder the current {@link TlvEncoder} context to encode with
    */
-  public static final void encodeName(Name name, TlvEncoder encoder) {
+  public static void encodeName(final Name name, final TlvEncoder encoder) {
     int saveLength = encoder.getLength();
     for (int i = name.size() - 1; i >= 0; --i) {
       encoder.writeBlobTlv(Tlv.NameComponent, name.get(i).getValue().buf());
@@ -100,9 +106,9 @@ public class EncodingHelper {
    *
    * @param input the bytes to decode
    * @return a decoded {@link Name}
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public static Name decodeStrategy(ByteBuffer input) throws EncodingException {
+  public static Name decodeStrategy(final ByteBuffer input) throws EncodingException {
     TlvDecoder decoder = new TlvDecoder(input);
     return decodeStrategy(decoder);
   }
@@ -113,9 +119,9 @@ public class EncodingHelper {
    *
    * @param decoder the current {@link TlvDecoder} context to decode with
    * @return a decoded strategy (e.g. {@link Name})
-   * @throws EncodingException
+   * @throws EncodingException when decoding fails
    */
-  public static Name decodeStrategy(TlvDecoder decoder) throws EncodingException {
+  public static Name decodeStrategy(final TlvDecoder decoder) throws EncodingException {
     int strategyEndOffset = decoder.readNestedTlvsStart(Tlv.ControlParameters_Strategy);
     Name strategy = decodeName(decoder);
     decoder.finishNestedTlvs(strategyEndOffset);
@@ -129,7 +135,7 @@ public class EncodingHelper {
    * @param strategy the {@link Name} to encode
    * @return an encoded {@link Blob}
    */
-  public static Blob encodeStrategy(Name strategy) {
+  public static Blob encodeStrategy(final Name strategy) {
     TlvEncoder encoder = new TlvEncoder();
     encodeName(strategy, encoder);
     return new Blob(encoder.getOutput(), false);
@@ -140,53 +146,52 @@ public class EncodingHelper {
    * merged to Tlv0_1_1WireFormat.java.
    *
    * @param strategy the {@link Name} to encode
-   * @param encoder the current {@link TlvEncoder} context to use
+   * @param encoder  the current {@link TlvEncoder} context to use
    */
-  public static final void encodeStrategy(Name strategy, TlvEncoder encoder) {
+  public static void encodeStrategy(final Name strategy, final TlvEncoder encoder) {
     int strategySaveLength = encoder.getLength();
     encodeName(strategy, encoder);
     encoder.writeTypeAndLength(Tlv.ControlParameters_Strategy,
-            encoder.getLength() - strategySaveLength);
+      encoder.getLength() - strategySaveLength);
   }
 
   /**
    * Helper to encode control parameters using an existing encoding context;
    * could be merged to Tlv0_1_1WireFormat.java.
    *
-   * @param controlParameters
-   * @param encoder
+   * @param controlParameters control parameters
+   * @param encoder           TlvEncoder instance
    */
-  public static final void encodeControlParameters(ControlParameters controlParameters, TlvEncoder encoder) {
+  public static void encodeControlParameters(final ControlParameters controlParameters, final TlvEncoder encoder) {
     int saveLength = encoder.getLength();
 
     // Encode backwards.
     encoder.writeOptionalNonNegativeIntegerTlvFromDouble(Tlv.ControlParameters_ExpirationPeriod,
-            controlParameters.getExpirationPeriod());
+      controlParameters.getExpirationPeriod());
 
     // Encode strategy
     if (controlParameters.getStrategy().size() != 0) {
       int strategySaveLength = encoder.getLength();
       encodeName(controlParameters.getStrategy(), encoder);
       encoder.writeTypeAndLength(Tlv.ControlParameters_Strategy,
-              encoder.getLength() - strategySaveLength);
+        encoder.getLength() - strategySaveLength);
     }
 
     // Encode ForwardingFlags
     int flags = controlParameters.getForwardingFlags().getNfdForwardingFlags();
-    if (flags != new ForwardingFlags().getNfdForwardingFlags()) // The flags are not the default value.
-    {
+    if (flags != new ForwardingFlags().getNfdForwardingFlags()) { // The flags are not the default value.
       encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Flags, flags);
     }
 
     encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_Cost, controlParameters.getCost());
     encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_Origin, controlParameters.getOrigin());
     encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_LocalControlFeature,
-            controlParameters.getLocalControlFeature());
+      controlParameters.getLocalControlFeature());
 
     // Encode URI
     if (!controlParameters.getUri().isEmpty()) {
       encoder.writeBlobTlv(Tlv.ControlParameters_Uri,
-              new Blob(controlParameters.getUri()).buf());
+        new Blob(controlParameters.getUri()).buf());
     }
 
     encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, controlParameters.getFaceId());
@@ -200,10 +205,13 @@ public class EncodingHelper {
   }
 
   /**
-   * Convert ByteBuffer to string, assuming UTF-8 encoding in the buffer
+   * Convert ByteBuffer to string, assuming UTF-8 encoding in the buffer.
+   *
+   * @param buffer buffer to convert
+   * @return String representation of ByteBuffer (UTF-8 encoding)
    */
   public static String
-  toString(ByteBuffer buffer) {
+  toString(final ByteBuffer buffer) {
     byte[] array = new byte[buffer.remaining()];
     buffer.get(array);
     return new String(array, Charset.forName("UTF-8"));

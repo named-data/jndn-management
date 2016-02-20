@@ -15,10 +15,10 @@ package com.intel.jndn.management.enums;
 
 /**
  * Indicate whether the face is local for scope control purposes; used by
- * FaceStatus
+ * FaceStatus.
  *
- * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">FaceMgmt</a>
  * @author Andrew Brown <andrew.brown@intel.com>
+ * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">Face Management</a>
  */
 public enum FaceScope {
 
@@ -31,16 +31,31 @@ public enum FaceScope {
 
   /////////////////////////////////////////////////////////////////////////////
 
-  FaceScope(int value) {
+  /**
+   * Create enum using NFD's FaceScope code.
+   *
+   * @param value NFD's FaceScope code
+   */
+  FaceScope(final int value) {
     this.value = value;
   }
 
+  /**
+   * Convert FaceScope to the NFD code.
+   *
+   * @return NFD's FaceScope code
+   */
   public final int toInteger() {
     return value;
   }
 
-  public static FaceScope
-  fromInteger(int value) {
+  /**
+   * Convert NFD code to FaceScope enum.
+   *
+   * @param value NFD's FaceScope code
+   * @return enum value
+   */
+  public static FaceScope fromInteger(final int value) {
     switch (value) {
       case 0:
         return NON_LOCAL;
