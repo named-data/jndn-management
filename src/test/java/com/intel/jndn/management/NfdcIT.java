@@ -261,4 +261,12 @@ public class NfdcIT {
 
     Nfdc.disableLocalControlHeader(face, LocalControlHeader.INCOMING_FACE_ID);
   }
+
+  @Test
+  public void testGetChannelStatus() throws Exception {
+    assertFalse(Nfdc.getChannelStatusList(face).isEmpty());
+
+    exception.expect(ManagementException.class);
+    Nfdc.getChannelStatusList(mockFace);
+  }
 }

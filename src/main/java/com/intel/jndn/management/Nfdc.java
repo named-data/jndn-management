@@ -17,6 +17,7 @@ import com.intel.jndn.management.enums.LocalControlHeader;
 import com.intel.jndn.management.enums.RouteOrigin;
 import com.intel.jndn.management.helpers.FetchHelper;
 import com.intel.jndn.management.helpers.StatusDatasetHelper;
+import com.intel.jndn.management.types.ChannelStatus;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.ForwarderStatus;
@@ -150,6 +151,25 @@ public final class Nfdc {
     }
   }
 
+  /**
+   * Retrieve the list of channel status entries from the NFD; calls
+   * /localhost/nfd/faces/channels which requires a local Face (all non-local packets
+   * are dropped).
+   *
+   * @param face only a localhost Face
+   * @return a list of channel status entries
+   * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
+   *                             the NFD rejected the request
+   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Channel-Dataset">Face Management</a>
+   */
+  public static List<ChannelStatus> getChannelStatusList(final Face face) throws ManagementException {
+    try {
+      List<Data> segments = FetchHelper.getSegmentedData(face, new Name("/localhost/nfd/faces/channels"));
+      return StatusDatasetHelper.wireDecode(segments, ChannelStatus.class);
+    } catch (IOException e) {
+      throw new ManagementException(e.getMessage(), e);
+    }
+  }
   /**
    * Retrieve the {@link KeyLocator} for an NFD.
    *
