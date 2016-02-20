@@ -93,4 +93,38 @@ public class FaceStatusTest {
     assertEquals(1329719163, status.getNInBytes());
     assertEquals(999110448, status.getNOutBytes());
   }
+
+  @Test
+  public void testToString() throws Exception {
+    FaceStatus status = new FaceStatus(testFaceStatusWire);
+
+    assertEquals("FaceStatus(FaceID: 100,\n" +
+        "RemoteUri: tcp4://192.0.2.1:6363,\n" +
+        "LocalUri: tcp4://192.0.2.2:55555,\n" +
+        "ExpirationPeriod: 10000 milliseconds,\n" +
+        "FaceScope: LOCAL,\n" +
+        "FacePersistency: ON_DEMAND,\n" +
+        "LinkType: MULTI_ACCESS,\n" +
+        "Counters: { Interests: {in: 10, out: 3000},\n" +
+        "            Data: {in: 200, out: 4},\n" +
+        "            Nack: {in: 1, out: 2},\n" +
+        "            bytes: {in: 1329719163, out: 999110448} }\n" +
+        ")",
+      status.toString());
+
+    status.setExpirationPeriod(0);
+    assertEquals("FaceStatus(FaceID: 100,\n" +
+        "RemoteUri: tcp4://192.0.2.1:6363,\n" +
+        "LocalUri: tcp4://192.0.2.2:55555,\n" +
+        "ExpirationPeriod: infinite,\n" +
+        "FaceScope: LOCAL,\n" +
+        "FacePersistency: ON_DEMAND,\n" +
+        "LinkType: MULTI_ACCESS,\n" +
+        "Counters: { Interests: {in: 10, out: 3000},\n" +
+        "            Data: {in: 200, out: 4},\n" +
+        "            Nack: {in: 1, out: 2},\n" +
+        "            bytes: {in: 1329719163, out: 999110448} }\n" +
+        ")",
+      status.toString());
+  }
 }

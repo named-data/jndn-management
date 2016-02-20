@@ -13,29 +13,28 @@
  */
 package com.intel.jndn.management;
 
+import com.intel.jndn.management.enums.LocalControlHeader;
 import com.intel.jndn.management.enums.RouteOrigin;
 import com.intel.jndn.management.helpers.FetchHelper;
 import com.intel.jndn.management.helpers.StatusDatasetHelper;
 import com.intel.jndn.management.types.FaceStatus;
 import com.intel.jndn.management.types.FibEntry;
 import com.intel.jndn.management.types.ForwarderStatus;
-import com.intel.jndn.management.enums.LocalControlHeader;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.management.types.StrategyChoice;
+import net.named_data.jndn.ControlParameters;
+import net.named_data.jndn.ControlResponse;
+import net.named_data.jndn.Data;
+import net.named_data.jndn.Face;
+import net.named_data.jndn.ForwardingFlags;
+import net.named_data.jndn.Interest;
+import net.named_data.jndn.KeyLocator;
+import net.named_data.jndn.Name;
+import net.named_data.jndn.encoding.EncodingException;
+import net.named_data.jndn.security.SecurityException;
 
 import java.io.IOException;
 import java.util.List;
-
-import net.named_data.jndn.ControlResponse;
-import net.named_data.jndn.Data;
-import net.named_data.jndn.Interest;
-import net.named_data.jndn.Name;
-import net.named_data.jndn.KeyLocator;
-import net.named_data.jndn.Face;
-import net.named_data.jndn.ControlParameters;
-import net.named_data.jndn.ForwardingFlags;
-import net.named_data.jndn.encoding.EncodingException;
-import net.named_data.jndn.security.SecurityException;
 
 /**
  * Helper class for interacting with an NDN forwarder daemon; see
@@ -125,7 +124,8 @@ public final class Nfdc {
     try {
       List<Data> segments = FetchHelper.getSegmentedData(face, new Name("/localhost/nfd/rib/list"));
       return StatusDatasetHelper.wireDecode(segments, RibEntry.class);
-    } catch (IOException e) {
+    } catch (ArrayIndexOutOfBoundsException | IOException e) {
+      // TODO: remove ArrayIndexOutOfBoundsException after fixing bug in MockFace
       throw new ManagementException(e.getMessage(), e);
     }
   }
@@ -554,7 +554,7 @@ public final class Nfdc {
     // forwarder must have command signing info set
     try {
       face.makeCommandInterest(interest);
-    } catch (SecurityException e) {
+    } catch (NullPointerException | SecurityException e) {
       throw new IllegalArgumentException("Failed to make command interest; ensure command signing info is set on the " +
         "face.", e);
     }

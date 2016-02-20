@@ -88,7 +88,7 @@ tasks.withType(Test) {
     showStandardStreams = true
     exceptionFormat = "full"
   }
-  outputs.upToDateWhen { false }
+//  outputs.upToDateWhen { false }
 }
 
 tasks.withType(Checkstyle) {

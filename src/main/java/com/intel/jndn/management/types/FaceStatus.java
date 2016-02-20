@@ -431,4 +431,34 @@ public class FaceStatus implements Decodable {
     this.outBytes = outBytes;
     return this;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder ret = new StringBuilder();
+
+    ret.append("FaceStatus(")
+       .append("FaceID: ").append(getFaceId()).append(",\n")
+       .append("RemoteUri: ").append(getRemoteUri()).append(",\n")
+       .append("LocalUri: ").append(getLocalUri()).append(",\n");
+
+    if (hasExpirationPeriod()) {
+      ret.append("ExpirationPeriod: ").append(getExpirationPeriod()).append(" milliseconds,\n");
+    } else {
+      ret.append("ExpirationPeriod: infinite,\n");
+    }
+
+    ret.append("FaceScope: ").append(getFaceScope()).append(",\n")
+       .append("FacePersistency: ").append(getFacePersistency()).append(",\n")
+       .append("LinkType: ").append(getLinkType()).append(",\n")
+       .append("Counters: { Interests: {in: ").append(getNInInterests()).append(", ")
+       .append("out: ").append(getNOutInterests()).append("},\n")
+       .append("            Data: {in: ").append(getNInDatas()).append(", ")
+       .append("out: ").append(getNOutDatas()).append("},\n")
+       .append("            Nack: {in: ").append(getNInNacks()).append(", ")
+       .append("out: ").append(getNOutNacks()).append("},\n")
+       .append("            bytes: {in: ").append(getNInBytes()).append(", ")
+       .append("out: ").append(getNOutBytes()).append("} }\n")
+       .append(")");
+    return ret.toString();
+  }
 }

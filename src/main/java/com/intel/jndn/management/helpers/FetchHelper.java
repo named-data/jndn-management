@@ -121,7 +121,7 @@ public final class FetchHelper implements OnData, OnTimeout {
 
     try {
       data.getName().get(SEGMENT_NAME_COMPONENT_OFFSET).toSegment();
-    } catch (EncodingException e) {
+    } catch (ArrayIndexOutOfBoundsException | EncodingException e) {
       throw new IOException("Retrieved data does not have segment number as the last name component", e);
     }
     if (data.getName().size() != prefix.size() + 2) {
