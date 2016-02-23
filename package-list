@@ -1,2 +1,4 @@
 com.intel.jndn.management
+com.intel.jndn.management.enums
+com.intel.jndn.management.helpers
 com.intel.jndn.management.types
