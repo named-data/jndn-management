@@ -82,7 +82,7 @@ public class NfdcIT {
   public void testFailOfGetKeyLocator() throws Exception {
     mockFace.onSendInterest.add(new MockFace.SignalOnSendInterest() {
       @Override
-      public void emit(final Interest interest) throws EncodingException, SecurityException {
+      public void emit(final Interest interest) {
         Data data = new Data();
         data.setName(new Name(interest.getName()).appendVersion(0).appendSegment(0));
 
@@ -95,8 +95,11 @@ public class NfdcIT {
         LOG.info(data.getSignature().toString());
 
         // don't set anything else
-
-        mockFace.receive(data);
+        try {
+          mockFace.receive(data);
+        } catch (EncodingException e) {
+          LOG.severe("Failed to set receive data: " + e);
+        }
       }
     });
 
@@ -234,7 +237,7 @@ public class NfdcIT {
 
     mockFace.onSendInterest.add(new MockFace.SignalOnSendInterest() {
       @Override
-      public void emit(final Interest interest) throws EncodingException, SecurityException {
+      public void emit(final Interest interest) {
         ControlResponse response = new ControlResponse();
         response.setStatusCode(300);
         response.setStatusText("Test FAIL");
@@ -243,7 +246,11 @@ public class NfdcIT {
         data.setName(interest.getName());
         data.setContent(response.wireEncode());
 
-        mockFace.receive(data);
+        try {
+          mockFace.receive(data);
+        } catch (EncodingException e) {
+          LOG.severe("Failed to set receive data: " + e);
+        }
       }
     });
     Nfdc.setStrategy(mockFace, new Name("/"), Strategies.BROADCAST);
