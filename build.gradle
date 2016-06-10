@@ -18,7 +18,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'checkstyle'
 
 group = 'com.intel.jndn.management'
-version = '1.1.0'
+version = '1.1.2'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
@@ -56,10 +56,10 @@ configurations {
 }
 
 dependencies {
-  compile 'net.named-data:jndn:0.10'
+  compile 'net.named-data:jndn:0.13'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'com.intel.jndn.mock:jndn-mock:1.0.1'
+  testCompile 'com.intel.jndn.mock:jndn-mock:1.0.3'
   testRuntime 'org.slf4j:slf4j-api:1.7.16'
 
   checkstyleConfig "com.puppycrawl.tools:checkstyle:6.15"
