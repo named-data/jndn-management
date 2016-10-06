@@ -569,12 +569,16 @@ public final class Nfdc {
    */
   private static ControlResponse sendCommand(final Face face, final Name name) throws IOException, EncodingException,
     ManagementException {
+    if (face == null) {
+      throw new IllegalArgumentException("Face parameter is null.");
+    }
+
     Interest interest = new Interest(name);
 
     // forwarder must have command signing info set
     try {
       face.makeCommandInterest(interest);
-    } catch (NullPointerException | SecurityException e) {
+    } catch (SecurityException e) {
       throw new IllegalArgumentException("Failed to make command interest; ensure command signing info is set on the " +
         "face.", e);
     }

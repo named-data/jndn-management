@@ -28,11 +28,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Trival NDN client to fetch one or multiple Data packets.
+ * Trivial NDN client to fetch one or multiple data packets.
  */
 public final class FetchHelper implements OnData, OnTimeout {
-  public static final long DEFAULT_TIMEOUT = 2000;
-
+  private static final long DEFAULT_TIMEOUT = 2000;
   private static final Logger LOG = Logger.getLogger(FetchHelper.class.getName());
   private static final int SLEEP_TIMEOUT = 20;
   private static final int SEGMENT_NAME_COMPONENT_OFFSET = -1;
@@ -42,12 +41,6 @@ public final class FetchHelper implements OnData, OnTimeout {
   private Face face;
 
   /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Prevent creation of FetchHelper instances: use getData or getSegmentedData.
-   */
-  private FetchHelper() {
-  }
 
   /**
    * Private constructor: use getData or getSegmentedData.
@@ -119,16 +112,18 @@ public final class FetchHelper implements OnData, OnTimeout {
 
     Data data = fetcher.getData(interest);
 
-    try {
-      data.getName().get(SEGMENT_NAME_COMPONENT_OFFSET).toSegment();
-    } catch (ArrayIndexOutOfBoundsException | EncodingException e) {
-      throw new IOException("Retrieved data does not have segment number as the last name component", e);
-    }
     if (data.getName().size() != prefix.size() + 2) {
-      throw new IOException("Retrieved data is not part of segmented stream");
+      throw new IOException("Retrieved data is not part of segmented stream; " +
+              "data name must end with .../[version]/[segment]");
     }
 
-    long finalBlockId = 0;
+    try {
+      data.getName().get(SEGMENT_NAME_COMPONENT_OFFSET).toSegment();
+    } catch (EncodingException e) {
+      throw new IOException("Retrieved data does not have segment number as the last name component", e);
+    }
+
+    long finalBlockId;
     try {
       finalBlockId = data.getMetaInfo().getFinalBlockId().toSegment();
     } catch (EncodingException e) {
@@ -167,7 +162,7 @@ public final class FetchHelper implements OnData, OnTimeout {
       try {
         Thread.sleep(SLEEP_TIMEOUT);
       } catch (InterruptedException e) {
-        // ok
+        Thread.currentThread().interrupt();
       }
     }
 
@@ -189,7 +184,7 @@ public final class FetchHelper implements OnData, OnTimeout {
     state.nRetries--;
     if (state.nRetries > 0) {
       try {
-        face.expressInterest(new Interest(interest).setNonce(null), this, this);
+        face.expressInterest(new Interest(interest), this, this);
       } catch (IOException e) {
         LOG.log(Level.INFO, "Error while expressing interest: " + e.toString(), e);
       }
