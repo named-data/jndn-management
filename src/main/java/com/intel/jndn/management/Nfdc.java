@@ -125,8 +125,7 @@ public final class Nfdc {
     try {
       List<Data> segments = FetchHelper.getSegmentedData(face, new Name("/localhost/nfd/rib/list"));
       return StatusDatasetHelper.wireDecode(segments, RibEntry.class);
-    } catch (ArrayIndexOutOfBoundsException | IOException e) {
-      // TODO: remove ArrayIndexOutOfBoundsException after fixing bug in MockFace
+    } catch (IOException e) {
       throw new ManagementException(e.getMessage(), e);
     }
   }
