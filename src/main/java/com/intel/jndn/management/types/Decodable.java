@@ -29,5 +29,5 @@ public interface Decodable {
    * @param decoder Instance of TlvDecoder
    * @throws EncodingException when decoding fails
    */
-  void wireDecode(final TlvDecoder decoder) throws EncodingException;
+  void wireDecode(TlvDecoder decoder) throws EncodingException;
 }
