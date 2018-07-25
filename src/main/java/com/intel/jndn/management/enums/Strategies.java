@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -19,7 +19,7 @@ import net.named_data.jndn.Name;
  * A reference list of the strategies available in NFD.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategy">Strategies</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategy">Strategies</a>
  */
 public final class Strategies {
   public static final Name BEST_ROUTE = new Name("/localhost/nfd/strategy/best-route");

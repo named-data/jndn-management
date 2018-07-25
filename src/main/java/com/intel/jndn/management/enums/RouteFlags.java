@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -13,10 +13,13 @@
  */
 package com.intel.jndn.management.enums;
 
+import java.util.HashMap;
+import java.util.StringJoiner;
+
 /**
  * NFD route flags.
  *
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
  */
 public enum RouteFlags {
   NONE(0),
@@ -34,6 +37,36 @@ public enum RouteFlags {
    */
   RouteFlags(final int value) {
     this.value = value;
+  }
+
+  /**
+   * Convert RouteFlags to human-readable string.
+   * @return string
+   */
+  public final String toString() {
+    if (value == NONE.toInteger()) {
+      return "none";
+    }
+
+    HashMap<RouteFlags, String> knownBits = new HashMap<>();
+    knownBits.put(CHILD_INHERIT, "child-inherit");
+    knownBits.put(CAPTURE, "capture");
+
+    StringJoiner join = new StringJoiner("|");
+    int routeFlags = value;
+    for (HashMap.Entry<RouteFlags, String> entry : knownBits.entrySet()) {
+      int bit = entry.getKey().toInteger();
+      String token = entry.getValue();
+
+      if ((routeFlags & bit) != 0) {
+        join.add(token);
+        routeFlags = routeFlags & ~bit;
+      }
+    }
+    if (routeFlags != NONE.toInteger()) {
+      join.add(String.format("0x%x", routeFlags));
+    }
+    return join.toString();
   }
 
   /**

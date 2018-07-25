@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
  * Represent a ForwarderStatus object.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
  */
 public class ForwarderStatus implements Decodable {
   private String nfdVersion = "";
@@ -37,10 +37,10 @@ public class ForwarderStatus implements Decodable {
   private long nMeasurementEntries = 0;
   private long nCsEntries = 0;
   private long nInInterests = 0;
-  private long nInDatas = 0;
+  private long nInData = 0;
   private long nInNacks = 0;
   private long nOutInterests = 0;
-  private long nOutDatas = 0;
+  private long nOutData = 0;
   private long nOutNacks = 0;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -80,10 +80,10 @@ public class ForwarderStatus implements Decodable {
    */
   public final void wireEncode(final TlvEncoder encoder) {
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutNacks, nOutNacks);
-    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutDatas, nOutDatas);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutData, nOutData);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NOutInterests, nOutInterests);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NInNacks, nInNacks);
-    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInDatas, nInDatas);
+    encoder.writeNonNegativeIntegerTlv(NfdTlv.NInData, nInData);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NInInterests, nInInterests);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NCsEntries, nCsEntries);
     encoder.writeNonNegativeIntegerTlv(NfdTlv.NMeasurementsEntries, nMeasurementEntries);
@@ -121,10 +121,10 @@ public class ForwarderStatus implements Decodable {
     this.nMeasurementEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NMeasurementsEntries);
     this.nCsEntries = decoder.readNonNegativeIntegerTlv(NfdTlv.NCsEntries);
     this.nInInterests = decoder.readNonNegativeIntegerTlv(NfdTlv.NInInterests);
-    this.nInDatas = decoder.readNonNegativeIntegerTlv(NfdTlv.NInDatas);
+    this.nInData = decoder.readNonNegativeIntegerTlv(NfdTlv.NInData);
     this.nInNacks = decoder.readNonNegativeIntegerTlv(NfdTlv.NInNacks);
     this.nOutInterests = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutInterests);
-    this.nOutDatas = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutDatas);
+    this.nOutData = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutData);
     this.nOutNacks = decoder.readNonNegativeIntegerTlv(NfdTlv.NOutNacks);
   }
 
@@ -293,18 +293,18 @@ public class ForwarderStatus implements Decodable {
   /**
    * @return Number of incoming Data since NFD start
    */
-  public long getNInDatas() {
-    return nInDatas;
+  public long getNInData() {
+    return nInData;
   }
 
   /**
    * Set the number of incoming Data since NFD start.
    *
-   * @param nInDatas the number of incoming Interests since NFD start
+   * @param nInData the number of incoming Interests since NFD start
    * @return this
    */
-  public ForwarderStatus setNInDatas(final long nInDatas) {
-    this.nInDatas = nInDatas;
+  public ForwarderStatus setNInData(final long nInData) {
+    this.nInData = nInData;
     return this;
   }
 
@@ -329,18 +329,18 @@ public class ForwarderStatus implements Decodable {
   /**
    * @return Number of outgoing Data since NFD start
    */
-  public long getNOutDatas() {
-    return nOutDatas;
+  public long getNOutData() {
+    return nOutData;
   }
 
   /**
    * Set the number of outgoing Data since NFD start.
    *
-   * @param nOutDatas the number of outgoing Data since NFD start
+   * @param nOutData the number of outgoing Data since NFD start
    * @return this
    */
-  public ForwarderStatus setNOutDatas(final long nOutDatas) {
-    this.nOutDatas = nOutDatas;
+  public ForwarderStatus setNOutData(final long nOutData) {
+    this.nOutData = nOutData;
     return this;
   }
 

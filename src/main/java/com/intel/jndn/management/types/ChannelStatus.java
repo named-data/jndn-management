@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2016, Regents of the University of California.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
 /**
  * Represent a ChannelStatus object.
  *
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Channel-Dataset">Face Management</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Channel-Dataset">Face Management</a>
  */
 public class ChannelStatus implements Decodable {
   private String localUri = "";

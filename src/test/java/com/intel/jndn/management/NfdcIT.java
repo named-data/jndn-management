@@ -13,7 +13,6 @@
  */
 package com.intel.jndn.management;
 
-import com.intel.jndn.management.enums.LocalControlHeader;
 import com.intel.jndn.management.enums.Strategies;
 import com.intel.jndn.management.types.RibEntry;
 import com.intel.jndn.management.types.StrategyChoice;
@@ -62,7 +61,7 @@ public class NfdcIT {
   @Before
   public void setUp() throws SecurityException {
     face = new Face("localhost");
-    mockFace = new MockFace();
+    mockFace = new MockFace(new MockFace.Options().setEnablePacketLogging(false).setEnableRegistrationReply(false));
     noKeyChainFace = new Face("localhost"); // don't set command signing info
     KeyChain keyChain = MockKeyChain.configure(new Name("/tmp/identity"));
     face.setCommandSigningInfo(keyChain, keyChain.getDefaultCertificateName());
@@ -226,7 +225,7 @@ public class NfdcIT {
 
   @Test
   public void testFailOfSetStrategyWithoutKeychain() throws Exception {
-    exception.expect(IllegalArgumentException.class);
+    exception.expect(NullPointerException.class);
     Nfdc.setStrategy(noKeyChainFace, new Name("/test"), Strategies.BEST_ROUTE);
   }
 
@@ -254,19 +253,6 @@ public class NfdcIT {
       }
     });
     Nfdc.setStrategy(mockFace, new Name("/"), Strategies.BROADCAST);
-  }
-
-  /**
-   * LocalControlHeader works only with NFD < 0.3.4, broken otherwise.
-   */
-  @Test(expected = ManagementException.class)
-  public void testLocalControlHeader() throws Exception {
-    Nfdc.enableLocalControlHeader(face, LocalControlHeader.INCOMING_FACE_ID);
-    Thread.sleep(1000); // strategy takes a while to register
-
-    // TODO: add asserts
-
-    Nfdc.disableLocalControlHeader(face, LocalControlHeader.INCOMING_FACE_ID);
   }
 
   @Test

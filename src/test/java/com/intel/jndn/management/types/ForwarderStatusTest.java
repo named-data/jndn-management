@@ -56,10 +56,10 @@ public class ForwarderStatusTest {
     status.setNMeasurementsEntries(1771725298);
     status.setNCsEntries(1264968688);
     status.setNInInterests(612811615);
-    status.setNInDatas(1843576050);
+    status.setNInData(1843576050);
     status.setNInNacks(1234);
     status.setNOutInterests(952144445);
-    status.setNOutDatas(138198826);
+    status.setNOutData(138198826);
     status.setNOutNacks(4321);
 
     ByteBuffer wire = status.wireEncode().buf();
@@ -79,10 +79,10 @@ public class ForwarderStatusTest {
     assertEquals(1771725298,          status.getNMeasurementsEntries());
     assertEquals(1264968688,          status.getNCsEntries());
     assertEquals(612811615,           status.getNInInterests());
-    assertEquals(1843576050,          status.getNInDatas());
+    assertEquals(1843576050,          status.getNInData());
     assertEquals(1234,                status.getNInNacks());
     assertEquals(952144445,           status.getNOutInterests());
-    assertEquals(138198826,           status.getNOutDatas());
+    assertEquals(138198826,           status.getNOutData());
     assertEquals(4321,                status.getNOutNacks());
   }
 }

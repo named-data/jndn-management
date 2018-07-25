@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -28,7 +28,7 @@ import java.util.List;
  * Helper class to handle StatusDatasets.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">StatusDataset</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StatusDataset">StatusDataset</a>
  */
 public final class StatusDatasetHelper {
   /**
@@ -66,7 +66,7 @@ public final class StatusDatasetHelper {
    * @param type     class implementing Decodable interface
    * @return List decoded status entries
    * @throws ManagementException when decoding fails
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StatusDataset">StatusDataset</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StatusDataset">StatusDataset</a>
    */
   public static <T extends Decodable> List<T>
   wireDecode(final List<Data> segments, final Class<T> type) throws ManagementException {

@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -18,7 +18,7 @@ package com.intel.jndn.management.enums;
  * FaceStatus.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
- * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">Face Management</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
  */
 public enum FaceScope {
 
@@ -47,6 +47,21 @@ public enum FaceScope {
    */
   public final int toInteger() {
     return value;
+  }
+
+  /**
+   * Convert FaceScope to human-readable string.
+   * @return string
+   */
+  public final String toString() {
+    switch (value) {
+      case 0:
+        return "non-local";
+      case 1:
+        return "local";
+      default:
+        return "none";
+    }
   }
 
   /**

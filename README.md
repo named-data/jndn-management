@@ -1,6 +1,6 @@
 # jndn-management
 
-This project consists of tools for managing an NDN forwarding daemon (NFD). It relies on the [NDN Protocol](https://named-data.net) and its associated [client library](https://github.com/named-data/jndn). It implements the NFD management specification outlined at http://redmine.named-data.net/projects/nfd/wiki/Management. Please note that this library does not yet implement all of the commands in the management specification.
+This project consists of tools for managing an NDN forwarding daemon (NFD). It relies on the [NDN Protocol](https://named-data.net) and its associated [client library](https://github.com/named-data/jndn). It implements the NFD management specification outlined at https://redmine.named-data.net/projects/nfd/wiki/Management. Please note that this library does not yet implement all of the commands in the management specification.
 
 ## Install
 With Maven, add the following to your POM:

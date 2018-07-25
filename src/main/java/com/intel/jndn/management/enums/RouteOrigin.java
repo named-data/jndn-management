@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -16,15 +16,16 @@ package com.intel.jndn.management.enums;
 /**
  * NFD route origin.
  *
- * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
  */
 public enum RouteOrigin {
-  UNKNOWN(-1),
+  NONE(-1),
   APP(0),
   AUTOREG(64),
   CLIENT(65),
   AUTOCONF(66),
   NLSR(128),
+  SELFLEARNING(129),
   STATIC(255);
 
   private final int value;
@@ -50,6 +51,30 @@ public enum RouteOrigin {
   }
 
   /**
+   * Convert RouteOrigin to human-readable string.
+   * @return string
+   */
+  public final String toString() {
+    if (value == APP.toInteger()) {
+      return "app";
+    } else if (value == AUTOREG.toInteger()) {
+      return "autoreg";
+    } else if (value == CLIENT.toInteger()) {
+      return "client";
+    } else if (value == AUTOCONF.toInteger()) {
+      return "autoconf";
+    } else if (value == NLSR.toInteger()) {
+      return "nlsr";
+    } else if (value == SELFLEARNING.toInteger()) {
+      return "selflearning";
+    } else if (value == STATIC.toInteger()) {
+      return "static";
+    } else {
+      return "none";
+    }
+  }
+
+  /**
    * Convert NFD code to RouteOrigin enum.
    *
    * @param value NFD's RouteOrigin code
@@ -67,10 +92,12 @@ public enum RouteOrigin {
       return AUTOCONF;
     } else if (value == NLSR.toInteger()) {
       return NLSR;
+    } else if (value == SELFLEARNING.toInteger()) {
+      return SELFLEARNING;
     } else if (value == STATIC.toInteger()) {
       return STATIC;
     } else {
-      return UNKNOWN;
+      return NONE;
     }
   }
 }

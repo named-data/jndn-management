@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -17,7 +17,7 @@ package com.intel.jndn.management.enums;
  * Indicate whether the face is persistent; used by FaceStatus.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
- * @see <a href="http://redmine.named-data.net/projects/nfd/widi/FaceMgmt">Face Management</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
  */
 public enum FacePersistency {
   NONE(-1), // invalid value
@@ -46,6 +46,23 @@ public enum FacePersistency {
    */
   public final int toInteger() {
     return value;
+  }
+
+  /**
+   * Convert FacePersistency to human-readable string.
+   * @return string
+   */
+  public final String toString() {
+    switch (value) {
+      case 0:
+        return "persistent";
+      case 1:
+        return "on-demand";
+      case 2:
+        return "permanent";
+      default:
+        return "none";
+    }
   }
 
   /**

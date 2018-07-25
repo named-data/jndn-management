@@ -1,6 +1,6 @@
 /*
  * jndn-management
- * Copyright (c) 2015-2016, Intel Corporation.
+ * Copyright (c) 2015-2018, Intel Corporation.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms and conditions of the GNU Lesser General Public License,
@@ -13,7 +13,6 @@
  */
 package com.intel.jndn.management;
 
-import com.intel.jndn.management.enums.LocalControlHeader;
 import com.intel.jndn.management.enums.RouteOrigin;
 import com.intel.jndn.management.helpers.FetchHelper;
 import com.intel.jndn.management.helpers.StatusDatasetHelper;
@@ -39,13 +38,14 @@ import java.util.List;
 
 /**
  * Helper class for interacting with an NDN forwarder daemon; see
- * <a href="http://redmine.named-data.net/projects/nfd/wiki/Management">NFD Management</a>
+ * <a href="https://redmine.named-data.net/projects/nfd/wiki/Management">NFD Management</a>
  * for explanations of the various protocols used.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
 public final class Nfdc {
   private static final int OK_STATUS = 200;
+  private static final int FACE_ALREADY_EXISTS = 409;
 
   /////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +62,7 @@ public final class Nfdc {
    * @param face only a localhost Face
    * @return the forwarder status object
    * @throws ManagementException if the network request failed or the returned status could not be decoded
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus">ForwarderStatus</a>
    */
   public static ForwarderStatus getForwarderStatus(final Face face) throws ManagementException {
     try {
@@ -81,7 +81,7 @@ public final class Nfdc {
    * @param face only a localhost Face
    * @return a list of face status objects
    * @throws ManagementException if the network request failed or if the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">FaceManagement</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">FaceManagement</a>
    */
   public static List<FaceStatus> getFaceList(final Face face) throws ManagementException {
     try {
@@ -100,7 +100,7 @@ public final class Nfdc {
    * @param face only a localhost Face
    * @return a list of FIB entries
    * @throws ManagementException if the network request failed or if the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">FIB Dataset</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FibMgmt#FIB-Dataset">FIB Dataset</a>
    */
   public static List<FibEntry> getFibList(final Face face) throws ManagementException {
     try {
@@ -119,7 +119,7 @@ public final class Nfdc {
    * @param face only a localhost Face
    * @return a list of RIB entries, i.e. routes
    * @throws ManagementException if the network request failed or if the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt#RIB-Dataset">RIB Dataset</a>
    */
   public static List<RibEntry> getRouteList(final Face face) throws ManagementException {
     try {
@@ -139,7 +139,7 @@ public final class Nfdc {
    * @return a list of strategy choice entries, i.e. routes
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice">StrategyChoice</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StrategyChoice">StrategyChoice</a>
    */
   public static List<StrategyChoice> getStrategyList(final Face face) throws ManagementException {
     try {
@@ -159,7 +159,7 @@ public final class Nfdc {
    * @return a list of channel status entries
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Channel-Dataset">Face Management</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#Channel-Dataset">Face Management</a>
    */
   public static List<ChannelStatus> getChannelStatusList(final Face face) throws ManagementException {
     try {
@@ -242,54 +242,6 @@ public final class Nfdc {
   }
 
   /**
-   * Enable a local control feature on the given forwarder.
-   *
-   * @param face   only a localhost {@link Face}
-   * @param header the control feature to enable
-   * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
-   *                             the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
-   */
-  public static void enableLocalControlHeader(final Face face, final LocalControlHeader header) throws
-    ManagementException {
-    // build command name
-    Name command = new Name("/localhost/nfd/faces/enable-local-control");
-    ControlParameters parameters = new ControlParameters();
-    parameters.setLocalControlFeature(header.toInteger());
-    command.append(parameters.wireEncode());
-
-    try {
-      sendCommand(face, command);
-    } catch (IOException | EncodingException | ManagementException e) {
-      throw new ManagementException(e.getMessage(), e);
-    }
-  }
-
-  /**
-   * Disable a local control feature on the given forwarder.
-   *
-   * @param face   only a localhost {@link Face}
-   * @param header the control feature to disable
-   * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
-   *                             the NFD rejected the request
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
-   */
-  public static void disableLocalControlHeader(final Face face, final LocalControlHeader header) throws
-    ManagementException {
-    // build command name
-    Name command = new Name("/localhost/nfd/faces/disable-local-control");
-    ControlParameters parameters = new ControlParameters();
-    parameters.setLocalControlFeature(header.toInteger());
-    command.append(parameters.wireEncode());
-
-    try {
-      sendCommand(face, command);
-    } catch (IOException | EncodingException | ManagementException e) {
-      throw new ManagementException(e.getMessage(), e);
-    }
-  }
-
-  /**
    * Register a route on the forwarder.
    * <p/>
    * Ensure the forwarding face is on the local machine (management requests are to /localhost/...) and that command
@@ -300,7 +252,7 @@ public final class Nfdc {
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
    * @see <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">nfdc</a>
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
    */
   public static void register(final Face face, final ControlParameters controlParameters) throws ManagementException {
     // build command name
@@ -344,7 +296,7 @@ public final class Nfdc {
    * @param face  only a localhost {@link Face}
    * @param uri   the URI (e.g. "tcp4://10.10.2.2:6363") of the remote node; note
    *              that this must be one of the canonical forms described in the wiki
-   *              (http://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#TCP) for NFD to
+   *              (https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt#TCP) for NFD to
    *              accept the registration--otherwise you will see 400 errors
    * @param route the {@link Name} prefix of the route
    * @param cost  the numeric cost of forwarding along the route
@@ -400,7 +352,7 @@ public final class Nfdc {
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
    * @see <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">nfdc</a>
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
    */
   public static void unregister(final Face face, final ControlParameters controlParameters) throws ManagementException {
     // build command name
@@ -425,7 +377,7 @@ public final class Nfdc {
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
    * @see <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">nfdc</a>
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
    */
   public static void unregister(final Face face, final Name route) throws ManagementException {
     // build command name
@@ -449,7 +401,7 @@ public final class Nfdc {
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
    * @see <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">nfdc</a>
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
    */
   public static void unregister(final Face face, final Name route, final int faceId) throws ManagementException {
     // build command name
@@ -474,7 +426,7 @@ public final class Nfdc {
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
    * @see <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">nfdc command-line usage</a>
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RibMgmt</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RibMgmt</a>
    */
   public static void unregister(final Face face, final Name route, final String uri) throws ManagementException {
     int faceId = -1;
@@ -506,7 +458,7 @@ public final class Nfdc {
    * @throws ManagementException if the network request failed, the NFD response could not be decoded, or
    *                             the NFD rejected the request
    * @see <a href="http://named-data.net/doc/NFD/current/manpages/nfdc.html">nfdc command-line usage</a>
-   * @see <a href="http://redmine.named-data.net/projects/nfd/wiki/StrategyChoice">StrategyChoice</a>
+   * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StrategyChoice">StrategyChoice</a>
    */
   public static void setStrategy(final Face face, final Name prefix, final Name strategy) throws ManagementException {
     // build command name
@@ -558,7 +510,7 @@ public final class Nfdc {
    *
    * @param face only a localhost Face, command signing info must be set
    * @param name As described at
-   *             <a href="http://redmine.named-data.net/projects/nfd/wiki/ControlCommand">ControlCommand</a>,
+   *             <a href="https://redmine.named-data.net/projects/nfd/wiki/ControlCommand">ControlCommand</a>,
    *             the requested interest must have encoded ControlParameters appended to the
    *             interest name
    * @return a {@link ControlResponse}
@@ -590,7 +542,7 @@ public final class Nfdc {
     response.wireDecode(data.getContent().buf());
 
     // check response for success
-    if (response.getStatusCode() != OK_STATUS) {
+    if (response.getStatusCode() != OK_STATUS && response.getStatusCode() != FACE_ALREADY_EXISTS) {
       throw ManagementException.fromResponse(response);
     }
 
