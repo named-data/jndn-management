@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-  id "org.sonarqube" version "2.6.2"
+  id 'org.sonarqube' version '2.6.2'
   id 'net.saliman.cobertura' version '2.5.4'
 }
 
@@ -56,13 +56,13 @@ configurations {
 }
 
 dependencies {
-  compile 'net.named-data:jndn:0.17'
+  compile 'net.named-data:jndn:0.22'
 
   testCompile 'junit:junit:4.12'
   testCompile 'net.named-data.jndn-extra:jndn-mock:1.1.1'
-  testRuntime 'org.slf4j:slf4j-api:1.7.25'
+  testRuntime 'org.slf4j:slf4j-api:1.7.26'
 
-  checkstyleConfig "com.puppycrawl.tools:checkstyle:8.11"
+  checkstyleConfig "com.puppycrawl.tools:checkstyle:8.22"
 }
 
 task javadocJar(type: Jar) {
