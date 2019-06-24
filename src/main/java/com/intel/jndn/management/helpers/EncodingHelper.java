@@ -14,8 +14,8 @@
 package com.intel.jndn.management.helpers;
 
 import net.named_data.jndn.ControlParameters;
-import net.named_data.jndn.ForwardingFlags;
 import net.named_data.jndn.Name;
+import net.named_data.jndn.RegistrationOptions;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.Tlv;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
@@ -179,7 +179,8 @@ public final class EncodingHelper {
 
     // Encode ForwardingFlags
     int flags = controlParameters.getForwardingFlags().getNfdForwardingFlags();
-    if (flags != new ForwardingFlags().getNfdForwardingFlags()) { // The flags are not the default value.
+
+    if (flags != new RegistrationOptions().getNfdForwardingFlags()) { // The flags are not the default value.
       encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Flags, flags);
     }
 

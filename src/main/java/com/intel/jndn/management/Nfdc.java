@@ -26,10 +26,10 @@ import net.named_data.jndn.ControlParameters;
 import net.named_data.jndn.ControlResponse;
 import net.named_data.jndn.Data;
 import net.named_data.jndn.Face;
-import net.named_data.jndn.ForwardingFlags;
 import net.named_data.jndn.Interest;
 import net.named_data.jndn.KeyLocator;
 import net.named_data.jndn.Name;
+import net.named_data.jndn.RegistrationOptions;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.security.SecurityException;
 
@@ -277,15 +277,15 @@ public final class Nfdc {
    *                             the NFD rejected the request
    */
   public static void register(final Face face, final Name route, final int cost) throws ManagementException {
-    ForwardingFlags flags = new ForwardingFlags();
-    flags.setCapture(false);
-    flags.setChildInherit(true);
+    RegistrationOptions options = new RegistrationOptions();
+    options.setCapture(false);
+    options.setChildInherit(true);
 
     register(face, new ControlParameters()
       .setName(route)
       .setCost(cost)
       .setOrigin(RouteOrigin.APP.toInteger())
-      .setForwardingFlags(flags));
+      .setForwardingFlags(options));
   }
 
   /**
@@ -332,10 +332,10 @@ public final class Nfdc {
     parameters.setFaceId(faceId);
     parameters.setCost(cost);
     parameters.setOrigin(RouteOrigin.STATIC.toInteger());
-    ForwardingFlags flags = new ForwardingFlags();
-    flags.setCapture(false);
-    flags.setChildInherit(true);
-    parameters.setForwardingFlags(flags);
+    RegistrationOptions options = new RegistrationOptions();
+    options.setCapture(false);
+    options.setChildInherit(true);
+    parameters.setForwardingFlags(options);
 
     // run base method
     register(forwarder, parameters);
