@@ -41,19 +41,6 @@ public final class EncodingHelper {
   }
 
   /**
-   * Helper to decode names since Tlv0_1_1WireFormat.java uses its own internal,
-   * protected implementation.
-   *
-   * @param input the bytes to decode
-   * @return a decoded {@link Name}
-   * @throws EncodingException when decoding fails
-   */
-  public static Name decodeName(final ByteBuffer input) throws EncodingException {
-    TlvDecoder decoder = new TlvDecoder(input);
-    return decodeName(decoder);
-  }
-
-  /**
    * Helper to decode names using an existing decoding context; could be merged
    * to Tlv0_1_1WireFormat.java.
    *
@@ -73,19 +60,6 @@ public final class EncodingHelper {
   }
 
   /**
-   * Helper to encode names since Tlv0_1_1WireFormat.java uses its own internal,
-   * protected implementation.
-   *
-   * @param name the {@link Name} to encode
-   * @return an encoded {@link Blob}
-   */
-  public static Blob encodeName(final Name name) {
-    TlvEncoder encoder = new TlvEncoder();
-    encodeName(name, encoder);
-    return new Blob(encoder.getOutput(), false);
-  }
-
-  /**
    * Helper to encode names using an existing encoding context; could be merged
    * to Tlv0_1_1WireFormat.java.
    *
@@ -98,19 +72,6 @@ public final class EncodingHelper {
       encoder.writeBlobTlv(Tlv.NameComponent, name.get(i).getValue().buf());
     }
     encoder.writeTypeAndLength(Tlv.Name, encoder.getLength() - saveLength);
-  }
-
-  /**
-   * Helper to decode strategies since Tlv0_1_1WireFormat.java uses its own
-   * internal, protected implementation.
-   *
-   * @param input the bytes to decode
-   * @return a decoded {@link Name}
-   * @throws EncodingException when decoding fails
-   */
-  public static Name decodeStrategy(final ByteBuffer input) throws EncodingException {
-    TlvDecoder decoder = new TlvDecoder(input);
-    return decodeStrategy(decoder);
   }
 
   /**
@@ -129,19 +90,6 @@ public final class EncodingHelper {
   }
 
   /**
-   * Helper to encode strategies since Tlv0_1_1WireFormat.java uses its own
-   * internal, protected implementation.
-   *
-   * @param strategy the {@link Name} to encode
-   * @return an encoded {@link Blob}
-   */
-  public static Blob encodeStrategy(final Name strategy) {
-    TlvEncoder encoder = new TlvEncoder();
-    encodeName(strategy, encoder);
-    return new Blob(encoder.getOutput(), false);
-  }
-
-  /**
    * Helper to encode strategies using an existing decoding context; could be
    * merged to Tlv0_1_1WireFormat.java.
    *
@@ -153,56 +101,6 @@ public final class EncodingHelper {
     encodeName(strategy, encoder);
     encoder.writeTypeAndLength(Tlv.ControlParameters_Strategy,
       encoder.getLength() - strategySaveLength);
-  }
-
-  /**
-   * Helper to encode control parameters using an existing encoding context;
-   * could be merged to Tlv0_1_1WireFormat.java.
-   *
-   * @param controlParameters control parameters
-   * @param encoder           TlvEncoder instance
-   */
-  public static void encodeControlParameters(final ControlParameters controlParameters, final TlvEncoder encoder) {
-    int saveLength = encoder.getLength();
-
-    // Encode backwards.
-    encoder.writeOptionalNonNegativeIntegerTlvFromDouble(Tlv.ControlParameters_ExpirationPeriod,
-      controlParameters.getExpirationPeriod());
-
-    // Encode strategy
-    if (controlParameters.getStrategy().size() != 0) {
-      int strategySaveLength = encoder.getLength();
-      encodeName(controlParameters.getStrategy(), encoder);
-      encoder.writeTypeAndLength(Tlv.ControlParameters_Strategy,
-        encoder.getLength() - strategySaveLength);
-    }
-
-    // Encode ForwardingFlags
-    int flags = controlParameters.getForwardingFlags().getNfdForwardingFlags();
-
-    if (flags != new RegistrationOptions().getNfdForwardingFlags()) { // The flags are not the default value.
-      encoder.writeNonNegativeIntegerTlv(Tlv.ControlParameters_Flags, flags);
-    }
-
-    encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_Cost, controlParameters.getCost());
-    encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_Origin, controlParameters.getOrigin());
-    encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_LocalControlFeature,
-      controlParameters.getLocalControlFeature());
-
-    // Encode URI
-    if (!controlParameters.getUri().isEmpty()) {
-      encoder.writeBlobTlv(Tlv.ControlParameters_Uri,
-        new Blob(controlParameters.getUri()).buf());
-    }
-
-    encoder.writeOptionalNonNegativeIntegerTlv(Tlv.ControlParameters_FaceId, controlParameters.getFaceId());
-
-    // Encode name
-    if (controlParameters.getName() != null && controlParameters.getName().size() != 0) {
-      encodeName(controlParameters.getName(), encoder);
-    }
-
-    encoder.writeTypeAndLength(Tlv.ControlParameters_ControlParameters, encoder.getLength() - saveLength);
   }
 
   /**
