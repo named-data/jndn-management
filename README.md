@@ -2,16 +2,6 @@
 
 This project consists of tools for managing an NDN forwarding daemon (NFD). It relies on the [NDN Protocol](https://named-data.net) and its associated [client library](https://github.com/named-data/jndn). It implements the NFD management specification outlined at https://redmine.named-data.net/projects/nfd/wiki/Management. Please note that this library does not yet implement all of the commands in the management specification.
 
-## Install
-With Maven, add the following to your POM:
-```
-<dependency>
-  <groupId>com.intel.jndn.management</groupId>
-  <artifactId>jndn-management</artifactId>
-  <version>RELEASE</version> <!-- or a specific version -->
-</dependency>
-```
-
 ## Use
 With a Face that has command signing information set, call any of the following static methods:
  - __Nfdc.pingLocal(Face forwarder)__: ping a local NFD with /localhost/nfd to verify if it exists.
