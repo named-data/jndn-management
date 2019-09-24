@@ -7,16 +7,14 @@ buildscript {
 }
 
 plugins {
-  id 'org.sonarqube' version '2.6.2'
-  id 'net.saliman.cobertura' version '2.5.4'
+  id 'java'
+  id 'maven'
+  id 'signing'
+  id 'checkstyle'
+  id 'org.sonarqube' version '2.7.1'
+  id 'net.saliman.cobertura' version '2.6.1'
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
-apply plugin: 'checkstyle'
-
-// group = 'com.intel.jndn.management'
 group = 'net.named-data.jndn-extra'
 version = '1.2.2'
 
@@ -60,9 +58,9 @@ dependencies {
 
   testCompile 'junit:junit:4.12'
   testCompile 'net.named-data.jndn-extra:jndn-mock:1.1.1'
-  testRuntime 'org.slf4j:slf4j-api:1.7.26'
+  testRuntime 'org.slf4j:slf4j-api:1.7.28'
 
-  checkstyleConfig "com.puppycrawl.tools:checkstyle:8.22"
+  checkstyleConfig 'com.puppycrawl.tools:checkstyle:8.23'
 }
 
 task javadocJar(type: Jar) {
@@ -150,18 +148,18 @@ uploadArchives {
         name 'jndn-management'
         packaging 'jar'
         description 'Tools for managing an NDN forwarding daemon'
-        url 'https://github.com/01org/jndn-management'
+        url 'https://github.com/named-data/jndn-management'
 
         scm {
-          connection 'scm:git:https://github.com/cawka/jndn-management'
-          developerConnection 'scm:git:https://github.com/01org/jndn-management'
-          url 'https://github.com/01org/jndn-management'
+          connection 'scm:git:https://github.com/named-data/jndn-management.git'
+          developerConnection 'scm:git:ssh://git@github.com/named-data/jndn-management.git'
+          url 'https://github.com/named-data/jndn-management'
         }
 
         licenses {
           license {
             name 'GNU Lesser General Public License, Version 3.0+'
-            url 'http://www.gnu.org/licenses/lgpl.html'
+            url 'https://www.gnu.org/licenses/lgpl-3.0.html'
           }
         }
 

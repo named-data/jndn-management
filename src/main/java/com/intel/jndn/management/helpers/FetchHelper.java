@@ -44,6 +44,8 @@ public final class FetchHelper implements OnData, OnTimeout {
 
   /**
    * Private constructor: use getData or getSegmentedData.
+   *
+   * @param face Face instance
    */
   private FetchHelper(final Face face) {
     this.face = face;

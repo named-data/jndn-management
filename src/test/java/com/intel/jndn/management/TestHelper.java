@@ -29,6 +29,7 @@ public final class TestHelper {
    * Construct ByteBuffer from int[].
    *
    * @param array array to convert
+   * @return ByteBuffer instance
    */
   public static ByteBuffer
   bufferFromIntArray(final int[] array) {
