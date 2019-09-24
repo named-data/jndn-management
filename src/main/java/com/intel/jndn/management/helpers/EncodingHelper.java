@@ -13,9 +13,7 @@
  */
 package com.intel.jndn.management.helpers;
 
-import net.named_data.jndn.ControlParameters;
 import net.named_data.jndn.Name;
-import net.named_data.jndn.RegistrationOptions;
 import net.named_data.jndn.encoding.EncodingException;
 import net.named_data.jndn.encoding.tlv.Tlv;
 import net.named_data.jndn.encoding.tlv.TlvDecoder;
