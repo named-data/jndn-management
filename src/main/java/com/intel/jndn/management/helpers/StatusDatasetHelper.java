@@ -77,10 +77,10 @@ public final class StatusDatasetHelper {
     TlvDecoder decoder = new TlvDecoder(payload.buf());
     while (decoder.getOffset() < endOffset) {
       try {
-        T entry = type.newInstance();
+        T entry = type.getConstructor().newInstance();
         entry.wireDecode(decoder);
         entries.add(entry);
-      } catch (IllegalAccessException | InstantiationException | EncodingException e) {
+      } catch (ReflectiveOperationException | EncodingException e) {
         throw new ManagementException("Failed to read status dataset.", e);
       }
     }

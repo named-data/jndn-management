@@ -83,6 +83,10 @@ task integrationTest(type: Test) {
   mustRunAfter test
 }
 
+tasks.withType(JavaCompile) {
+  options.deprecation = true
+}
+
 tasks.withType(Test) {
   reports.html.destination = file("${reporting.baseDir}/${name}")
   testLogging {
