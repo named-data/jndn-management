@@ -1,9 +1,5 @@
 # Developer Notes
 
-## Prerequisites
-
-- [Gradle build system version 2.10 or later](http://gradle.org/)
-
 ## Compile
 
 To compile:
