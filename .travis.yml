@@ -1,6 +1,12 @@
+version: ~> 1.0
 language: java
-dist: xenial
+os: linux
+dist: bionic
+arch:
+  - amd64
+  - arm64
 jdk:
   - openjdk8
   - openjdk11
   - openjdk12
+  - openjdk13
