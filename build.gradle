@@ -16,7 +16,7 @@ plugins {
 }
 
 group = 'net.named-data.jndn-extra'
-version = '1.2.2'
+version = '1.3.0'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -54,11 +54,11 @@ configurations {
 }
 
 dependencies {
-  compile 'net.named-data:jndn:0.22'
+  compile 'net.named-data:jndn:0.24'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'net.named-data.jndn-extra:jndn-mock:1.1.1'
-  testRuntime 'org.slf4j:slf4j-api:1.7.28'
+  testCompile 'net.named-data.jndn-extra:jndn-mock:1.2.0'
+  testRuntime 'org.slf4j:slf4j-api:1.7.30'
 
   checkstyleConfig 'com.puppycrawl.tools:checkstyle:8.23'
 }
