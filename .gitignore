@@ -5,13 +5,11 @@
 bin/
 gen/
 out/
-obj/
-app/src/*/libs/
-app/src/*/obj/
 
 # Gradle files
-.gradle/
-build/
+.gradle
+**/build/
+!src/**/build/
 # Ignore Gradle GUI config
 gradle-app.setting
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
@@ -22,15 +20,15 @@ gradle-app.setting
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Log Files
+*.log
+
+# Android Studio Navigation editor temp files
+.navigation/
+
 # Eclipse project files
 .classpath
 .project
-
-# OSX files
-.DS_Store
-
-# Windows thumbnail db
-Thumbs.db
 
 # IntelliJ
 *.iml
@@ -46,12 +44,16 @@ Thumbs.db
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
 
-# Old-style IDEA project files
-*.ipr
-*.iws
-
-# Sandbox stuff
-_sandbox
-
 # Emacs stuff
 prj.el
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
