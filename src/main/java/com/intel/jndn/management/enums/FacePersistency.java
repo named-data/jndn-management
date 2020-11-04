@@ -20,8 +20,8 @@ package com.intel.jndn.management.enums;
  * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt">Face Management</a>
  */
 public enum FacePersistency {
-  NONE(-1), // invalid value
 
+  NONE(-1), // invalid value
   PERSISTENT(0),
   ON_DEMAND(1),
   PERMANENT(2);

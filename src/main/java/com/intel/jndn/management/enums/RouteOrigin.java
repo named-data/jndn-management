@@ -19,13 +19,14 @@ package com.intel.jndn.management.enums;
  * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
  */
 public enum RouteOrigin {
+
   NONE(-1),
   APP(0),
   AUTOREG(64),
   CLIENT(65),
   AUTOCONF(66),
   NLSR(128),
-  SELFLEARNING(129),
+  PREFIXANN(129),
   STATIC(255);
 
   private final int value;
@@ -65,8 +66,8 @@ public enum RouteOrigin {
       return "autoconf";
     } else if (value == NLSR.toInteger()) {
       return "nlsr";
-    } else if (value == SELFLEARNING.toInteger()) {
-      return "selflearning";
+    } else if (value == PREFIXANN.toInteger()) {
+      return "prefixann";
     } else if (value == STATIC.toInteger()) {
       return "static";
     } else {
@@ -92,8 +93,8 @@ public enum RouteOrigin {
       return AUTOCONF;
     } else if (value == NLSR.toInteger()) {
       return NLSR;
-    } else if (value == SELFLEARNING.toInteger()) {
-      return SELFLEARNING;
+    } else if (value == PREFIXANN.toInteger()) {
+      return PREFIXANN;
     } else if (value == STATIC.toInteger()) {
       return STATIC;
     } else {

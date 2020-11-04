@@ -173,18 +173,17 @@ public class NfdcIT {
     Nfdc.unregister(face, new Name("/my/test/route"), "udp4://127.0.0.1:56363");
   }
 
-  // TODO: restore after fixed bug in MockFace
-//  @Test
-//  public void testFailOfRegister() throws Exception {
-//    exception.expect(ManagementException.class);
-//    Nfdc.register(mockFace, new Name("/my/route/to/app/face"), 333);
-//  }
-//
-//  @Test
-//  public void testFailOfUnregister() throws Exception {
-//    exception.expect(ManagementException.class);
-//    Nfdc.unregister(mockFace, new Name("/my/route/to/app/face"));
-//  }
+  @Test
+  public void testFailOfRegister() throws Exception {
+    exception.expect(ManagementException.class);
+    Nfdc.register(mockFace, new Name("/my/route/to/app/face"), 333);
+  }
+
+  @Test
+  public void testFailOfUnregister() throws Exception {
+    exception.expect(ManagementException.class);
+    Nfdc.unregister(mockFace, new Name("/my/route/to/app/face"));
+  }
 
   @Test
   public void testFailOfCreateFace() throws Exception {
@@ -205,7 +204,7 @@ public class NfdcIT {
     List<StrategyChoice> choices = Nfdc.getStrategyList(face);
     int oldSize = choices.size();
 
-    Nfdc.setStrategy(face, prefix, Strategies.CLIENT_CONTROL);
+    Nfdc.setStrategy(face, prefix, Strategies.RANDOM);
     Thread.sleep(1000); // strategy takes a while to register
 
     choices = Nfdc.getStrategyList(face);
@@ -252,7 +251,7 @@ public class NfdcIT {
         }
       }
     });
-    Nfdc.setStrategy(mockFace, new Name("/"), Strategies.BROADCAST);
+    Nfdc.setStrategy(mockFace, new Name("/"), Strategies.MULTICAST);
   }
 
   @Test

@@ -22,6 +22,7 @@ import java.util.StringJoiner;
  * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/RibMgmt">RIB Management</a>
  */
 public enum RouteFlags {
+
   NONE(0),
   CHILD_INHERIT(1),
   CAPTURE(2);

@@ -23,7 +23,6 @@ package com.intel.jndn.management.enums;
 public enum FaceScope {
 
   NONE(-1), // invalid value
-
   NON_LOCAL(0),
   LOCAL(1);
 

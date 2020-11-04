@@ -13,13 +13,14 @@
  */
 package com.intel.jndn.management.types;
 
-import java.nio.ByteBuffer;
-
 import com.intel.jndn.management.TestHelper;
 import net.named_data.jndn.encoding.EncodingException;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.ByteBuffer;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test encoding/decoding of ForwarderStatus.

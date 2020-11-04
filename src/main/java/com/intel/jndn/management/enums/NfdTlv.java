@@ -67,7 +67,6 @@ public final class NfdTlv {
   public static final int FaceScope = 132;
   public static final int FacePersistency = 133;
   public static final int LinkType = 134;
-
   public static final int FaceQueryFilter = 150;
   public static final int FaceEventNotification = 192;
   public static final int FaceEventKind = 193;
@@ -75,14 +74,16 @@ public final class NfdTlv {
   // ForwarderStatus and FaceStatus counters
   // https://redmine.named-data.net/projects/nfd/wiki/ForwarderStatus
   // https://redmine.named-data.net/projects/nfd/wiki/FaceMgmt
+  public static final int NInBytes = 148;
+  public static final int NOutBytes = 149;
   public static final int NInInterests = 144;
   public static final int NInData = 145;
   public static final int NInNacks = 151;
   public static final int NOutInterests = 146;
   public static final int NOutData = 147;
   public static final int NOutNacks = 152;
-  public static final int NInBytes = 148;
-  public static final int NOutBytes = 149;
+  public static final int NSatisfiedInterests = 153;
+  public static final int NUnsatisfiedInterests = 154;
 
   // FIB Management
   // https://redmine.named-data.net/projects/nfd/wiki/FibMgmt

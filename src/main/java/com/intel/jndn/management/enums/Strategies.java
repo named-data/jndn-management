@@ -19,13 +19,16 @@ import net.named_data.jndn.Name;
  * A reference list of the strategies available in NFD.
  *
  * @author Andrew Brown <andrew.brown@intel.com>
- * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategy">Strategies</a>
+ * @see <a href="https://redmine.named-data.net/projects/nfd/wiki/StrategyChoice#Strategies">Strategies</a>
  */
 public final class Strategies {
+  public static final Name ACCESS = new Name("/localhost/nfd/strategy/access");
+  public static final Name ASF = new Name("/localhost/nfd/strategy/asf");
   public static final Name BEST_ROUTE = new Name("/localhost/nfd/strategy/best-route");
-  public static final Name BROADCAST = new Name("/localhost/nfd/strategy/broadcast");
-  public static final Name CLIENT_CONTROL = new Name("/localhost/nfd/strategy/client-control");
+  public static final Name MULTICAST = new Name("/localhost/nfd/strategy/multicast");
   public static final Name NCC = new Name("/localhost/nfd/strategy/ncc");
+  public static final Name RANDOM = new Name("/localhost/nfd/strategy/random");
+  public static final Name SELF_LEARNING = new Name("/localhost/nfd/strategy/self-learning");
 
   /**
    * Prevent instances of Strategies.

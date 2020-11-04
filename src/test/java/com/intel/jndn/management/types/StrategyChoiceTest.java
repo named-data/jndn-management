@@ -11,9 +11,9 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  */
-package com.intel.jndn.management;
+package com.intel.jndn.management.types;
 
-import com.intel.jndn.management.types.StrategyChoice;
+import com.intel.jndn.management.TestHelper;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
 import org.junit.Before;
