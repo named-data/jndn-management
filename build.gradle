@@ -43,7 +43,7 @@ configurations {
 dependencies {
   api 'net.named-data:jndn:0.24'
 
-  testImplementation 'junit:junit:4.12'
+  testImplementation 'junit:junit:4.13.1'
   testImplementation 'net.named-data.jndn-extra:jndn-mock:1.2.0'
   testRuntimeOnly 'org.slf4j:slf4j-api:1.7.30'
 }

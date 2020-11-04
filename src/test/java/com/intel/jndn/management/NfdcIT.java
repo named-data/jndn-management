@@ -27,12 +27,12 @@ import net.named_data.jndn.KeyLocator;
 import net.named_data.jndn.MetaInfo;
 import net.named_data.jndn.Name;
 import net.named_data.jndn.encoding.EncodingException;
+import net.named_data.jndn.encoding.Tlv0_3WireFormat;
+import net.named_data.jndn.encoding.WireFormat;
 import net.named_data.jndn.security.KeyChain;
 import net.named_data.jndn.security.SecurityException;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -55,11 +56,10 @@ public class NfdcIT {
   private MockFace mockFace;
   private Face noKeyChainFace;
 
-  @Rule
-  public final ExpectedException exception = ExpectedException.none();
-
   @Before
   public void setUp() throws SecurityException {
+    WireFormat.setDefaultWireFormat(Tlv0_3WireFormat.get());
+
     face = new Face("localhost");
     mockFace = new MockFace(new MockFace.Options().setEnablePacketLogging(false).setEnableRegistrationReply(false));
     noKeyChainFace = new Face("localhost"); // don't set command signing info
@@ -73,8 +73,7 @@ public class NfdcIT {
     assertNotNull(keyLocator);
     LOG.info("Connected to NFD with key locator: " + keyLocator.getKeyName().toUri());
 
-    exception.expect(ManagementException.class);
-    Nfdc.getKeyLocator(mockFace);
+    assertThrows(ManagementException.class, () -> Nfdc.getKeyLocator(mockFace));
   }
 
   @Test
@@ -102,41 +101,32 @@ public class NfdcIT {
       }
     });
 
-    exception.expect(ManagementException.class);
-    exception.expectMessage("No key locator available.");
-    Nfdc.getKeyLocator(mockFace);
+    Exception exception = assertThrows(ManagementException.class, () -> Nfdc.getKeyLocator(mockFace));
+    assertEquals("No key locator available.", exception.getMessage());
   }
 
   @Test
   public void testGetForwarderStatus() throws Exception {
     assertTrue(Nfdc.getForwarderStatus(face).getStartTimestamp() > 0);
-
-    exception.expect(ManagementException.class);
-    Nfdc.getForwarderStatus(mockFace);
+    assertThrows(ManagementException.class, () -> Nfdc.getForwarderStatus(mockFace));
   }
 
   @Test
   public void testGetFaceList() throws Exception {
     assertFalse(Nfdc.getFaceList(face).isEmpty());
-
-    exception.expect(ManagementException.class);
-    Nfdc.getFaceList(mockFace);
+    assertThrows(ManagementException.class, () -> Nfdc.getFaceList(mockFace));
   }
 
   @Test
   public void testGetFibList() throws Exception {
     assertFalse(Nfdc.getFibList(face).isEmpty());
-
-    exception.expect(ManagementException.class);
-    Nfdc.getFibList(mockFace);
+    assertThrows(ManagementException.class, () -> Nfdc.getFibList(mockFace));
   }
 
   @Test
   public void testGetRouteList() throws Exception {
     assertFalse(Nfdc.getRouteList(face).isEmpty());
-
-    exception.expect(ManagementException.class);
-    Nfdc.getRouteList(mockFace);
+    assertThrows(ManagementException.class, () -> Nfdc.getRouteList(mockFace));
   }
 
   @Test
@@ -168,39 +158,35 @@ public class NfdcIT {
 
     Thread.sleep(1000); // wait for face to be destroyed
 
-    exception.expect(ManagementException.class);
-    exception.expectMessage("Face not found: udp4://127.0.0.1:56363");
-    Nfdc.unregister(face, new Name("/my/test/route"), "udp4://127.0.0.1:56363");
+    Exception exception = assertThrows(ManagementException.class, () -> {
+                                         Nfdc.unregister(face, new Name("/my/test/route"), "udp4://127.0.0.1:56363");
+                                       });
+    assertEquals("Face not found: udp4://127.0.0.1:56363", exception.getMessage());
   }
 
   @Test
   public void testFailOfRegister() throws Exception {
-    exception.expect(ManagementException.class);
-    Nfdc.register(mockFace, new Name("/my/route/to/app/face"), 333);
+    assertThrows(ManagementException.class, () -> Nfdc.register(mockFace, new Name("/my/route/to/app/face"), 333));
   }
 
   @Test
   public void testFailOfUnregister() throws Exception {
-    exception.expect(ManagementException.class);
-    Nfdc.unregister(mockFace, new Name("/my/route/to/app/face"));
+    assertThrows(ManagementException.class, () -> Nfdc.unregister(mockFace, new Name("/my/route/to/app/face")));
   }
 
   @Test
   public void testFailOfCreateFace() throws Exception {
-    exception.expect(ManagementException.class);
-    Nfdc.createFace(mockFace, "udp4://127.0.0.1:56363");
+    assertThrows(ManagementException.class, () -> Nfdc.createFace(mockFace, "udp4://127.0.0.1:56363"));
   }
 
   @Test
   public void testFailOfDestroyFace() throws Exception {
-    exception.expect(ManagementException.class);
-    Nfdc.destroyFace(mockFace, 1);
+    assertThrows(ManagementException.class, () -> Nfdc.destroyFace(mockFace, 1));
   }
 
   @Test
   public void testStrategies() throws Exception {
-    Name prefix = new Name("/test/strategy").append("random:" + new Random().nextInt());
-
+    Name prefix = new Name("/test/strategy").append("random" + new Random().nextInt());
     List<StrategyChoice> choices = Nfdc.getStrategyList(face);
     int oldSize = choices.size();
 
@@ -211,28 +197,28 @@ public class NfdcIT {
     assertEquals(oldSize + 1, choices.size());
 
     Nfdc.unsetStrategy(face, prefix);
+    Thread.sleep(1000);
 
-    exception.expect(ManagementException.class);
-    Nfdc.getStrategyList(mockFace);
+    choices = Nfdc.getStrategyList(face);
+    assertEquals(oldSize, choices.size());
+
+    assertThrows(ManagementException.class, () -> Nfdc.getStrategyList(mockFace));
   }
 
   @Test
   public void testFailOfUnsetStrategy() throws Exception {
-    exception.expect(ManagementException.class);
-    Nfdc.unsetStrategy(mockFace, new Name("/"));
+    assertThrows(ManagementException.class, () -> Nfdc.unsetStrategy(mockFace, new Name("/")));
   }
 
   @Test
   public void testFailOfSetStrategyWithoutKeychain() throws Exception {
-    exception.expect(NullPointerException.class);
-    Nfdc.setStrategy(noKeyChainFace, new Name("/test"), Strategies.BEST_ROUTE);
+    assertThrows(NullPointerException.class, () -> {
+                   Nfdc.setStrategy(noKeyChainFace, new Name("/test"), Strategies.BEST_ROUTE);
+                 });
   }
 
   @Test
   public void testFailOfSetStrategyWithNon200Code() throws Exception {
-    exception.expect(ManagementException.class);
-    exception.expectMessage("Action failed, forwarder returned: 300 Test FAIL");
-
     mockFace.onSendInterest.add(new MockFace.SignalOnSendInterest() {
       @Override
       public void emit(final Interest interest) {
@@ -251,14 +237,16 @@ public class NfdcIT {
         }
       }
     });
-    Nfdc.setStrategy(mockFace, new Name("/"), Strategies.MULTICAST);
+
+    Exception exception = assertThrows(ManagementException.class, () -> {
+                                         Nfdc.setStrategy(mockFace, new Name("/"), Strategies.MULTICAST);
+                                       });
+    assertEquals("Action failed, forwarder returned: 300 Test FAIL", exception.getMessage());
   }
 
   @Test
   public void testGetChannelStatus() throws Exception {
     assertFalse(Nfdc.getChannelStatusList(face).isEmpty());
-
-    exception.expect(ManagementException.class);
-    Nfdc.getChannelStatusList(mockFace);
+    assertThrows(ManagementException.class, () -> Nfdc.getChannelStatusList(mockFace));
   }
 }
