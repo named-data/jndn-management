@@ -5,18 +5,16 @@ This project consists of tools for managing an NDN forwarding daemon (NFD). It r
 ## Use
 
 With a Face that has command signing information set, call any of the following static methods:
- - __Nfdc.pingLocal(Face forwarder)__: ping a local NFD with /localhost/nfd to verify if it exists.
- - __Nfdc.getForwarderStatus(Face forwarder)__: retrieve the forwarder status information.
- - __Nfdc.getFaceList(Face forwarder)__: retrieve all connected faces.
- - __Nfdc.getFibList(Face forwarder)__: retrieve all forwarding entries in the Forwarding Information Base (FIB).
- - __Nfdc.getRibList(Face forwarder)__: retrieve all routing entries in the Routing Information Base (RIB).
- - __Nfdc.getChannelStatusList(Face forwarder)__: Retrieve the list of channel status entries from the NFD.
- - __Nfdc.createFace(Face forwarder, String uri)__: create a new face on the NFD opened to the given URI.
- - __Nfdc.register(Face forwarder, ...)__: includes several similar methods for registering a new route on the NFD.
- - __Nfdc.unregister(Face forwarder, Name route)__: unregister a route by name.
- - __Nfdc.setStrategy(Face forwarder, Name prefix, Name strategy)__: set the forwarding strategy for the given prefix.
-
-See [full Javadoc documentation](http://01org.github.io/jndn-management/index.html)
+ - `Nfdc.pingLocal(Face forwarder)`: ping a local NFD with /localhost/nfd to verify if it exists.
+ - `Nfdc.getForwarderStatus(Face forwarder)`: retrieve the forwarder status information.
+ - `Nfdc.getFaceList(Face forwarder)`: retrieve all connected faces.
+ - `Nfdc.getFibList(Face forwarder)`: retrieve all forwarding entries in the Forwarding Information Base (FIB).
+ - `Nfdc.getRibList(Face forwarder)`: retrieve all routing entries in the Routing Information Base (RIB).
+ - `Nfdc.getChannelStatusList(Face forwarder)`: Retrieve the list of channel status entries from the NFD.
+ - `Nfdc.createFace(Face forwarder, String uri)`: create a new face on the NFD opened to the given URI.
+ - `Nfdc.register(Face forwarder, ...)`: includes several similar methods for registering a new route on the NFD.
+ - `Nfdc.unregister(Face forwarder, Name route)`: unregister a route by name.
+ - `Nfdc.setStrategy(Face forwarder, Name prefix, Name strategy)`: set the forwarding strategy for the given prefix.
 
 ## License
 

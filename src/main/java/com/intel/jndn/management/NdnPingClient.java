@@ -61,8 +61,9 @@ public final class NdnPingClient {
   public static boolean ping(final Face face, final Name name) {
     // build interest
     Interest interest = new Interest(name);
-    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
+    interest.setCanBePrefix(true);
     interest.setMustBeFresh(true);
+    interest.setInterestLifetimeMilliseconds(DEFAULT_TIMEOUT);
 
     // send packet
     try {
