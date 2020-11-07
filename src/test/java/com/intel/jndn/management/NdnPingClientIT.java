@@ -15,17 +15,16 @@ package com.intel.jndn.management;
 
 import net.named_data.jndn.Face;
 import net.named_data.jndn.Name;
-import net.named_data.jndn.security.SecurityException;
+import net.named_data.jndn.encoding.Tlv0_3WireFormat;
+import net.named_data.jndn.encoding.WireFormat;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Testing basic pining using real NFD instance (NFD must be run locally while executing the test).
+ * Testing basic pinging using real NFD instance (NFD must be run locally while executing the test).
  *
  * @author Andrew Brown <andrew.brown@intel.com>
  */
@@ -33,12 +32,14 @@ public class NdnPingClientIT {
   private Face face;
 
   @Before
-  public void setUp() throws SecurityException {
+  public void setUp() {
+    WireFormat.setDefaultWireFormat(Tlv0_3WireFormat.get());
+
     face = new Face("localhost");
   }
 
   @Test
-  public void testPingLocal() throws IOException, ManagementException {
+  public void testPingLocal() {
     boolean hasSucceeded = NdnPingClient.pingLocal(face);
     assertTrue(hasSucceeded);
   }
